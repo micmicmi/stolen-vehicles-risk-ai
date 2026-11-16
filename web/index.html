@@ -2182,19 +2182,29 @@
                 grid-template-columns: 1fr;
             }
 
-            /* Modal sheet optimization for mobile */
+            /* Full-screen coast-to-coast comparison modal on mobile */
             .agent-modal-overlay {
-                padding: 8px;
-                align-items: flex-end;
+                padding: 0;
+                align-items: stretch;
+                z-index: 1100;
+                overflow: hidden;
             }
 
             .agent-modal-overlay .agent-bottom-section {
-                max-height: 92dvh;
-                border-radius: 18px;
+                width: 100%;
+                max-width: 100%;
+                height: 100dvh;
+                max-height: 100dvh;
+                border-radius: 0;
+                margin: 0;
+                overflow-y: auto;
             }
 
             .bestie-zone-hero {
-                padding: 12px 14px;
+                position: sticky;
+                top: 0;
+                z-index: 10;
+                padding: max(12px, env(safe-area-inset-top)) 14px 12px;
             }
 
             .agent-header-row {
@@ -2239,7 +2249,7 @@
             }
 
             .bestie-results-workspace {
-                padding: 12px 14px 18px;
+                padding: 12px 14px max(78px, calc(64px + env(safe-area-inset-bottom)));
             }
 
             .agent-speech-bubble-hero {
@@ -2273,6 +2283,7 @@
                 bottom: 14px;
                 width: 48px;
                 height: 48px;
+                z-index: 1120;
             }
 
             .bestie-sticky-dock {
