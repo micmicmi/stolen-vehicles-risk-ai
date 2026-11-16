@@ -1919,6 +1919,74 @@
     @media (max-width: 40rem) {
       :root {
         --gutter: 16px;
+        --header-h: 136px;
+      }
+
+      .header-inner {
+        flex-wrap: wrap;
+        gap: 6px;
+        padding-block: 8px;
+        min-height: auto;
+      }
+
+      .header-brand {
+        width: 100%;
+      }
+
+      .header-title {
+        font-size: 0.92rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .header-actions {
+        width: 100%;
+        flex-shrink: 1;
+        gap: 12px;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+
+      .header-actions::-webkit-scrollbar {
+        display: none;
+      }
+
+      .btn-live-app,
+      .btn-secondary-nav {
+        font-size: 0.78rem;
+        padding: 4px 10px;
+      }
+
+      h1 {
+        font-size: clamp(1.7rem, 6.5vw, 2.3rem);
+        line-height: 1.12;
+      }
+
+      .lead {
+        font-size: 1rem;
+        line-height: 1.55;
+      }
+
+      .hero-actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+      }
+
+      .hero-actions .btn {
+        justify-content: center;
+      }
+
+      pre,
+      .katex-display,
+      .table-wrap {
+        max-width: 100%;
+        overflow-x: auto;
+      }
+
+      code {
+        overflow-wrap: anywhere;
       }
 
       .hero-figures,
@@ -2370,7 +2438,7 @@
               <div class="contract-val">Maker × Model × Model Year × City × Event Year</div>
             </div>
             <div class="contract-card">
-              <div class="contract-label">קוהורט טרום-חיתוך וכיול חשיפה</div>
+              <div class="contract-label">הגדרת קבוצת המחקר ונרמול החשיפה</div>
               <div class="contract-val">Train 2024: n=17,389 (12m) | Blind Test 2025: n=16,853 (9m, Offset 0.75)</div>
             </div>
             <div class="contract-card">

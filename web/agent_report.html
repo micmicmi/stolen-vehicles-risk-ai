@@ -601,6 +601,14 @@
             max-width: 62ch;
         }
 
+        .study-copy h1 {
+            font-size: 70px;
+        }
+
+        .study-copy .lead {
+            font-size: 18px;
+        }
+
         .hero .lead {
             margin-top: var(--space-md);
             max-width: 52ch;
@@ -1468,6 +1476,29 @@
                 --section-gap: 72px;
                 --section-gap-l: 96px;
                 --gap-columns: 16px;
+                --header-h: 136px;
+            }
+
+            .header-inner {
+                flex-wrap: wrap;
+                gap: 6px;
+                padding-block: 8px;
+                min-height: auto;
+            }
+
+            .header-brand {
+                width: 100%;
+            }
+
+            .header-title {
+                font-size: 0.94rem;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .header-actions {
+                width: 100%;
+                gap: 12px;
             }
 
             .header-subtitle {
@@ -1475,7 +1506,27 @@
             }
 
             .hero {
-                padding-block: var(--space-xl) var(--space-2xl);
+                padding-block: var(--space-lg) var(--space-xl);
+            }
+
+            h1,
+            .study-copy h1 {
+                font-size: clamp(1.75rem, 6.5vw, 2.35rem);
+                line-height: 1.12;
+            }
+
+            .lead,
+            .standfirst,
+            .study-copy .lead {
+                font-size: 1rem;
+                line-height: 1.55;
+            }
+
+            .contract-val,
+            code,
+            pre {
+                overflow-wrap: anywhere;
+                max-width: 100%;
             }
 
             .hero-figures {
@@ -1504,7 +1555,7 @@
             }
 
             .diagram-viewport {
-                height: 480px;
+                height: 360px;
             }
         }
 
@@ -1586,8 +1637,8 @@
 
                 <!-- Right column: Display headline, lead text & primary actions -->
                 <div class="study-copy">
-                    <h1 style="font-size: 70px;">מחיזוי ML פסיבי לסוכן השוואת ביטוח אוטונומי בזמן אמת</h1>
-                    <p class="lead" style="font-size: 18px;">
+                    <h1>מחיזוי ML פסיבי לסוכן השוואת ביטוח אוטונומי בזמן אמת</h1>
+                    <p class="lead">
                         מסמך זה מתעד את חיבור אומדן הסיכון המחקרי לסוכן AI אוטונומי המבוסס על כלים :
                         בחירת דגם ועיר מפעילה ברקע ניתוח כיסוי נתונים, סימולציית מחיר לפרופיל נהג ייחוס וחיפוש של עד
                         שלוש חלופות. הצ'אט המובנה מאפשר לבחון תרחישי מיגון והשוואה. המחירים ודרישות המיגון מחושבים בקוד
