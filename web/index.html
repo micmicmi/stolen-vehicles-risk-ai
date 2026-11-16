@@ -1701,6 +1701,10 @@
             pointer-events: none;
         }
 
+        body.instant-render .agent-side-widget {
+            transition: none !important;
+        }
+
         .agent-side-launcher {
             position: fixed;
             left: 20px;
@@ -2285,17 +2289,55 @@
             }
 
             .agent-side-widget {
-                left: 10px;
-                right: 10px;
-                bottom: 10px;
-                width: auto;
+                inset: 0;
+                left: 0;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                width: 100%;
                 max-width: none;
-                max-height: calc(100dvh - 20px);
-                border-radius: 18px;
+                height: 100dvh;
+                max-height: 100dvh;
+                border-radius: 0;
+                z-index: 1200;
+            }
+
+            .agent-side-header {
+                padding: max(12px, env(safe-area-inset-top)) 14px 12px;
+                flex-shrink: 0;
+            }
+
+            .agent-side-minimize-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 1.05rem;
+            }
+
+            .agent-side-context-bar {
+                flex-shrink: 0;
+            }
+
+            .agent-side-body {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                min-height: 0;
+                overflow: hidden;
+                padding: 12px 14px max(14px, env(safe-area-inset-bottom));
+            }
+
+            .agent-quick-prompts {
+                flex-shrink: 0;
             }
 
             .agent-chat-messages {
-                height: min(240px, 38dvh);
+                flex: 1;
+                height: auto;
+                min-height: 0;
+            }
+
+            .agent-chat-input-row {
+                flex-shrink: 0;
             }
 
             .formula-modal-overlay {
@@ -3232,7 +3274,7 @@
                         } else if (viewParam === 'chat') {
                             openSideAgentChat();
                             const sideChat = document.getElementById('agent-inline-chat');
-                            if (sideChat) {
+                            if (sideChat && window.innerWidth > 640) {
                                 sideChat.classList.remove('minimized');
                                 sideChat.style.display = 'flex';
                                 sideChat.style.position = 'relative';
@@ -4907,6 +4949,9 @@
                 widget.classList.remove('minimized');
             }
             if (launcher) launcher.classList.remove('visible');
+            if (window.innerWidth <= 640) {
+                document.documentElement.style.overflow = 'hidden';
+            }
             const inp = document.getElementById('agent-chat-input');
             if (inp) setTimeout(() => inp.focus(), 120);
         }
@@ -4916,6 +4961,7 @@
             const launcher = document.getElementById('bestie-side-chat-launcher');
             if (widget) widget.classList.add('minimized');
             if (launcher) launcher.classList.add('visible');
+            document.documentElement.style.overflow = '';
         }
 
         function getInsurerBrandLogoHtml(insurerName) {
