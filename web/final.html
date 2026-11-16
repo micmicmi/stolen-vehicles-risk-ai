@@ -1884,6 +1884,47 @@
       pointer-events: auto;
     }
 
+    .mobile-menu-btn,
+    .mobile-nav-drawer,
+    .mobile-sticky-cta {
+      display: none;
+    }
+
+    .mobile-drawer-section-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--color-muted);
+      margin: 10px 0 6px;
+      padding-inline: 4px;
+    }
+
+    .mobile-drawer-links {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .mobile-drawer-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      border-radius: var(--radius-inner);
+      background: var(--color-paper-2);
+      border: var(--rule-hair) solid var(--color-rule);
+      color: var(--color-ink);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .mobile-drawer-link--primary {
+      background: var(--color-accent-deep);
+      color: #ffffff;
+      border-color: var(--color-accent-deep);
+      font-weight: 700;
+    }
+
     /* ── responsive ─────────────────────────────────────────── */
     @media (max-width: 60rem) {
       :root {
@@ -1918,44 +1959,185 @@
 
     @media (max-width: 40rem) {
       :root {
-        --gutter: 16px;
-        --header-h: 136px;
+        --gutter: 12px;
+        --header-h: 56px;
+      }
+
+      body {
+        padding-bottom: 84px;
       }
 
       .header-inner {
-        flex-wrap: wrap;
-        gap: 6px;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        gap: 10px;
         padding-block: 8px;
-        min-height: auto;
+        min-height: 56px;
       }
 
       .header-brand {
-        width: 100%;
+        width: auto;
+        flex: 1;
+        min-width: 0;
       }
 
       .header-title {
-        font-size: 0.92rem;
+        font-size: 0.88rem;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
       }
 
-      .header-actions {
-        width: 100%;
-        flex-shrink: 1;
-        gap: 12px;
-        overflow-x: auto;
-        scrollbar-width: none;
-      }
-
-      .header-actions::-webkit-scrollbar {
+      .header-actions,
+      .chapter-nav-bar {
         display: none;
       }
 
-      .btn-live-app,
-      .btn-secondary-nav {
-        font-size: 0.78rem;
-        padding: 4px 10px;
+      .mobile-menu-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: var(--radius-inner);
+        border: var(--rule-hair) solid var(--color-rule-2);
+        background: var(--color-paper);
+        color: var(--color-ink);
+        cursor: pointer;
+        flex-shrink: 0;
+      }
+
+      .mobile-nav-drawer.open {
+        display: block;
+        position: fixed;
+        top: 56px;
+        inset-inline: 0;
+        max-height: calc(100dvh - 56px);
+        overflow-y: auto;
+        background: var(--color-paper);
+        border-bottom: var(--rule-hair) solid var(--color-rule-2);
+        box-shadow: var(--shadow-lift);
+        z-index: var(--z-sticky-nav);
+        padding: 10px 12px 18px;
+      }
+
+      .hero-figures,
+      .contract-band,
+      .band,
+      .comp,
+      .figures,
+      .tradeoff-card,
+      .tradeoff-conflict,
+      .feat-card,
+      .decay-card,
+      .bars,
+      .bars--compact,
+      .case-sim-wrap,
+      .case-sim-score-box,
+      .agent-cta-card,
+      .ch2-funnel-card,
+      .ch2-panel-card {
+        padding: 14px 12px;
+      }
+
+      .ch2-mini-stat,
+      .ch2-offset-box,
+      pre {
+        padding: 10px 12px;
+      }
+
+      .chip {
+        white-space: normal;
+        max-width: 100%;
+        text-align: center;
+        line-height: 1.35;
+      }
+
+      .chart-frame {
+        width: calc(100% + 24px);
+        margin-inline: -12px;
+        border-radius: 0;
+        max-height: none;
+        padding: 0;
+      }
+
+      .chart-frame img {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      .lightbox-modal {
+        padding: 0;
+      }
+
+      .lightbox-content {
+        width: 100vw;
+        max-width: 100vw;
+        max-height: 100dvh;
+      }
+
+      .lightbox-content img {
+        width: 100vw;
+        max-width: 100vw;
+        max-height: 88dvh;
+        object-fit: contain;
+        border-radius: 0;
+      }
+
+      .lightbox-close {
+        top: -44px;
+        left: 12px;
+        right: auto;
+      }
+
+      .mobile-sticky-cta {
+        display: block;
+        position: fixed;
+        bottom: 0;
+        inset-inline: 0;
+        z-index: var(--z-sticky-nav);
+        padding: 10px 12px max(10px, env(safe-area-inset-bottom));
+        background: color-mix(in oklab, var(--color-paper) 94%, transparent);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-top: var(--rule-hair) solid var(--color-rule-2);
+        box-shadow: 0 -8px 24px oklch(20% 0.02 165 / 0.10);
+        transform: translateY(110%);
+        opacity: 0;
+        pointer-events: none;
+        transition: transform 0.25s var(--ease-out), opacity 0.2s ease;
+      }
+
+      .mobile-sticky-cta.visible {
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .mobile-sticky-cta-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        padding: 11px 16px;
+        border-radius: var(--radius-pill);
+        background: var(--color-accent-deep);
+        color: #ffffff;
+        font-family: var(--font-body);
+        font-size: 0.92rem;
+        font-weight: 700;
+        text-decoration: none;
+        box-shadow: 0 4px 14px color-mix(in oklab, var(--color-accent) 32%, transparent);
+      }
+
+      .btn-top {
+        bottom: 72px;
+        left: 12px;
+        width: 40px;
+        height: 40px;
       }
 
       h1 {
@@ -2393,6 +2575,38 @@
         <a class="btn-secondary-nav" href="agent_report.html">
           <span>דוח סוכן AI</span>
         </a>
+      </div>
+      <button type="button" class="mobile-menu-btn" id="mobileMenuBtn" aria-label="פתח תפריט ניווט"
+        aria-expanded="false" aria-controls="mobileNavDrawer">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+          stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <div class="mobile-nav-drawer" id="mobileNavDrawer" aria-label="תפריט ניווט מובייל">
+      <div class="mobile-drawer-links">
+        <a class="mobile-drawer-link mobile-drawer-link--primary" href="index.html">
+          <span>לבדיקת סיכון גניבת רכב</span>
+          <span aria-hidden="true">←</span>
+        </a>
+        <a class="mobile-drawer-link" href="agent_report.html">דוח סוכן AI</a>
+        <a class="mobile-drawer-link" href="https://colab.research.google.com/" target="_blank"
+          rel="noopener noreferrer">פתיחה ב-Colab</a>
+      </div>
+      <div class="mobile-drawer-section-label">פרקי הדוח</div>
+      <div class="mobile-drawer-links">
+        <a class="mobile-drawer-link" href="#ch1">01 · ארכיטקטורה</a>
+        <a class="mobile-drawer-link" href="#ch2">02 · נתונים ואי-זליגה</a>
+        <a class="mobile-drawer-link" href="#ch3">03 · חשיפת למ״ס</a>
+        <a class="mobile-drawer-link" href="#ch4">04 · ניתוח EDA</a>
+        <a class="mobile-drawer-link" href="#ch5">05 · התלבטויות הנדסיות</a>
+        <a class="mobile-drawer-link" href="#ch6">06 · ביצועי מודלים</a>
+        <a class="mobile-drawer-link" href="#ch7">07 · מוצר וסוכן AI</a>
+        <a class="mobile-drawer-link" href="#ch8">08 · מגבלות וסיכום</a>
       </div>
     </div>
 
@@ -4332,6 +4546,14 @@
     </div>
   </div>
 
+  <!-- Mobile Sticky Bottom Primary CTA -->
+  <div class="mobile-sticky-cta" id="mobileStickyCta">
+    <a class="mobile-sticky-cta-btn" href="index.html">
+      <span>לבדיקת סיכון גניבת רכב</span>
+      <span aria-hidden="true">←</span>
+    </a>
+  </div>
+
   <!-- Back to top floating button -->
   <button class="btn-top" id="btnTop" title="חזרה לראש העמוד" aria-label="חזרה לראש העמוד">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
@@ -4507,15 +4729,59 @@
         document.fonts.ready.then(() => initNavAlignment());
       }
 
-      // 2. Back to top button
+      // 2. Back to top button + Mobile Sticky CTA + Mobile Hamburger Menu
       const btnTop = document.getElementById('btnTop');
+      const mobileStickyCta = document.getElementById('mobileStickyCta');
       window.addEventListener('scroll', function () {
         if (window.scrollY > 400) {
           btnTop.classList.add('visible');
         } else {
           btnTop.classList.remove('visible');
         }
+        if (mobileStickyCta) {
+          if (window.scrollY > 220) {
+            mobileStickyCta.classList.add('visible');
+          } else {
+            mobileStickyCta.classList.remove('visible');
+          }
+        }
       }, { passive: true });
+
+      const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+      const mobileNavDrawer = document.getElementById('mobileNavDrawer');
+      if (mobileMenuBtn && mobileNavDrawer) {
+        const closeDrawer = () => {
+          mobileNavDrawer.classList.remove('open');
+          mobileMenuBtn.setAttribute('aria-expanded', 'false');
+        };
+        mobileMenuBtn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          const isOpen = mobileNavDrawer.classList.toggle('open');
+          mobileMenuBtn.setAttribute('aria-expanded', String(isOpen));
+        });
+        mobileNavDrawer.querySelectorAll('a').forEach(link => {
+          link.addEventListener('click', function (e) {
+            const href = this.getAttribute('href') || '';
+            closeDrawer();
+            if (href.startsWith('#')) {
+              const target = document.querySelector(href);
+              if (target) {
+                e.preventDefault();
+                const headerH = document.querySelector('.fixed-header')?.offsetHeight || 56;
+                window.scrollTo({
+                  top: Math.max(0, target.getBoundingClientRect().top + window.pageYOffset - headerH - 12),
+                  behavior: 'smooth'
+                });
+              }
+            }
+          });
+        });
+        document.addEventListener('click', function (e) {
+          if (mobileNavDrawer.classList.contains('open') && !mobileNavDrawer.contains(e.target) && e.target !== mobileMenuBtn) {
+            closeDrawer();
+          }
+        });
+      }
 
       if (btnTop) {
         btnTop.addEventListener('click', function () {
