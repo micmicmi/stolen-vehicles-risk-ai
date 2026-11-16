@@ -2006,8 +2006,21 @@
         }
 
         @media (max-width: 640px) {
+            body {
+                padding-top: 52px;
+            }
+
+            body.instant-render {
+                padding-top: 0;
+            }
+
             #top-nav {
-                padding: 10px 14px;
+                position: static;
+                background: transparent;
+                backdrop-filter: none;
+                -webkit-backdrop-filter: none;
+                border-bottom: none;
+                padding: 10px 14px 4px;
             }
 
             .nav-inner {
@@ -2016,9 +2029,23 @@
             }
 
             .nav-logo {
+                position: fixed;
+                top: 0;
+                inset-inline: 0;
+                height: 52px;
+                z-index: 1000;
+                background: var(--apple-glass);
+                backdrop-filter: var(--blur-standard);
+                -webkit-backdrop-filter: var(--blur-standard);
+                border-bottom: 1px solid var(--apple-border);
+                padding: 0 14px;
                 font-size: 0.92rem;
                 min-width: 0;
-                flex: 1 1 100%;
+            }
+
+            body.agent-chat-open #top-nav,
+            body.agent-chat-open .nav-logo {
+                display: none !important;
             }
 
             .nav-links {
@@ -4944,6 +4971,7 @@
         function openSideAgentChat() {
             const widget = document.getElementById('agent-inline-chat');
             const launcher = document.getElementById('bestie-side-chat-launcher');
+            document.body.classList.add('agent-chat-open');
             if (widget) {
                 widget.style.display = 'flex';
                 widget.classList.remove('minimized');
@@ -4959,6 +4987,7 @@
         function minimizeSideAgentChat() {
             const widget = document.getElementById('agent-inline-chat');
             const launcher = document.getElementById('bestie-side-chat-launcher');
+            document.body.classList.remove('agent-chat-open');
             if (widget) widget.classList.add('minimized');
             if (launcher) launcher.classList.add('visible');
             document.documentElement.style.overflow = '';
