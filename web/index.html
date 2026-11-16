@@ -473,7 +473,7 @@
 
         #results-section.visible {
             display: block;
-            animation: appleFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: appleFadeOnly 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         /* ===== KPI CARDS: CRISP, REFINED & AUTHORITATIVE ===== */
@@ -832,10 +832,26 @@
             transition: all 0.2s ease;
         }
 
-        .info-icon-btn:hover {
+        .info-icon-btn:hover,
+        .info-tooltip-wrapper.active .info-icon-btn {
             background: var(--apple-blue);
             color: #ffffff;
             border-color: var(--apple-blue);
+        }
+
+        .info-tooltip-close {
+            display: none;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: var(--text-secondary);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            cursor: pointer;
+            flex-shrink: 0;
         }
 
         .info-tooltip-bubble {
@@ -870,8 +886,16 @@
             border-color: var(--apple-surface-elevated) transparent transparent transparent;
         }
 
-        .info-tooltip-wrapper:hover .info-tooltip-bubble,
-        .info-tooltip-wrapper:focus-within .info-tooltip-bubble,
+        @media (hover: hover) and (pointer: fine) {
+            .info-tooltip-wrapper:hover .info-tooltip-bubble,
+            .info-tooltip-wrapper:focus-within .info-tooltip-bubble {
+                visibility: visible;
+                opacity: 1;
+                transform: translateY(0);
+                pointer-events: auto;
+            }
+        }
+
         .info-tooltip-wrapper.active .info-tooltip-bubble {
             visibility: visible;
             opacity: 1;
@@ -1955,6 +1979,16 @@
         }
 
         /* ===== ANIMATIONS ===== */
+        @keyframes appleFadeOnly {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
         @keyframes appleFadeIn {
             from {
                 opacity: 0;
@@ -2160,15 +2194,26 @@
                 padding: 10px 12px;
             }
 
+            .info-icon-btn {
+                width: 24px;
+                height: 24px;
+                font-size: 0.78rem;
+            }
+
+            .info-tooltip-close {
+                display: inline-flex;
+            }
+
             .info-tooltip-bubble {
                 position: fixed;
                 left: 16px;
                 right: 16px;
-                bottom: 86px;
                 top: auto;
+                bottom: 92px;
                 width: auto;
-                max-width: none;
-                z-index: 1150;
+                max-width: 360px;
+                margin-inline: auto;
+                z-index: 1250;
                 padding: 14px 16px;
                 border-radius: var(--radius-lg);
                 transform: translateY(8px);
@@ -2386,16 +2431,36 @@
                 flex-shrink: 0;
             }
 
+            /* Full-screen coast-to-coast formula modal on mobile */
             .formula-modal-overlay {
-                padding: 10px;
+                padding: 0;
+                align-items: stretch;
+                overflow: hidden;
+            }
+
+            .formula-modal-window {
+                width: 100%;
+                max-width: 100%;
+                height: 100dvh;
+                max-height: 100dvh;
+                border-radius: 0;
+                border: none;
             }
 
             .formula-modal-header {
-                padding: 14px 16px;
+                padding: max(14px, env(safe-area-inset-top)) 16px 14px;
+            }
+
+            .formula-modal-close {
+                width: 36px;
+                height: 36px;
+                font-size: 1.15rem;
+                flex-shrink: 0;
             }
 
             .formula-modal-body {
-                padding: 16px;
+                padding: 16px 16px max(24px, env(safe-area-inset-bottom));
+                flex: 1;
             }
         }
     </style>
@@ -2602,14 +2667,17 @@
                         <div
                             style="font-size: 0.82rem; color: var(--text3); display: flex; align-items: center; gap: 5px;">
                             <span>מדד סיכון היישוב:</span>
-                            <div class="info-tooltip-wrapper" onclick="toggleCityRiskTooltip(event)"
-                                onmouseleave="hideCityRiskTooltip()">
-                                <button type="button" class="info-icon-btn" aria-label="הסבר על מדד סיכון היישוב"
-                                    title="לחץ או רחף לקבלת הסבר על המדד">ⓘ</button>
-                                <div class="info-tooltip-bubble" id="city-risk-tooltip">
+                            <div class="info-tooltip-wrapper" onmouseleave="handleCityRiskTooltipMouseLeave()">
+                                <button type="button" class="info-icon-btn" onclick="toggleCityRiskTooltip(event)"
+                                    aria-label="הסבר על מדד סיכון היישוב" aria-expanded="false"
+                                    aria-controls="city-risk-tooltip" title="לחץ או רחף לקבלת הסבר על המדד">ⓘ</button>
+                                <div class="info-tooltip-bubble" id="city-risk-tooltip"
+                                    onclick="event.stopPropagation()">
                                     <div
-                                        style="font-weight: 700; color: #93c5fd; margin-bottom: 6px; font-size: 0.84rem; display: flex; align-items: center; gap: 4px;">
-                                        <span>📍</span> <span id="tooltip-city-title">מדד סיכון היישוב</span>
+                                        style="font-weight: 700; color: #93c5fd; margin-bottom: 6px; font-size: 0.84rem; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                                        <span style="display: flex; align-items: center; gap: 4px;"><span>📍</span> <span id="tooltip-city-title">מדד סיכון היישוב</span></span>
+                                        <button type="button" class="info-tooltip-close"
+                                            onclick="hideCityRiskTooltip(event)" aria-label="סגור הסבר">✕</button>
                                     </div>
                                     <div id="city-risk-tooltip-content"
                                         style="color: var(--text2); line-height: 1.5; font-size: 0.78rem;">
@@ -4546,25 +4614,82 @@
         }
 
         // ─── City Risk Info Tooltip ───
+        function positionCityRiskTooltipMobile() {
+            const wrapper = document.querySelector('.info-tooltip-wrapper');
+            const bubble = document.getElementById('city-risk-tooltip');
+            const btn = wrapper ? wrapper.querySelector('.info-icon-btn') : null;
+            if (!bubble || !btn) return;
+            if (window.innerWidth > 640) {
+                bubble.style.top = '';
+                bubble.style.bottom = '';
+                return;
+            }
+            const rect = btn.getBoundingClientRect();
+            const vh = window.innerHeight || document.documentElement.clientHeight;
+            const bubbleHeight = bubble.offsetHeight || 150;
+            const minTop = 62;
+            const maxBottom = vh - 88;
+            let top;
+            if (rect.top - minTop >= bubbleHeight + 10) {
+                top = rect.top - bubbleHeight - 10;
+            } else if (maxBottom - rect.bottom >= bubbleHeight + 10) {
+                top = rect.bottom + 10;
+            } else {
+                top = Math.max(minTop, Math.min(maxBottom - bubbleHeight, rect.bottom + 10));
+            }
+            bubble.style.top = `${Math.round(top)}px`;
+            bubble.style.bottom = 'auto';
+        }
+
         function toggleCityRiskTooltip(e) {
-            if (e) e.stopPropagation();
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
             const wrapper = document.querySelector('.info-tooltip-wrapper');
             if (!wrapper) return;
             const isActive = wrapper.classList.toggle('active');
-            if (!isActive) {
-                const btn = wrapper.querySelector('.info-icon-btn');
+            const btn = wrapper.querySelector('.info-icon-btn');
+            if (btn) btn.setAttribute('aria-expanded', isActive ? 'true' : 'false');
+            if (isActive) {
+                positionCityRiskTooltipMobile();
+            } else {
                 if (btn) btn.blur();
             }
         }
 
-        function hideCityRiskTooltip() {
+        function hideCityRiskTooltip(e) {
+            if (e) e.stopPropagation();
             const wrapper = document.querySelector('.info-tooltip-wrapper');
             if (wrapper) {
                 wrapper.classList.remove('active');
                 const btn = wrapper.querySelector('.info-icon-btn');
-                if (btn) btn.blur();
+                if (btn) {
+                    btn.setAttribute('aria-expanded', 'false');
+                    btn.blur();
+                }
             }
         }
+
+        function handleCityRiskTooltipMouseLeave() {
+            if (window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+                hideCityRiskTooltip();
+            }
+        }
+
+        window.addEventListener('resize', () => {
+            const wrapper = document.querySelector('.info-tooltip-wrapper');
+            if (wrapper && wrapper.classList.contains('active')) {
+                positionCityRiskTooltipMobile();
+            }
+        });
+
+        window.addEventListener('scroll', () => {
+            const wrapper = document.querySelector('.info-tooltip-wrapper');
+            if (wrapper && wrapper.classList.contains('active') && window.innerWidth <= 640) {
+                positionCityRiskTooltipMobile();
+            }
+        }, { passive: true });
 
         document.addEventListener('click', (e) => {
             if (!e.target.closest('.info-tooltip-wrapper')) {
@@ -4594,6 +4719,7 @@
 
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
+                hideCityRiskTooltip();
                 closeFormulaModal();
                 closeBestieAgentModal();
             }
