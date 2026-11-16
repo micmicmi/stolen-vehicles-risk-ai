@@ -1,0 +1,2525 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>סוכן אוטונומי לבדיקת חיסכון בביטוח הרכב | AI Engineering &amp; Product Portfolio</title>
+    <meta
+        content="תיעוד הנדסי ומוצרי מלא של סוכן ה-AI האוטונומי להשוואת מחירי ביטוח רכב באתר Bestie וניתוח חלופות מבוסס XGBoost."
+        name="description" />
+
+    <!-- Google Fonts: Dose Theme System -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700&family=Instrument+Sans:wght@400;500&family=DM+Mono:wght@400;500&family=Heebo:wght@400;500;700&display=swap"
+        rel="stylesheet" />
+
+    <style>
+        /* Hallmark · shape: Long Document · genre: modern-minimal · theme: Dose · companion: Bestie Copilot Agent Report */
+        /* ── tokens (Dose) ──────────────────────────────────────── */
+        :root {
+            --space-3xs: 2px;
+            --space-2xs: 4px;
+            --space-xs: 8px;
+            --space-sm: 12px;
+            --space-md: 16px;
+            --space-lg: 24px;
+            --space-xl: 40px;
+            --space-2xl: 64px;
+            --space-3xl: 96px;
+            --space-4xl: 144px;
+            --text-xs: 0.8125rem;
+            --text-sm: 0.875rem;
+            --text-md: 1.125rem;
+            --text-lg: 1.25rem;
+            --text-xl: 1.5625rem;
+            --text-2xl: 1.953rem;
+            --text-3xl: 2.441rem;
+            --text-display-s: clamp(2.25rem, 4vw + 0.5rem, 3.75rem);
+            --text-display: clamp(2.5rem, 4vw + 1rem, 4.75rem);
+            --text-section: clamp(1.9rem, 2.2vw + 1rem, 3.25rem);
+            --text-title: clamp(1.25rem, 0.75vw + 0.875rem, 1.625rem);
+            --text-lead: clamp(1.125rem, 0.35vw + 1rem, 1.375rem);
+            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+            --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+            --dur-micro: 120ms;
+            --dur-short: 220ms;
+            --dur-long: 420ms;
+            --container: 1440px;
+            --gutter: 64px;
+            --gap-columns: 32px;
+            --section-gap-s: 120px;
+            --section-gap: 144px;
+            --section-gap-l: 176px;
+            --z-base: 1;
+            --z-raised: 10;
+            --z-dropdown: 100;
+            --z-sticky: 200;
+            --z-sticky-nav: 300;
+            --z-modal: 400;
+            --z-toast: 500;
+            --z-tooltip: 600;
+
+            --color-paper: #ffffff;
+            --color-paper-2: oklch(96.5% 0.02 160);
+            --color-paper-3: oklch(93% 0.036 160);
+            --color-ink: oklch(21% 0.025 170);
+            --color-ink-2: oklch(31% 0.02 170);
+            --color-muted: oklch(49% 0.024 165);
+            --color-rule: oklch(86.5% 0.022 140);
+            --color-rule-2: oklch(70% 0.024 150);
+            --color-accent: oklch(50% 0.13 160);
+            --color-accent-deep: oklch(42% 0.11 162);
+            --color-accent-soft: oklch(88% 0.08 160);
+            --color-accent-ink: oklch(99% 0.006 160);
+            --color-focus: oklch(45% 0.14 160);
+            --p-mon: oklch(85% 0.052 22);
+            --p-tue: oklch(87.5% 0.058 64);
+            --p-wed: oklch(91.5% 0.064 98);
+            --p-thu: oklch(86.5% 0.075 160);
+            --p-fri: oklch(87% 0.048 210);
+            --p-sat: oklch(84% 0.045 270);
+            --p-sun: oklch(84% 0.048 322);
+            --light: oklch(99.4% 0.016 84);
+            --glint: oklch(100% 0 0);
+
+            --font-display: "Schibsted Grotesk", "Heebo", ui-sans-serif, sans-serif;
+            --font-body: "Instrument Sans", "Heebo", ui-sans-serif, sans-serif;
+            --font-outlier: "DM Mono", ui-monospace, monospace;
+            --display-weight: 700;
+            --tracking-display: -0.03em;
+            --radius-card: 14px;
+            --radius-inner: 10px;
+            --radius-pill: 999px;
+            --rule-hair: 1px;
+            --shadow-card: 0 1px 2px oklch(30% 0.03 165 / 0.08), 0 24px 48px -24px oklch(40% 0.08 165 / 0.35);
+            --shadow-lift: 0 1px 1px oklch(30% 0.03 165 / 0.10), 8px 18px 28px -14px oklch(36% 0.06 165 / 0.32), 18px 40px 60px -30px oklch(40% 0.08 165 / 0.30);
+            --header-top-h: 64px;
+            --header-nav-h: 48px;
+            --header-h: 112px;
+            --measure: 52ch;
+        }
+
+        /* ── base ───────────────────────────────────────────────── */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            overflow-x: clip;
+        }
+
+        html {
+            scrollbar-color: var(--color-muted) var(--color-paper);
+            scroll-padding-top: calc(var(--header-h) + var(--space-md));
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            padding-top: var(--header-h);
+            padding-bottom: var(--section-gap-s);
+            background-color: var(--color-paper);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23g)' opacity='0.05'/%3E%3C/svg%3E");
+            color: var(--color-ink-2);
+            font-family: var(--font-body);
+            font-size: var(--text-md);
+            line-height: 1.5;
+            font-weight: 400;
+            -webkit-font-smoothing: antialiased;
+            caret-color: var(--color-accent);
+        }
+
+        ::selection {
+            background: color-mix(in oklab, var(--color-accent) 22%, transparent);
+            color: var(--color-ink);
+        }
+
+        :focus-visible {
+            outline: 2px solid var(--color-focus);
+            outline-offset: 2px;
+        }
+
+        a {
+            color: inherit;
+            text-decoration-thickness: 1px;
+            text-underline-offset: 0.2em;
+            text-decoration-color: var(--color-rule-2);
+            transition: text-decoration-color var(--dur-short) var(--ease-out), color var(--dur-short) var(--ease-out);
+        }
+
+        a:hover {
+            text-decoration-color: var(--color-accent);
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5 {
+            margin: 0;
+            font-family: var(--font-display);
+            font-weight: var(--display-weight);
+            font-synthesis: none;
+            font-variant-numeric: lining-nums tabular-nums;
+            letter-spacing: var(--tracking-display);
+            line-height: 1.02;
+            overflow-wrap: break-word;
+            min-width: 0;
+            text-wrap: balance;
+            color: var(--color-ink);
+        }
+
+        h1 {
+            max-width: 22ch;
+            font-size: var(--text-display);
+        }
+
+        h2 {
+            max-width: 30ch;
+            font-size: var(--text-section);
+        }
+
+        h3 {
+            /* max-width: 40ch; */
+            font-size: var(--text-title);
+            line-height: 1.15;
+            letter-spacing: -0.015em;
+        }
+
+        h4,
+        h5 {
+            max-width: 44ch;
+            font-size: var(--text-lg);
+            font-weight: 500;
+            line-height: 1.3;
+            letter-spacing: -0.01em;
+        }
+
+        h5 {
+            font-size: var(--text-md);
+        }
+
+        p {
+            margin: 0;
+            text-wrap: pretty;
+            overflow-wrap: break-word;
+            max-width: var(--measure);
+        }
+
+        .lead,
+        .standfirst {
+            font-family: var(--font-body);
+            font-size: 20px;
+            font-weight: 400;
+            line-height: 30px;
+            max-width: 52ch;
+            color: var(--color-ink-2);
+        }
+
+        strong,
+        b {
+            font-weight: 500;
+            color: var(--color-ink);
+        }
+
+        h1 strong,
+        h2 strong,
+        h3 strong,
+        h4 strong,
+        h5 strong,
+        .metric-value strong {
+            font-weight: inherit;
+            color: inherit;
+        }
+
+        img,
+        video {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        svg {
+            display: block;
+        }
+
+        code {
+            font-family: var(--font-outlier);
+            font-weight: 500;
+            font-size: 0.88em;
+            overflow-wrap: break-word;
+        }
+
+        button,
+        input,
+        select,
+        textarea {
+            font: inherit;
+        }
+
+        small,
+        figcaption,
+        th,
+        nav,
+        label,
+        .btn,
+        .badge,
+        .pill-num,
+        .contract-label,
+        .metric-label {
+            font-family: var(--font-body);
+            font-weight: 500;
+        }
+
+        .container,
+        .page-body {
+            width: var(--container);
+            max-width: 100%;
+            margin-inline: auto;
+            padding-inline: var(--gutter);
+            box-sizing: border-box;
+        }
+
+        .num,
+        .figure,
+        .metric-value,
+        td.num {
+            font-variant-numeric: lining-nums tabular-nums;
+        }
+
+        /* ── reading progress (removed) ────────────────────────── */
+
+        /* ── the plastic surface language ───────────────────────── */
+        .plastic {
+            border-radius: var(--radius-card);
+            background:
+                linear-gradient(color-mix(in oklab, var(--glint) 32%, transparent), transparent 18%),
+                color-mix(in oklab, var(--t, var(--p-thu)) 62%, transparent);
+            box-shadow: inset 0 1.5px 0 var(--glint), inset 0 -24px 36px -28px color-mix(in oklab, var(--t, var(--p-thu)) 45%, var(--color-ink));
+        }
+
+        /* ── chrome: the bar and the chapter strip ──────────────── */
+        .fixed-header {
+            position: fixed;
+            inset-block-start: 0;
+            inset-inline: 0;
+            z-index: var(--z-sticky-nav);
+            background: color-mix(in oklab, var(--color-paper) 94%, transparent);
+            backdrop-filter: blur(10px);
+            border-bottom: var(--rule-hair) solid var(--color-rule);
+        }
+
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--space-lg);
+            min-height: var(--header-top-h);
+            width: var(--container);
+            max-width: 100%;
+            margin-inline: auto;
+            padding-inline: var(--gutter);
+            box-sizing: border-box;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            min-width: 0;
+        }
+
+        .header-brand-icon {
+            color: var(--color-accent);
+            flex-shrink: 0;
+        }
+
+        .header-brand-icon svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .header-title {
+            margin: 0;
+            font-family: var(--font-display);
+            font-size: var(--text-md);
+            font-weight: 700;
+            line-height: 1.15;
+            letter-spacing: -0.02em;
+            color: var(--color-ink);
+            white-space: nowrap;
+        }
+
+        .header-subtitle {
+            margin: 0;
+            font-family: var(--font-outlier);
+            font-size: var(--text-xs);
+            color: var(--color-muted);
+            line-height: 1.3;
+            white-space: nowrap;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-lg);
+            flex-shrink: 0;
+            min-width: 0;
+            max-width: 100%;
+        }
+
+        .btn-secondary-nav {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            font-family: var(--font-body);
+            font-size: var(--text-sm);
+            font-weight: 500;
+            color: var(--color-ink-2);
+            text-decoration: none;
+            white-space: nowrap;
+            padding-block: var(--space-xs);
+            border-bottom: 1px solid transparent;
+            transition: color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
+        }
+
+        .btn-secondary-nav:hover {
+            color: var(--color-ink);
+            border-bottom-color: var(--color-accent);
+        }
+
+        .btn-secondary-nav:active {
+            transform: translateY(1px);
+        }
+
+        .btn-secondary-nav svg {
+            width: 15px;
+            height: 15px;
+        }
+
+        .btn-live-app {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            font-family: var(--font-body);
+            font-size: var(--text-sm);
+            font-weight: 500;
+            color: var(--color-ink);
+            text-decoration: underline;
+            text-decoration-color: var(--color-rule-2);
+            text-underline-offset: 0.22em;
+            white-space: nowrap;
+            transition: text-decoration-color var(--dur-short) var(--ease-out);
+        }
+
+        .btn-live-app:hover {
+            text-decoration-color: var(--color-accent);
+        }
+
+        .btn-live-app svg {
+            width: 15px;
+            height: 15px;
+        }
+
+        .chapter-nav-bar {
+            border-top: var(--rule-hair) solid var(--color-rule);
+            background: var(--color-paper);
+        }
+
+        .chapter-nav-pills {
+            position: relative;
+            display: flex;
+            align-items: stretch;
+            justify-content: space-between;
+            gap: clamp(12px, 1.5vw, 28px);
+            width: var(--container);
+            max-width: 100%;
+            margin-inline: auto;
+            padding-inline: var(--gutter);
+            box-sizing: border-box;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .chapter-nav-pills::-webkit-scrollbar {
+            display: none;
+        }
+
+        .chap-nav-pill {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding-block: var(--space-sm);
+            font-family: var(--font-body);
+            font-size: var(--text-sm);
+            font-weight: 500;
+            color: var(--color-muted);
+            text-decoration: none;
+            white-space: nowrap;
+            flex-shrink: 0;
+            transition: color var(--dur-micro) var(--ease-out);
+        }
+
+        .chap-nav-pill:hover {
+            color: var(--color-ink);
+        }
+
+        .chap-nav-pill:active {
+            transform: translateY(1px);
+        }
+
+        .chap-nav-pill.active {
+            color: var(--color-ink);
+            font-weight: 700;
+        }
+
+        .pill-num {
+            font-family: var(--font-outlier);
+            font-variant-numeric: tabular-nums;
+            color: var(--color-muted);
+            min-width: auto;
+            flex-shrink: 0;
+            display: inline-block;
+        }
+
+        .chap-nav-pill.active .pill-num {
+            color: var(--color-accent-deep);
+            font-weight: 700;
+        }
+
+        .nav-underline-indicator {
+            position: absolute;
+            inset-block-end: 0;
+            left: 0;
+            height: 3px;
+            border-radius: var(--radius-pill);
+            background: var(--color-accent);
+            pointer-events: none;
+            z-index: 2;
+            transform: translate3d(0, 0, 0);
+            transition: transform 0.28s cubic-bezier(0.2, 0.9, 0.3, 1.2), width 0.24s cubic-bezier(0.2, 0.9, 0.3, 1.2), opacity 0.2s ease-out;
+            opacity: 0;
+        }
+
+        /* ── controls: moulded plastic ──────────────────────────── */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-xs);
+            min-height: 52px;
+            padding-inline: var(--space-lg);
+            border: 0;
+            border-radius: var(--radius-inner);
+            background: var(--color-paper-2);
+            color: var(--color-ink);
+            font-family: var(--font-body);
+            font-weight: 500;
+            font-size: var(--text-md);
+            line-height: 1;
+            white-space: nowrap;
+            text-decoration: none;
+            cursor: pointer;
+            box-shadow: inset 0 1px 0 var(--glint), 0 0 0 1px var(--color-rule), 0 3px 0 var(--color-rule);
+            transition: transform var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
+        }
+
+        .btn:hover {
+            box-shadow: inset 0 1px 0 var(--glint), 0 0 0 1px var(--color-rule-2), 0 3px 0 var(--color-rule-2);
+        }
+
+        .btn:active {
+            transform: translateY(3px);
+            box-shadow: inset 0 1px 0 var(--glint), 0 0 0 1px var(--color-rule);
+        }
+
+        .btn--primary,
+        .btn:not(.btn--quiet) {
+            background: var(--color-accent-deep);
+            color: var(--color-accent-ink);
+            box-shadow: inset 0 1px 0 color-mix(in oklab, var(--glint) 45%, transparent), 0 0 0 1px var(--color-accent-deep), 0 3px 0 var(--color-accent-deep);
+        }
+
+        .btn--primary:hover,
+        .btn:not(.btn--quiet):hover {
+            background: var(--color-accent);
+            box-shadow: inset 0 1px 0 color-mix(in oklab, var(--glint) 45%, transparent), 0 0 0 1px var(--color-accent), 0 3px 0 var(--color-accent-deep);
+        }
+
+        .btn--quiet {
+            background: transparent;
+            color: var(--color-ink);
+            box-shadow: inset 0 1px 0 var(--glint), 0 0 0 1px var(--color-rule-2), 0 3px 0 var(--color-rule-2);
+        }
+
+        .btn--quiet:hover {
+            background: var(--color-paper-2);
+            box-shadow: inset 0 1px 0 var(--glint), 0 0 0 1px var(--color-ink-2), 0 3px 0 var(--color-ink-2);
+        }
+
+        /* ── hero (Settled: the study text beside its contract tray) ── */
+        .hero {
+            position: relative;
+            padding-block: var(--space-xl);
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            inset: calc(-1 * var(--space-xl)) calc(-1 * var(--space-2xl));
+            z-index: 0;
+            pointer-events: none;
+            background:
+                linear-gradient(105deg, transparent 12%, color-mix(in oklab, var(--light) 70%, transparent) 12.5%, transparent 27%),
+                linear-gradient(105deg, transparent 31%, color-mix(in oklab, var(--light) 55%, transparent) 31.5%, transparent 45%),
+                linear-gradient(105deg, transparent 52%, color-mix(in oklab, var(--light) 65%, transparent) 52.5%, transparent 71%),
+                linear-gradient(105deg, transparent 75%, color-mix(in oklab, var(--light) 45%, transparent) 75.5%, transparent 93%);
+            filter: blur(16px);
+        }
+
+        .hero>* {
+            position: relative;
+            z-index: 1;
+        }
+
+        .study-split {
+            display: grid;
+            grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+            gap: var(--space-2xl);
+            align-items: start;
+        }
+
+        .study-copy {
+            max-width: 62ch;
+        }
+
+        .hero .lead {
+            margin-top: var(--space-md);
+            max-width: 52ch;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: var(--space-md);
+            margin-top: var(--space-lg);
+        }
+
+        .hero-figures {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            margin-top: var(--space-xl);
+            padding: var(--space-lg) var(--space-xl);
+            background: var(--color-ink);
+            color: var(--color-paper);
+            border-radius: var(--radius-card);
+        }
+
+        .contract-grid>*,
+        .hero-figures>* {
+            min-width: 0;
+        }
+
+        .metric-card {
+            padding-inline: var(--space-lg);
+            border-inline-start: 1px solid color-mix(in oklab, var(--color-paper) 22%, transparent);
+            min-width: 0;
+            text-align: right;
+        }
+
+        .metric-card:first-child {
+            padding-inline-start: 0;
+            border-inline-start: 0;
+        }
+
+        .metric-value {
+            font-family: var(--font-display);
+            font-size: clamp(1.6rem, 2vw + 0.5rem, 2.6rem);
+            font-weight: 700;
+            line-height: 1.02;
+            letter-spacing: var(--tracking-display);
+            font-variant-numeric: lining-nums tabular-nums;
+            overflow-wrap: break-word;
+            color: var(--color-paper);
+            text-align: right;
+            direction: rtl;
+        }
+
+        .metric-card--lead .metric-value {
+            color: var(--color-accent-soft);
+        }
+
+        .metric-label {
+            margin-top: var(--space-xs);
+            font-family: var(--font-body);
+            font-size: var(--text-sm);
+            font-weight: 500;
+            color: var(--color-accent-soft);
+            line-height: 1.45;
+            font-weight: 400;
+            line-height: 1.5;
+            text-align: right;
+            direction: rtl;
+        }
+
+        .metric-label strong {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        /* ── the signature: the contract as a pharmacy tray ── */
+        .contract-band {
+            --t: var(--p-thu);
+            margin-top: 0;
+            padding: var(--space-xl) var(--space-xl) var(--space-lg);
+            border-radius: var(--radius-card);
+            background:
+                linear-gradient(color-mix(in oklab, var(--glint) 32%, transparent), transparent 18%),
+                color-mix(in oklab, var(--t) 62%, transparent);
+            box-shadow: inset 0 1.5px 0 var(--glint), inset 0 -24px 36px -28px color-mix(in oklab, var(--t) 45%, var(--color-ink));
+        }
+
+        .contract-head {
+            font-family: var(--font-outlier);
+            font-size: var(--text-sm);
+            font-weight: 500;
+            letter-spacing: 0;
+            color: var(--color-ink-2);
+        }
+
+        .contract-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+            gap: var(--space-sm);
+            margin-top: var(--space-md);
+        }
+
+        .contract-card {
+            padding: var(--space-md);
+            background: color-mix(in oklab, var(--glint) 55%, var(--color-paper));
+            border-radius: var(--radius-inner);
+            border-bottom: 1px dashed color-mix(in oklab, var(--color-rule-2) 70%, transparent);
+            min-width: 0;
+        }
+
+        .contract-label {
+            font-family: var(--font-body);
+            font-size: var(--text-sm);
+            font-weight: 500;
+            color: var(--color-ink-2);
+        }
+
+        .contract-val {
+            margin-top: var(--space-2xs);
+            font-family: var(--font-outlier);
+            font-size: var(--text-sm);
+            color: var(--color-ink);
+            line-height: 1.55;
+        }
+
+        .contract-card.alert-card {
+            margin: 0;
+            padding: var(--space-md);
+            background: white;
+            border-bottom: 0;
+        }
+
+        .contract-card.alert-card .contract-label {
+            color: var(--color-ink-2);
+        }
+
+        .contract-card.alert-card .contract-val {
+            color: var(--color-ink-2);
+        }
+
+        .key-note {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+            gap: var(--space-xs);
+            margin-top: 0;
+            padding-top: 8px;
+            padding-bottom: 8px;
+            border-top: var(--rule-hair) solid var(--color-rule);
+        }
+
+        /* ── chapters ───────────────────────────────────────────── */
+        .section-card,
+        .report-section {
+            padding-block: var(--section-gap-s);
+            border-top: var(--rule-hair) solid var(--color-rule);
+            scroll-margin-top: calc(var(--header-h) + var(--space-md));
+        }
+
+        .chapter-head {
+            display: block;
+            margin-bottom: var(--space-xl);
+        }
+
+        .ch-num {
+            font-family: var(--font-outlier);
+            font-size: var(--text-md);
+            font-weight: 500;
+            font-variant-numeric: tabular-nums;
+            color: var(--color-accent);
+            letter-spacing: 0;
+            margin-inline-end: var(--space-xs);
+        }
+
+        .chapter-id {
+            font-family: var(--font-outlier);
+            font-size: var(--text-sm);
+            color: var(--color-muted);
+            margin-top: var(--space-xs);
+            direction: ltr;
+            text-align: right;
+        }
+
+        .section-intro {
+            font-size: var(--text-md);
+            color: var(--color-ink-2);
+            line-height: 1.65;
+            max-width: 66ch;
+            margin-top: var(--space-md);
+        }
+
+        .block-head {
+            font-size: var(--text-title);
+            margin-top: var(--space-2xl);
+            max-width: 48ch;
+        }
+
+        .block-sub {
+            font-size: var(--text-sm);
+            color: var(--color-muted);
+            margin-top: var(--space-2xs);
+            max-width: 66ch;
+            line-height: 1.6;
+        }
+
+        .section-card>p {
+            margin-top: var(--space-md);
+            max-width: 68ch;
+        }
+
+        .section-card h3 {
+            margin-top: var(--space-2xl);
+        }
+
+        .section-card h4 {
+            margin-top: var(--space-lg);
+        }
+
+        .section-card h3+*,
+        .section-card h4+* {
+            margin-top: var(--space-sm);
+        }
+
+        /* ── Two bands side by side & Three-compartment trays ──── */
+        .bands {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: var(--gap-columns);
+            margin-top: var(--space-xl);
+        }
+
+        @media (max-width: 60rem) {
+            .bands {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        .band {
+            padding: var(--space-xl);
+            min-width: 0;
+        }
+
+        .band h3 {
+            font-size: var(--text-title);
+            margin-top: var(--space-3xs);
+        }
+
+        .band p {
+            font-size: var(--text-sm);
+            color: var(--color-ink-2);
+            margin-top: var(--space-sm);
+            line-height: 1.65;
+            max-width: 56ch;
+        }
+
+        .band ul,
+        .band ol {
+            font-size: var(--text-sm);
+            color: var(--color-ink-2);
+            margin-top: var(--space-sm);
+            line-height: 1.65;
+            padding-inline-start: var(--space-lg);
+        }
+
+        .band li+li {
+            margin-top: var(--space-2xs);
+        }
+
+        .tray {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: var(--gap-columns);
+            margin-top: var(--space-xl);
+        }
+
+        @media (max-width: 60rem) {
+            .tray {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        .comp {
+            padding: var(--space-xl);
+            min-width: 0;
+        }
+
+        .comp h3 {
+            font-size: var(--text-title);
+            margin-top: var(--space-xs);
+        }
+
+        .comp p {
+            margin-top: var(--space-xs);
+            color: var(--color-ink-2);
+            font-size: var(--text-sm);
+            line-height: 1.6;
+        }
+
+        /* ── Stations (sequence as plastic bands) ──────────────── */
+        .stations {
+            margin-top: var(--space-xl);
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: var(--space-lg);
+        }
+
+        .station {
+            min-width: 0;
+            padding: var(--space-lg) var(--space-xl);
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr);
+            gap: var(--space-lg);
+            align-items: start;
+        }
+
+        @media (max-width: 60rem) {
+            .stations {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .station {
+                grid-template-columns: 1fr;
+                gap: var(--space-md);
+                padding: var(--space-lg);
+            }
+        }
+
+        .station-num {
+            font-family: var(--font-display);
+            font-weight: var(--display-weight);
+            letter-spacing: var(--tracking-display);
+            font-size: var(--text-display-s);
+            line-height: 1;
+            color: var(--color-ink);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .station h3 {
+            font-size: var(--text-title);
+            margin-top: var(--space-3xs);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .station p {
+            font-size: var(--text-sm);
+            color: var(--color-ink-2);
+            margin-top: var(--space-xs);
+            line-height: 1.65;
+            max-width: 100%;
+        }
+
+        .station .challenge,
+        .station .solution {
+            border-radius: var(--radius-inner);
+            padding: var(--space-md) var(--space-lg);
+            font-size: var(--text-sm);
+            line-height: 1.65;
+            margin-top: var(--space-sm);
+        }
+
+        .station .challenge {
+            background: color-mix(in oklab, var(--glint) 50%, transparent);
+            color: var(--color-ink-2);
+        }
+
+        .station .solution {
+            background: var(--color-accent-soft);
+            color: var(--color-ink-2);
+        }
+
+        .station .solution strong,
+        .station .challenge strong {
+            color: var(--color-ink);
+        }
+
+        /* ── Tables ─────────────────────────────────────────────── */
+        .tbl-wrap {
+            overflow-x: auto;
+            margin-top: var(--space-xl);
+        }
+
+        .tbl {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: var(--text-sm);
+        }
+
+        .tbl th {
+            font-weight: 500;
+            color: var(--color-ink);
+            text-align: start;
+            padding: var(--space-sm) var(--space-md);
+            border-bottom: 2px solid var(--color-ink);
+            white-space: nowrap;
+        }
+
+        .tbl td {
+            padding: var(--space-sm) var(--space-md);
+            border-bottom: var(--rule-hair) solid var(--color-rule);
+            color: var(--color-ink-2);
+            vertical-align: top;
+            line-height: 1.6;
+        }
+
+        .tbl tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .tbl .c {
+            text-align: center;
+        }
+
+        .tbl .num {
+            font-family: var(--font-outlier);
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+            color: var(--color-ink);
+        }
+
+        .row-hi td {
+            background: var(--color-paper-2);
+        }
+
+        .row-win td {
+            background: var(--color-accent-soft);
+        }
+
+        /* ── Chips ──────────────────────────────────────────────── */
+        .chip {
+            display: inline-block;
+            padding: var(--space-3xs) var(--space-xs);
+            border-radius: var(--radius-pill);
+            font-size: var(--text-xs);
+            font-weight: 500;
+            white-space: nowrap;
+            margin-bottom: 1rem;
+        }
+
+        .chip-ink {
+            background: var(--color-ink);
+            color: var(--color-paper);
+        }
+
+        .chip-mint {
+            background: var(--color-accent-soft);
+            color: var(--color-accent-deep);
+        }
+
+        .chip-grey {
+            background: var(--color-paper-2);
+            color: var(--color-muted);
+        }
+
+        .chip-line {
+            border: var(--rule-hair) solid var(--color-rule-2);
+            color: var(--color-ink-2);
+        }
+
+        /* ── Notes (callouts) ───────────────────────────────────── */
+        .note {
+            background: var(--color-paper-2);
+            border-radius: var(--radius-inner);
+            padding: var(--space-lg) var(--space-xl);
+            margin-top: var(--space-xl);
+            font-size: var(--text-sm);
+            color: var(--color-ink-2);
+            line-height: 1.7;
+            min-width: 0;
+            overflow-x: auto;
+        }
+
+        .note ul,
+        .note ol {
+            padding-inline-start: var(--space-lg);
+            margin-top: var(--space-xs);
+        }
+
+        .note li+li {
+            margin-top: var(--space-2xs);
+        }
+
+        .note--mint {
+            background: var(--color-accent-soft);
+            color: var(--color-ink);
+        }
+
+        .note-head {
+            font-size: var(--text-md);
+            line-height: 1.35;
+            margin-bottom: var(--space-2xs);
+            font-weight: 700;
+            color: var(--color-ink);
+        }
+
+        /* ── Charts & Screenshots ───────────────────────────────── */
+        .chart {
+            margin: var(--space-xl) 0 0;
+        }
+
+        .charts-2 {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: var(--gap-columns);
+            margin-top: var(--space-xl);
+        }
+
+        @media (max-width: 60rem) {
+            .charts-2 {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        .chart-frame {
+            border-radius: var(--radius-card);
+            overflow: hidden;
+            cursor: zoom-in;
+            background: var(--color-paper-2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: var(--space-md);
+            box-shadow: var(--shadow-card);
+            transition: transform var(--dur-short) var(--ease-out);
+        }
+
+        .chart-frame--dark {
+            background: var(--color-ink);
+            padding: var(--space-lg);
+        }
+
+        .chart-frame:hover {
+            transform: translateY(-2px);
+        }
+
+        .chart-frame img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            border-radius: var(--radius-inner);
+        }
+
+        .chart figcaption {
+            margin-top: var(--space-sm);
+            font-size: var(--text-sm);
+            color: var(--color-muted);
+            line-height: 1.55;
+            max-width: 85ch;
+        }
+
+        .chart figcaption strong {
+            color: var(--color-ink-2);
+        }
+
+        /* ── Interactive Diagram Viewer (Dose Studio Adaptation) ── */
+        .diagram-viewer-wrap {
+            position: relative;
+            background: var(--color-ink);
+            border: var(--rule-hair) solid var(--color-rule-2);
+            border-radius: var(--radius-card);
+            overflow: hidden;
+            box-shadow: var(--shadow-card);
+            margin-top: var(--space-xl);
+            user-select: none;
+            scroll-margin-top: calc(var(--header-h) + var(--space-md));
+        }
+
+        .diagram-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-sm) var(--space-lg);
+            background: color-mix(in oklab, var(--color-ink) 92%, black);
+            border-bottom: 1px solid color-mix(in oklab, var(--color-paper) 14%, transparent);
+            color: var(--color-paper);
+            flex-wrap: wrap;
+            gap: var(--space-sm);
+            z-index: 10;
+            position: relative;
+        }
+
+        .diagram-toolbar-title {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: var(--text-sm);
+            color: var(--color-accent-soft);
+        }
+
+        .diagram-toolbar-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            flex-wrap: wrap;
+        }
+
+        .diagram-tool-btn {
+            background: color-mix(in oklab, var(--color-paper) 10%, transparent);
+            border: 1px solid color-mix(in oklab, var(--color-paper) 20%, transparent);
+            color: var(--color-paper);
+            border-radius: var(--radius-inner);
+            padding: 5px 12px;
+            font-family: var(--font-body);
+            font-size: var(--text-xs);
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: background var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out);
+        }
+
+        .diagram-tool-btn:hover {
+            background: color-mix(in oklab, var(--color-paper) 20%, transparent);
+            transform: translateY(-1px);
+        }
+
+        .diagram-tool-btn:active {
+            transform: translateY(0);
+        }
+
+        .diagram-zoom-badge {
+            background: color-mix(in oklab, var(--color-accent) 25%, transparent);
+            color: var(--color-accent-soft);
+            border: 1px solid color-mix(in oklab, var(--color-accent-soft) 40%, transparent);
+            padding: 4px 10px;
+            border-radius: var(--radius-inner);
+            font-family: var(--font-outlier);
+            font-weight: 500;
+            font-size: var(--text-xs);
+            min-width: 58px;
+            text-align: center;
+        }
+
+        .diagram-viewport {
+            position: relative;
+            width: 100%;
+            height: 680px;
+            background: radial-gradient(circle at 50% 40%, oklch(24% 0.025 170) 0%, oklch(15% 0.02 170) 100%);
+            overflow: hidden;
+            cursor: grab;
+            display: block;
+            direction: ltr;
+            user-select: none;
+        }
+
+        .diagram-viewport.is-dragging {
+            cursor: grabbing;
+        }
+
+        .diagram-image-wrapper {
+            position: absolute;
+            left: 0;
+            top: 0;
+            transform-origin: 0 0;
+            will-change: transform;
+        }
+
+        .diagram-image-wrapper img {
+            display: block;
+            pointer-events: none;
+            user-select: none;
+            -webkit-user-drag: none;
+            max-width: none !important;
+        }
+
+        .diagram-caption {
+            background: color-mix(in oklab, var(--color-ink) 94%, black);
+            color: color-mix(in oklab, var(--color-paper) 82%, transparent);
+            border-top: 1px solid color-mix(in oklab, var(--color-paper) 14%, transparent);
+            padding: var(--space-sm) var(--space-lg);
+            font-size: var(--text-xs);
+            line-height: 1.55;
+        }
+
+        .diagram-caption strong {
+            color: var(--color-accent-soft);
+        }
+
+        .diagram-viewer-wrap:fullscreen {
+            border-radius: 0;
+            width: 100vw !important;
+            height: 100vh !important;
+            margin: 0;
+        }
+
+        .diagram-viewer-wrap:fullscreen .diagram-viewport {
+            height: calc(100vh - 96px) !important;
+        }
+
+        /* ── Code blocks ────────────────────────────────────────── */
+        pre {
+            background: var(--color-ink);
+            color: var(--color-paper);
+            padding: var(--space-lg) var(--space-xl);
+            border-radius: var(--radius-inner);
+            overflow-x: auto;
+            max-width: 100%;
+            min-width: 0;
+            font-family: var(--font-outlier);
+            font-size: var(--text-sm);
+            line-height: 1.65;
+            margin-top: var(--space-xl);
+            direction: ltr;
+            text-align: left;
+            box-shadow: var(--shadow-card);
+        }
+
+        /* ── Colophon layout ────────────────────────────────────── */
+        .colophon {
+            width: var(--container);
+            max-width: 100%;
+            margin-inline: auto;
+            padding-inline: var(--gutter);
+            box-sizing: border-box;
+            margin-top: var(--section-gap-s);
+            padding-top: var(--space-xl);
+            border-top: var(--rule-hair) solid var(--color-rule);
+            color: var(--color-muted);
+            font-family: var(--font-body);
+            font-size: var(--text-sm);
+            font-weight: 500;
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-sm) var(--space-xl);
+            align-items: baseline;
+            justify-content: space-between;
+        }
+
+        .colophon .c-word {
+            font-family: var(--font-display);
+            font-weight: var(--display-weight);
+            letter-spacing: var(--tracking-display);
+            color: var(--color-ink);
+            font-size: var(--text-md);
+        }
+
+        .colophon nav {
+            display: flex;
+            gap: var(--space-lg);
+            flex-wrap: wrap;
+        }
+
+        .colophon a {
+            color: var(--color-ink-2);
+        }
+
+        /* ── Lightbox ───────────────────────────────────────────── */
+        .lightbox-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: color-mix(in oklab, var(--color-ink) 85%, transparent);
+            backdrop-filter: blur(8px);
+            z-index: var(--z-modal);
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-lg);
+        }
+
+        .lightbox-modal.active {
+            display: flex;
+        }
+
+        .lightbox-content {
+            position: relative;
+            max-width: 90vw;
+            max-height: 90vh;
+        }
+
+        .lightbox-content img {
+            max-width: 100%;
+            max-height: 85vh;
+            border-radius: var(--radius-card);
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            background: none;
+            border: none;
+            color: var(--glint);
+            font-size: 2rem;
+            cursor: pointer;
+        }
+
+        /* ── Back to top button ─────────────────────────────────── */
+        .btn-top {
+            position: fixed;
+            bottom: var(--space-lg);
+            left: var(--space-lg);
+            width: 44px;
+            height: 44px;
+            background: var(--color-ink);
+            color: var(--color-paper);
+            border-radius: var(--radius-pill);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            box-shadow: var(--shadow-lift);
+            cursor: pointer;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--dur-short) var(--ease-out), transform var(--dur-short) var(--ease-out);
+            z-index: var(--z-toast);
+        }
+
+        .btn-top.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .btn-top:hover {
+            transform: translateY(-2px);
+            background: var(--color-accent-deep);
+        }
+
+        /* ── Responsive ─────────────────────────────────────────── */
+        @media (max-width: 60rem) {
+            :root {
+                --gutter: 24px;
+                --section-gap-s: 80px;
+                --section-gap: 96px;
+                --section-gap-l: 120px;
+            }
+
+            .header-actions {
+                flex-shrink: 1;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                scrollbar-width: none;
+                gap: var(--space-md);
+            }
+
+            .header-actions::-webkit-scrollbar {
+                display: none;
+            }
+
+            .study-split {
+                grid-template-columns: minmax(0, 1fr);
+                gap: var(--space-xl);
+            }
+
+            .hero-figures {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                row-gap: var(--space-lg);
+            }
+
+            .metric-card {
+                padding-inline: var(--space-md);
+            }
+
+            .hero-figures> :nth-child(2n + 1) {
+                padding-inline-start: 0;
+                border-inline-start: 0;
+            }
+        }
+
+        @media (max-width: 40rem) {
+            :root {
+                --gutter: 16px;
+                --section-gap-s: 56px;
+                --section-gap: 72px;
+                --section-gap-l: 96px;
+                --gap-columns: 16px;
+            }
+
+            .header-subtitle {
+                display: none;
+            }
+
+            .hero {
+                padding-block: var(--space-xl) var(--space-2xl);
+            }
+
+            .hero-figures {
+                margin-top: var(--space-lg);
+                padding: var(--space-lg) var(--space-md);
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .contract-grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .metric-card {
+                padding-inline: 0;
+                border-inline-start: 0;
+                border-top: var(--rule-hair) solid var(--color-rule);
+                padding-block: var(--space-md);
+            }
+
+            .hero-figures> :first-child {
+                border-top: 0;
+            }
+
+            .contract-band {
+                padding: var(--space-lg);
+            }
+
+            .diagram-viewport {
+                height: 480px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Fixed Header: Topbar + Chapter Rail (Dose Theme System) -->
+    <header class="fixed-header">
+        <div class="header-inner">
+            <div class="header-brand">
+                <div aria-hidden="true" class="header-brand-icon">
+                    <svg aria-hidden="true" fill="none" height="22" stroke="currentColor" stroke-linecap="round"
+                        stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="22">
+                        <rect height="16" rx="2" width="16" x="4" y="4"></rect>
+                        <rect height="6" width="6" x="9" y="9"></rect>
+                        <line x1="9" x2="9" y1="1" y2="4"></line>
+                        <line x1="15" x2="15" y1="1" y2="4"></line>
+                        <line x1="9" x2="9" y1="20" y2="23"></line>
+                        <line x1="15" x2="15" y1="20" y2="23"></line>
+                        <line x1="20" x2="23" y1="9" y2="9"></line>
+                        <line x1="20" x2="23" y1="14" y2="14"></line>
+                        <line x1="1" x2="4" y1="9" y2="9"></line>
+                        <line x1="1" x2="4" y1="14" y2="14"></line>
+                    </svg>
+                </div>
+                <div>
+                    <p class="header-title">דו"ח הנדסת סוכן ה-AI</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a class="btn-live-app" href="index.html" title="מעבר לממשק החי עם הסוכן">
+                    <svg aria-hidden="true" fill="none" height="15" stroke="currentColor" stroke-width="2"
+                        transform="rotate(180)" viewBox="0 0 24 24" width="15">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polygon points="10 8 16 12 10 16 10 8"></polygon>
+                    </svg>
+                    <span>בדיקת סיכון גניבת רכב</span>
+                </a>
+                <a class="btn-secondary-nav" href="final.html" title="מעבר לדו״ח המחקר וה-ML הראשי">
+                    <svg aria-hidden="true" fill="none" height="15" stroke="currentColor" stroke-width="2"
+                        viewBox="0 0 24 24" width="15">
+                        <path d="M18 20V10M12 20V4M6 20v-6"></path>
+                    </svg>
+                    <span>דו"ח ה-ML הראשי</span>
+                </a>
+
+            </div>
+        </div>
+
+        <!-- Chapter navigation strip (Document's Spine) -->
+        <nav aria-label="ניווט מהיר בפרקי דו״ח הסוכן" class="chapter-nav-bar">
+            <div class="chapter-nav-pills" id="chapterNavPills">
+                <div class="nav-underline-indicator" id="navUnderlineIndicator" aria-hidden="true"></div>
+                <a class="chap-nav-pill active" href="#sec1"><span class="pill-num">01</span> המטרה והבעיה העסקית</a>
+                <a class="chap-nav-pill" href="#sec2"><span class="pill-num">02</span> בחינת חלופות (ADRs)</a>
+                <a class="chap-nav-pill" href="#sec3"><span class="pill-num">03</span> ארכיטקטורת הסוכן ו-4 הכלים</a>
+                <a class="chap-nav-pill" href="#sec4"><span class="pill-num">04</span> המוצר בפעולה וניתוח UX</a>
+                <a class="chap-nav-pill" href="#sec5"><span class="pill-num">05</span> מניעת הזיות ובדיקות Pytest</a>
+                <a class="chap-nav-pill" href="#sec6"><span class="pill-num">06</span> סיכום ותובנות</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Container (1440px Fixed Grid) -->
+    <main class="container page-body">
+
+        <!-- HERO (Settled: Lead copy beside the Agent Contract pharmacy tray) -->
+        <section class="hero">
+            <div class="study-split">
+
+                <!-- Right column: Display headline, lead text & primary actions -->
+                <div class="study-copy">
+                    <h1 style="font-size: 70px;">מחיזוי ML פסיבי לסוכן השוואת ביטוח אוטונומי בזמן אמת</h1>
+                    <p class="lead" style="font-size: 18px;">
+                        מסמך זה מתעד את חיבור אומדן הסיכון המחקרי לסוכן AI אוטונומי המבוסס על כלים :
+                        בחירת דגם ועיר מפעילה ברקע ניתוח כיסוי נתונים, סימולציית מחיר לפרופיל נהג ייחוס וחיפוש של עד
+                        שלוש חלופות. הצ'אט המובנה מאפשר לבחון תרחישי מיגון והשוואה. המחירים ודרישות המיגון מחושבים בקוד
+                        לצורכי הדגמה, והקישור ל-Bestie מאפשר למשתמש לעבור לאתר חיצוני לקבלת הצעה מסוכן בחברת הביטוח.
+                    </p>
+                    <div class="hero-actions">
+                        <a class="btn" href="index.html">בדיקת סיכון גניבת רכב</a>
+                        <a class="btn btn--quiet" href="final.html">דו"ח המחקר וה-ML הראשי</a>
+                    </div>
+                </div>
+
+                <!-- Left column: The signature agent contract (pharmacy tray in Dose green plastic) -->
+                <section aria-labelledby="contract-head" class="contract-band">
+                    <h2 class="contract-head" id="contract-head"> הסוכן וגבולות הסימולציה</h2>
+                    <div class="contract-grid">
+                        <div class="contract-card">
+                            <div class="contract-label">מצב הפעלה (Trigger Mode)</div>
+                            <div class="contract-val">Zero-Click Parallel Execution (POST /agent/auto-compare +
+                                /agent/chat)</div>
+                        </div>
+                        <div class="contract-card">
+                            <div class="contract-label">פרופיל נהג ייחוס (Reference Driver Persona)</div>
+                            <div class="contract-val">נהג בן 35 · 12 שנות ותק · העדר תביעות 3 שנים · שנתון 2025</div>
+                        </div>
+                        <div class="contract-card">
+                            <div class="contract-label">שרשרת 4 הכלים (Deterministic Toolset)</div>
+                            <div class="contract-val">get_vehicle_risk · fetch_bestie_quotes · compare_alternatives ·
+                                simulate_mitigation</div>
+                        </div>
+                        <div class="contract-card alert-card">
+                            <div class="contract-label">גבולות גזרה (Scope &amp; Non-Claims)</div>
+                            <div class="contract-val">סימולציית תמחור מקומית לפרופיל ייחוס- אינה סריקה חיה או הצעה
+                                מחייבת ממבטח</div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- The 4 figures on the ink band -->
+            <div class="hero-figures">
+                <div class="metric-card">
+                    <div class="metric-value" dir="ltr">Zero-Click</div>
+                    <div class="metric-label"><strong>הפעלה אוטונומית ברקע:</strong> טריגר מקבילי מיידי בעת בחירת דגם
+                        ועיר (ללא כפתור צף או פרומפט ידני)</div>
+
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">4 כלים <span style="font-size: 0.75em; opacity: 0.85;">(Tools)</span>
+                    </div>
+                    <div class="metric-label"><strong>שרשרת אקטוארית דטרמיניסטית:</strong> תזמור אוטונומי של שליפת סיכון
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value"><span dir="ltr">Top-3</span> חלופות</div>
+                    <div class="metric-label"><strong>אופטימיזציית סיכון ועלות:</strong> אלגוריתם איתור חכם של עד 3
+                        חלופות רכב דומות באותה עיר בעלות סיכון ופרמיה מופחתים</div>
+                </div>
+                <div class="metric-card metric-card--lead">
+                    <div class="metric-value" style="color: #ffffff;" dir="ltr">100% Grounded</div>
+                    <div class="metric-label"><strong>מניעת הזיות מלאה (Guardrails):</strong> איסור מודל שפה על המצאת
+                        מספרים; כל חישוב פרמיה או ציון סיכון מעוגן בקוד פייתון</div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ═══ CHAPTER 01: BUSINESS PROBLEM & SOLUTION ═══ -->
+        <section class="report-section section-card" id="sec1">
+            <header class="chapter-head">
+                <h2><span class="ch-num">01.</span> המטרה, הבעיה העסקית ואיך פתרנו אותה</h2>
+                <p class="chapter-id">Problem to solution fit</p>
+            </header>
+            <p class="section-intro">
+                בשלב א' של הפרויקט נבנה פייפליין מחקרי הבוחן ספירות גניבות ל־2025 מתוך ספירות 2024 ומציג מדד יחסי בטווח
+                0–100 לצירופים מכוסים (המדד אינו אחוז הסתברות). מנקודת מבט של <strong>ניהול מוצר (Product
+                    Management)</strong>, זיהינו פער קריטי במסע המשתמש בין תובנה סטטיסטית לבין החלטה צרכנית:
+            </p>
+
+            <div class="bands">
+                <!-- The Business Problem -->
+                <div class="band plastic" style="--t: var(--p-mon);">
+                    <span class="chip chip-ink">הבעיה העסקית והמוצרית</span>
+                    <h3>פער ה-"So What?" של דשבורדים סטטיסטיים</h3>
+                    <ol>
+                        <li><strong>ציון סיכון אינו החלטה כלכלית:</strong> כשמשתמש מגלה שטויוטה קורולה בתל אביב מקבלת
+                            ציון סיכון משוקלל של <strong>98/100</strong>, השאלה המיידית שלו היא: <em>"כמה זה יעלה לי
+                                בביטוח, ואיזה רכב משפחתי אחר יחסוך לי כסף?"</em></li>
+                        <li><strong>חיכוך גבוה באתרי השוואת ביטוח (כגון Bestie):</strong> כדי להשוות מחירי ביטוח בין 4
+                            רכבים שונים באתר Bestie, המשתמש נדרש למלא שאלון של 15 שדות חובה כפול 4 פעמים (מעל 15 דקות של
+                            עבודה ידנית מתישה).</li>
+                        <li><strong>כפתור צ'אט צף (Floating Button) מתפספס:</strong> רוב המשתמשים אינם פותחים ביוזמתם
+                            בועת צ'אט צפה בפינת המסך, ולכן הערך של סוכן ה-AI נשאר חבוי.</li>
+                    </ol>
+                </div>
+
+                <!-- How We Solved It -->
+                <div class="band plastic" style="--t: var(--p-thu);">
+                    <span class="chip chip-mint">הפתרון ההנדסי והמוצרי</span>
+                    <h3>סוכן AI אוטונומי שרץ במקביל ברקע + גלריית Bestie וצ'אט מובנה</h3>
+                    <ol>
+                        <li><strong>הפעלה אוטומטית במקביל (Zero-Click Trigger):</strong> ברגע שהמשתמש בוחר דגם ועיר,
+                            הסוכן מתעורר אוטומטית ברקע ללא צורך בלחיצה נוספת.</li>
+                        <li><strong>השוואת תרחישים אוטומטית:</strong> הסוכן מחשב עלות מדומה (מקיף + חובה) לפרופיל נהג
+                            ייחוס קבוע, ומחפש <strong>עד שלוש חלופות</strong> בעלות מדד נמוך יותר. קטגוריית הרכב מועדפת,
+                            אך כשאין די מועמדים החיפוש מתרחב לקטגוריות נוספות. הפרש המחיר הוא הפרש בין סימולציות ואינו
+                            הבטחת חיסכון.</li>
+                        <li><strong>אזור תחתון שלם וקפסולה חכמה:</strong> הצגת חיווי הפעולה החי של הסוכן, גלריית 4
+                            כרטיסיות השוואה מנומקות, ווידג'ט צ'אט לשאלות המשך וסימולציית הנחת מיגון.</li>
+                    </ol>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══ CHAPTER 02: ALTERNATIVES & ARCHITECTURE DECISIONS (ADRs) ═══ -->
+        <section class="report-section section-card" id="sec2">
+            <header class="chapter-head">
+                <h2><span class="ch-num">02.</span> תהליך החשיבה: בחינת חלופות והחלטות ארכיטקטורה (ADRs)</h2>
+                <p class="chapter-id">Product &amp; engineering ADRs</p>
+            </header>
+            <p class="section-intro">
+                כדי לבנות מערכת שעומדת בסטנדרטים של סביבת ייצור (Production-Grade), בחנו מספר חלופות הנדסיות ומוצריות
+                לכל רכיב. הטבלה הבאה מתעדת את החלופות שנפסלו, הבחירה הסופית, והערך המוצרי וההנדסי שעליו היא עונה:
+            </p>
+
+            <div class="tbl-wrap">
+                <table class="tbl">
+                    <thead>
+                        <tr>
+                            <th style="width: 20%;">ציר החלטה</th>
+                            <th style="width: 25%;">חלופה א' (נפסלה)</th>
+                            <th style="width: 27%;">חלופה ב' (נבחרה)</th>
+                            <th style="width: 28%;">נימוק הנדסי ומוצרי (למה נבחר ועל מה זה עונה)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>1. ממשק המשתמש והפעלת הסוכן (UX &amp; Activation)</strong></td>
+                            <td>כפתור צ'אט צף בפינת המסך (Floating Widget) שממתין שהמשתמש יפתח אותו ויקליד שאלה.</td>
+                            <td><strong>ריצה אוטומטית במקביל ברקע + קפסולת התראה וגלריית 4 כרטיסיות Bestie</strong> לצד
+                                צ'אט מובנה.</td>
+                            <td><strong>עונה על בעיית ה-Discoverability:</strong> 100% מהמשתמשים נחשפים מיד לתובנת
+                                ההשוואה הכספית של הסוכן בלי להקליד מילה, ועדיין נהנים מצ'אט מובנה לשאלות המשך מעמיקות.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>2. תמחור תרחישי ביטוח (Pricing Simulation)</strong></td>
+                            <td>הרצת Headless Browser סינכרונית בלייב שממלאת 15 שדות בטופס Bestie עבור 4 רכבים בכל
+                                חיפוש.</td>
+                            <td><strong>סימולציה דטרמיניסטית לפרופיל נהג ייחוס</strong> המבוססת על טבלאות ומקדמים
+                                מקומיים (ללא תלות בסריקה חיה).</td>
+                            <td><strong>יציבות חישוב מקומית:</strong> השוואת התרחישים אינה תלויה בטופס חיצוני או
+                                ב־CAPTCHA, ומאפשרת השוואת תפוחים-לתפוחים מהירה ואמינה.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>3. ניהול מקביליות ומניעת עומס (Concurrency)</strong></td>
+                            <td>קריאת API חוסמת (Blocking) שמעכבת את טעינת הדשבורד או יוצרת כפילויות בהחלפת ערים מהירה.
+                            </td>
+                            <td><strong>הפרדת <code>O(1)</code> משכבת ה-Agent + <code>AbortController</code></strong>
+                                לביטול ריצות קודמות.</td>
+                            <td><strong>עונה על חוויית המשתמש ועלויות API:</strong> הדשבורד עולה ב-10ms, והסוכן רץ
+                                באסינכרוניות מלאה ברקע תוך ביטול בקשות מיותרות אם המשתמש משנה בחירה.</td>
+                        </tr>
+                        <tr class="row-win">
+                            <td><strong>4. אמינות חישובית (LLM Grounding)</strong></td>
+                            <td>מתן חופש למודל השפה (LLM) להעריך בעצמו מחירי ביטוח וציוני סיכון מתוך הידע הכללי שלו.
+                            </td>
+                            <td><strong>Tool-First Deterministic Grounding:</strong> הסוכן מחויב לקרוא ל-4 פונקציות
+                                פייתון מבוססות <code>data.json</code> ו-XGBoost.</td>
+                            <td><strong>עיגון בכלים דטרמיניסטיים:</strong> המספרים מחושבים בקוד ונבדקים
+                                ב־<code>pytest</code>, ללא המצאת מחירים אקראית על ידי מודל השפה.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ═══ CHAPTER 03: ARCHITECTURE & 4 TOOLS ═══ -->
+        <section class="report-section section-card" id="sec3">
+            <header class="chapter-head">
+                <h2><span class="ch-num">03.</span> ארכיטקטורת הסוכן האוטונומי ושרשרת 4 הכלים</h2>
+                <p class="chapter-id">Agent orchestration &amp; toolset</p>
+            </header>
+            <p class="section-intro">
+                המערכת בנויה בארכיטקטורת <strong>Dual-Mode Agent</strong>: בעת בחירת דגם ועיר מתבצעת קריאה מקבילית
+                לאנדפוינט <code>POST /agent/auto-compare</code> שמפעיל אוטונומית 3 כלים ברצף לבניית גלריית הכרטיסיות
+                במקביל לרינדור הדשבורד ב-<code>O(1)</code>. בעת שליחת שאלה בצ'אט מופעל <code>POST /agent/chat</code>
+                המנתב את השאלה לכלי הרלוונטי (כולל כלי סימולציית המיגון):
+            </p>
+
+            <!-- The 4 Tools as Dose Stations -->
+            <div class="stations">
+                <div class="station plastic" style="--t: var(--p-thu);">
+                    <span aria-hidden="true" class="station-num">1</span>
+                    <div>
+                        <h3>כלי 1: <code>get_vehicle_risk</code> שליפת פרופיל סיכון ואומדן ספירה</h3>
+                        <p>
+                            שולף את אומדן הספירה השנתי ומדד הסיכון היחסי לצירוף דגם–עיר מתוך נכסי המחקר. מחזיר גרסת
+                            מודל, ציון סיכון משוקלל וסטטוס כיסוי (מדד מנורמל לאחוזון 99 של האומדנים המחקריים).
+                        </p>
+                    </div>
+                </div>
+
+                <div class="station plastic" style="--t: var(--p-fri);">
+                    <span aria-hidden="true" class="station-num">2</span>
+                    <div>
+                        <h3>כלי 2: <code>fetch_bestie_quotes</code> סימולציית תמחור לפרופיל נהג ייחוס</h3>
+                        <p>
+                            מחשב מחיר שנתי וחודשי מדומה (ביטוח מקיף + חובה) ודרישות מיגון לפרופיל נהג ייחוס קבוע. שמות
+                            החברות והמחירים מחושבים באופן דטרמיניסטי כחלק מהסימולציה ואינם תוצאת סריקה חיה של Bestie.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="station plastic" style="--t: var(--p-wed);">
+                    <span aria-hidden="true" class="station-num">3</span>
+                    <div>
+                        <h3>כלי 3: <code>compare_alternatives</code> איתור ודירוג עד 3 חלופות רכב</h3>
+                        <p>
+                            מדרג עד שלוש חלופות רכב באותה עיר לפי מדד סיכון יחסי נמוך יותר והפרש מחיר מדומה. החיפוש
+                            מעדיף אותה קטגוריית רכב (למשל משפחתיות או פנאי) ועשוי להתרחב כשאין די מועמדים.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="station plastic" style="--t: var(--p-sat);">
+                    <span aria-hidden="true" class="station-num">4</span>
+                    <div>
+                        <h3>כלי 4: <code>simulate_mitigation</code> מחשבון הוזלת פרמיה באמצעות מיגון</h3>
+                        <p>
+                            מופעל מתוך ווידג'ט הצ'אט: מחשב בכמה אחוזים ושקלים ניתן להוזיל את פוליסת המקיף המדומה של הרכב
+                            הנבחר באמצעות התקנת איתוראן פעיל כפול, קודן או מנעול הגה מכני.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Agent Architecture Diagram Viewer (Pan & Zoom Engine) -->
+            <div class="diagram-viewer-wrap" id="agent-architecture-viewer">
+                <div class="diagram-toolbar" dir="rtl">
+                    <div class="diagram-toolbar-title">
+                        <span>דיאגרמת ארכיטקטורת הסוכן (Interactive Pan &amp; Zoom)</span>
+                    </div>
+                    <div class="diagram-toolbar-actions">
+                        <button class="diagram-tool-btn" id="agent-diagram-zoom-in" title="התקרב (Zoom In) [+]"
+                            type="button">
+                            <span>+</span> התקרב
+                        </button>
+                        <button class="diagram-tool-btn" id="agent-diagram-zoom-out" title="התרחק (Zoom Out) [-]"
+                            type="button">
+                            <span>−</span> התרחק
+                        </button>
+                        <span class="diagram-zoom-badge" id="agent-diagram-zoom-level">100%</span>
+                        <button class="diagram-tool-btn" id="agent-diagram-zoom-fit" title="התאם לגודל חלון [0]"
+                            type="button">
+                            <span>↺</span> התאם לחלון
+                        </button>
+                        <button class="diagram-tool-btn" id="agent-diagram-zoom-actual" title="גודל מקורי (1:1) [1]"
+                            type="button">
+                            <span>1:1</span> גודל מקורי
+                        </button>
+                        <button class="diagram-tool-btn" id="agent-diagram-fullscreen" title="מסך מלא [F]"
+                            type="button">
+                            <span>⛶</span> מסך מלא
+                        </button>
+                    </div>
+                </div>
+
+                <div class="diagram-viewport" id="agent-diagram-viewport">
+                    <div class="diagram-image-wrapper" id="agent-diagram-wrapper">
+                        <img alt="דיאגרמת ארכיטקטורת סוכן הביטוח Bestie" id="agent-diagram-img" loading="eager"
+                            src="assets/images/agent_architecture.svg" />
+                    </div>
+                </div>
+
+                <div class="diagram-caption">
+                    <strong>איור 3.1- ארכיטקטורת סוכן הביטוח Bestie:</strong> מיפוי 4 הכלים (Function Calling), מנגנון
+                    ה-CoT, זרימת הבקשות הא-סינכרוניות מול ה-Web Client, והאינטגרציה עם מחשבון התרחישים ומודל ה-XGBoost.
+                    <em>ניתן להשתמש בגלגלת העכבר לזום, גרירה להזזה, התאמה לחלון (↺), 1:1 או מסך מלא.</em>
+                </div>
+            </div>
+
+            <div class="note note--mint">
+                <h3 class="note-head" style="margin-top: 0;">למה הגדרנו "פרופיל נהג ייחוס" (Reference Driver Persona)
+                    להשוואת Bestie?</h3>
+                <p style="max-width: 100%;">
+                    מחירי ביטוח רכב משתנים לפי גיל הנהג והיסטוריית התביעות שלו. כדי להשוות תפוחים לתפוחים בין הרכב
+                    שנבחר לבין 3 החלופות בלי לאלץ את המשתמש למלא טופס של 15 שדות, הגדרנו פרופיל ייחוס אחיד ושקוף המוצג
+                    בראש אזור הסוכן: <strong>נהג בן 35 · 12 שנות ותק · היעדר תביעות ב-3 השנים האחרונות · שנתון
+                        2022</strong>. כך הפער השקלי בין הכרטיסיות משקף באופן טהור את פערי הסיכון האקטוארי של הדגם
+                    והעיר.
+                </p>
+            </div>
+        </section>
+
+        <!-- ═══ CHAPTER 04: VISUAL WALKTHROUGH & REAL SCREENSHOTS ═══ -->
+        <section class="report-section section-card" id="sec4">
+            <header class="chapter-head">
+                <h2><span class="ch-num">04.</span> המוצר בפעולה: צילומי מסך וניתוח UX</h2>
+                <p class="chapter-id">Visual walkthrough &amp; UX analysis</p>
+            </header>
+            <p class="section-intro">
+                חוויית המשתמש של הסוכן תוכננה בשלושה רבדים משלימים: קפסולת התראה צפה המופיעה אוטומטית עם תוצאת החיסכון,
+                חלון השוואה מלא עם בועת נימוק שיחתית ו-4 כרטיסיות Bestie נקיות, ווידג'ט צ'אט צדדי קבוע לסימולציית מיגון:
+            </p>
+
+            <!-- Screenshot 1: Floating Capsule Dock -->
+            <figure class="chart">
+                <div class="chart-frame chart-frame--dark"
+                    onclick="openLightbox('assets/capsule.png', 'הקפסולה המרחפת של סוכן Bestie AI')"
+                    onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openLightbox('assets/capsule.png', 'הקפסולה המרחפת של סוכן Bestie AI');}"
+                    role="button" tabindex="0">
+                    <img alt="הקפסולה המרחפת של סוכן Bestie AI" src="assets/capsule.png"
+                        style="max-width: 890px; border-radius: 999px;" />
+                </div>
+                <figcaption style="max-width: 100%;">
+                    <strong>איור 4.1- Floating Sticky Dock:</strong> הקפסולה המרחפת מופיעה מיד עם הזנת שילוב העיר ודגם
+                    הרכב. היא מציגה חיווי סריקה חי ומעדכנת בזמן אמת על פוטנציאל החיסכון שנמצא (למשל: <em>חיסכון של עד
+                        ₪153/חודש</em>), עם כפתור הנעה לפעולה ישיר (<code>לגלריית ההשוואה ↓</code>) המאפשר לפתוח את חלון
+                    ההמלצה המלא בקליק יחיד מבלי להסתיר את נתוני הדשבורד הראשי.
+                </figcaption>
+            </figure>
+
+            <!-- Screenshot 2: Bestie Recommendations & Conversational Hero -->
+            <figure class="chart">
+                <div class="chart-frame chart-frame--dark"
+                    onclick="openLightbox('assets/agent_screenshot_gallery.png', 'חלון סוכן ה-AI המלא וגלריית 4 כרטיסיות ההשוואה')"
+                    onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openLightbox('assets/agent_screenshot_gallery.png', 'חלון סוכן ה-AI המלא וגלריית 4 כרטיסיות ההשוואה');}"
+                    role="button" tabindex="0">
+                    <img alt="צילום מסך חי של חלון סוכן ה-AI ב-Bestie: בועת שיחה שיחתית, תגית חיסכון מרבי וגלריית 4 כרטיסיות השוואה נקיות"
+                        src="assets/agent_screenshot_gallery.png" />
+                </div>
+                <figcaption>
+                    <strong>איור 4.2- חלון הסוכן המלא וגלריית ההשוואה:</strong> נפתח בלחיצה על הקפסולה. בראש המודל
+                    מוצגים בועת הפתיח השיחתית בקולו של הסוכן ("נימוק הסוכן"), תגית פרופיל נהג הייחוס (בן 35, ללא תביעות
+                    ב-3 השנים האחרונות), תגית החיסכון המשוער המרבי (<strong>עד ₪153/חודש</strong>), וגלריית 4 כרטיסיות
+                    Bestie מעוצבות עם תמחור חודשי בולט, מפרט מיגון/השתתפות עצמית וכפתור מעבר ל-Bestie.
+                </figcaption>
+            </figure>
+
+            <!-- 3 UX Components Tray -->
+            <div class="tray">
+                <div class="comp plastic" style="--t: var(--p-mon);">
+                    <span class="chip chip-ink">רכיב 1 · Conversational Hero</span>
+                    <h3>פתיח שיחתי בקולו של הסוכן</h3>
+                    <p>
+                        הסוכן פונה ישירות למשתמש בגוף ראשון בבועת דיבור ממותגת, מפרט את תוצאות הסריקה עבור הרכב הנבחר,
+                        ומציג את פוטנציאל החיסכון השנתי המרבי (עד ₪1,840/שנה) והסיבות לבחירת 3 החלופות.
+                    </p>
+                </div>
+
+                <div class="comp plastic" style="--t: var(--p-fri);">
+                    <span class="chip chip-ink">רכיב 2 · Floating Capsule</span>
+                    <h3>כמוסת סוכן צפה ופתיחה בקליק</h3>
+                    <p>
+                        במקום סרגל תחתון כבד החוסם את המסך, המערכת כוללת כמוסה צפה קומפקטית ומעוגלת במרכז התחתון המופיעה
+                        אוטומטית ברגע בחירת הדגם והעיר ומאפשרת פתיחה וסגירה חלקה.
+                    </p>
+                </div>
+
+                <div class="comp plastic" style="--t: var(--p-thu);">
+                    <span class="chip chip-ink">רכיב 3 · Reasoning Cards</span>
+                    <h3>כרטיסיות המלצה מנומקות ונקיות</h3>
+                    <p>
+                        הסרת עמודות ההשתתפות הכפולות ועשרות הצ'קבוקסים המעייפים; מעבר לכרטיסיות אלגנטיות עם תגית ייעוד,
+                        נימוק בחירה מפורט, מחיר חודשי ושנתי בולט, ומפרט מיגון/השתתפות עצמית חד-שורתי.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Screenshot 3: Expanded Side Copilot Widget -->
+            <figure class="chart">
+                <div class="chart-frame chart-frame--dark"
+                    onclick="openLightbox('assets/agent_screenshot_chat.png', 'ווידג׳ט צ׳אט סוכן ה-AI פעיל עם סימולציית מיגון')"
+                    onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openLightbox('assets/agent_screenshot_chat.png', 'ווידג׳ט צ׳אט סוכן ה-AI פעיל עם סימולציית מיגון');}"
+                    role="button" tabindex="0">
+                    <img alt="ווידג'ט צ'אט סוכן ה-AI פעיל עם סימולציית מיגון" src="assets/agent_screenshot_chat.png"
+                        style="max-width: 540px;" />
+                </div>
+                <figcaption>
+                    <strong>איור 4.3- ווידג'ט שאלות וסימולציית מיגון (Side Copilot):</strong> ווידג'ט הצ'אט הנפתח
+                    בלחיצה על כפתור ה-FAB. מופרד מאזור הכרטיסיות ומאפשר להריץ בזמן אמת שאילתות מבוססות כלים כמו
+                    <code>simulate_mitigation_discount</code> לקבלת חישוב הוזלה כספי מדויק בשקלים (למשל: חיסכון של
+                    ₪73/חודש ושדרוג למיגון מומלץ).
+                </figcaption>
+            </figure>
+
+            <div class="note">
+                <h3 class="note-head" style="margin-top: 0;">למה הפרדנו את אזור השאלות לווידג'ט צדדי תמיד פעיל
+                    (Always-Active Side Widget)?
+                </h3>
+                <p style="max-width:100%; !important">
+                    משתמש שסוקר את הגרפים בחלק העליון או משווה בין 4 כרטיסיות הפוליסה בגלריה לא צריך לחפש צ'אט שקבור
+                    בתחתית הדף. הפרדת הצ'אט ל<strong>ווידג'ט צדדי קבוע</strong> מאפשרת ללחוץ על <code>בדוק את סיכון
+                        גניבת הרכב</code> בכל כרטיסייה או על כפתורי השאלות המהירות (כמו <code>הוזלה במיגון</code>),
+                    להריץ את הכלי <code>simulate_mitigation_discount</code> ולקבל תשובה מיידית תוך שמירה על קשר עין מלא
+                    עם נתוני ההשוואה.
+                </p>
+            </div>
+        </section>
+
+        <!-- ═══ CHAPTER 05: GUARDRAILS & PYTEST VERIFICATION ═══ -->
+        <section class="report-section section-card" id="sec5">
+            <header class="chapter-head">
+                <h2><span class="ch-num">05.</span> אבטחת איכות, Guardrails ואימות אוטומטי (Pytest Suite)</h2>
+                <p class="chapter-id">Quality assurance, guardrails &amp; pytest verification</p>
+            </header>
+            <p class="section-intro">
+                בדיקות האינטגרציה בוחנות טעינת ארטיפקטים, גרסת המודל, טווחי מדדים, תגובות API וחישובי תרחישים. המודל
+                אינו מקבל מאפיינים דמוגרפיים, וכל פלט מספרי מעוגן בפונקציות הפייתון הדטרמיניסטיות (אם כי הגנות הטקסט
+                אינן מהוות ערובה מוחלטת מפני כל ניסיון Prompt Injection ודורשות בקרה מתמשכת):
+            </p>
+
+            <div class="bands">
+                <div class="band plastic" style="--t: var(--p-thu);">
+                    <h3>עיגון דטרמיניסטי (Tool-First Grounding)</h3>
+                    <ul>
+                        <li><strong>איסור המצאת מספרים:</strong> ה-System Prompt אוסר על מודל השפה לחשב פרמיות או ציוני
+                            סיכון בעצמו, ומחייב שליפה מתוך פלט 4 הכלים בלבד.</li>
+                        <li><strong>Fallback דטרמיניסטי מלא:</strong> גם כאשר שרת ה-LLM החיצוני אינו זמין או חורג מזמן
+                            התגובה, המערכת מחזירה תשובה מובנית מדויקת מתוך מנוע הכלים המקומי.</li>
+                    </ul>
+                </div>
+                <div class="band plastic" style="--t: var(--p-wed);">
+                    <h3>הגנות קלט ובדיקות אוטומטיות (Input Guardrails)</h3>
+                    <ul>
+                        <li><strong>סינון Prompt Injection:</strong> בדיקת תבניות עוינות בשרת ה-FastAPI לפני העברת
+                            השאילתה לסוכן.</li>
+                        <li><strong>בדיקות רגרסיה ב-Pytest:</strong> בדיקת תקינות ה-Payload של
+                            <code>POST /agent/auto-compare</code> ו-<code>POST /agent/chat</code> על תרחישי קצה.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <pre><code># הרצת בדיקות האינטגרציה של הפייפליין, ה-API וכל 4 כלי הסוכן:
+$ python -X utf8 -m pytest -q
+# תוצאות הבדיקות מאמתות טעינת ארטיפקטים, חוזי JSON, וחישובי סימולציה דטרמיניסטיים.
+
+# אנדפוינטים פעילים ב-FastAPI (src/api.py):
+POST /agent/auto-compare   # הרכב שנבחר ועד שלוש חלופות סימולטיביות + agent_steps
+POST /agent/chat           # צ'אט מובנה מבוסס כלים עם הגנת Prompt Injection</code></pre>
+        </section>
+
+        <!-- ═══ CHAPTER 06: PORTFOLIO SUMMARY (AI ENGINEERING + PM) ═══ -->
+        <section class="report-section section-card" id="sec6">
+            <header class="chapter-head">
+                <h2><span class="ch-num">06.</span> סיכום ותובנות </h2>
+                <p class="chapter-id"> Summary: Insights &amp; conclusions</p>
+            </header>
+            <p class="section-intro">
+                שילוב סוכן ה-AI האוטונומי מעל מודל החיזוי מדגים סינתזה מלאה בין הנדסת מערכות AI מודרניות לבין חשיבה
+                מוצרית הממוקדת בפתרון בעיה צרכנית אמיתית:
+            </p>
+
+            <div class="bands">
+                <div class="band plastic" style="--t: var(--p-fri);">
+                    <span class="chip chip-ink">AI &amp; Agent Engineering</span>
+                    <h3>יכולות הנדסת מערכות וסוכנים</h3>
+                    <ul>
+                        <li><strong>Multi-Step Tool Chaining:</strong> תזמור אוטונומי של 4 כלים אקטואריים המחוברים למודל
+                            הספירה המחקרי (<code>XGBoost Poisson</code>) ולמטריצת הנתונים.</li>
+                        <li><strong>Hybrid Resilience Architecture:</strong> עבודה חלקה מול שרת FastAPI + Gemini API עם
+                            מנוע Fallback דטרמיניסטי בצד השרת ובצד הלקוח להבטחת המשכיות תפקודית.</li>
+                        <li><strong>Async Lifecycle Management:</strong> שימוש ב-<code>AbortController</code> לניהול
+                            קריאות מקביליות ברקע ללא חסימת ה-UI Thread של הדשבורד הראשי.</li>
+                    </ul>
+                </div>
+
+                <div class="band plastic" style="--t: var(--p-thu);">
+                    <span class="chip chip-mint">Product Management (PM)</span>
+                    <h3>חשיבה מוצרית ומיקוד בערך למשתמש</h3>
+                    <ul>
+                        <li><strong>תרגום מדד טכני לערך כספי (Monetizable User Value):</strong> מעבר מציון סיכון מופשט
+                            להשוואת הפרשי עלות שנתית וחודשית בסימולציה לפרופיל נהג ייחוס.</li>
+                        <li><strong>הסרת חיכוך (Frictionless UX):</strong> ביטול הצורך במילוי 15 שדות חובה כפול 4 רכבים
+                            באמצעות "פרופיל נהג ייחוס" והפעלה אוטומטית ברקע (Zero-Click).</li>
+                        <li><strong>Product Iteration:</strong> מעבר מבועת צ'אט צפה פסיבית לאזור השוואה אקטיבי המשלב
+                            קפסולה חכמה, גלריית כרטיסיות מנומקת ווידג'ט צ'אט קונטקסטואלי.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Lightbox Modal -->
+    <div class="lightbox-modal" id="lightbox" onclick="closeLightbox()">
+        <div class="lightbox-content" onclick="event.stopPropagation()">
+            <button aria-label="סגירת התצוגה המוגדלת" class="lightbox-close" onclick="closeLightbox()">×</button>
+            <img alt="Enlarged Visual Chart" id="lightbox-img"
+                src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='1'%3E%3C/svg%3E" />
+        </div>
+    </div>
+
+    <!-- Back to top floating button -->
+    <button aria-label="חזרה לראש העמוד" class="btn-top" id="btnTop" title="חזרה לראש העמוד">
+        <svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+            stroke-width="2.5" viewBox="0 0 24 24" width="20">
+            <polyline points="18 15 12 9 6 15"></polyline>
+        </svg>
+    </button>
+
+    <!-- Footer Colophon -->
+    <footer class="colophon container" style="justify-content: center; ">
+        <span>דו"ח הנדסת סוכן AI , נובמבר 2026. מבוסס על נתוני משטרת ישראל 2017–2025
+            וסימולציית תרחישי ביטוח מחקרית.</span>
+
+    </footer>
+
+    <!-- Interactive Script: Nav Pills ScrollSpy, Lightbox & Back-to-Top -->
+    <script>
+        window.openLightbox = function (src, alt) {
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightbox-img');
+            if (lightbox && lightboxImg) {
+                lightboxImg.src = src;
+                if (alt) lightboxImg.alt = alt;
+                lightbox.classList.add('active');
+            }
+        };
+
+        window.closeLightbox = function () {
+            const lightbox = document.getElementById('lightbox');
+            if (lightbox) {
+                lightbox.classList.remove('active');
+            }
+        };
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                window.closeLightbox();
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // 1. ScrollSpy & Smooth Motion Indicator for Chapter Nav Pills
+            const sections = document.querySelectorAll('section.report-section');
+            const navPills = document.querySelectorAll('.chap-nav-pill');
+            const pillsContainer = document.getElementById('chapterNavPills');
+            const underline = document.getElementById('navUnderlineIndicator');
+            let isProgrammaticScroll = false;
+            let scrollTimer = null;
+            let ticking = false;
+
+            function updateUnderline(activePill, smooth = true) {
+                if (!activePill || !underline || !pillsContainer) return;
+                const leftOffset = activePill.offsetLeft;
+                const width = activePill.offsetWidth;
+
+                underline.style.transition = smooth
+                    ? 'transform 0.28s cubic-bezier(0.2, 0.9, 0.3, 1.2), width 0.24s cubic-bezier(0.2, 0.9, 0.3, 1.2), opacity 0.2s ease-out'
+                    : 'none';
+                underline.style.width = `${Math.round(width)}px`;
+                underline.style.transform = `translate3d(${Math.round(leftOffset)}px, 0, 0)`;
+                underline.style.opacity = '1';
+            }
+
+            function updatePills(smoothMotion = true) {
+                if (isProgrammaticScroll || sections.length === 0) return;
+
+                // Check if user is scrolled to the bottom of the page
+                const atBottom = (window.innerHeight + window.scrollY) >= (document.documentElement.scrollHeight - 70);
+                let current = sections[0].getAttribute('id');
+
+                if (atBottom) {
+                    current = sections[sections.length - 1].getAttribute('id');
+                } else {
+                    const headerEl = document.querySelector('.fixed-header');
+                    const headerHeight = headerEl ? headerEl.offsetHeight : 112;
+                    const triggerPoint = headerHeight + 80;
+
+                    sections.forEach(sec => {
+                        const rect = sec.getBoundingClientRect();
+                        if (rect.top <= triggerPoint) {
+                            current = sec.getAttribute('id');
+                        }
+                    });
+                }
+
+                const activePill = document.querySelector('.chap-nav-pill.active');
+                if (activePill && activePill.getAttribute('href') === '#' + current) {
+                    return; // Already on current section, avoid redundant transitions
+                }
+
+                let matchedPill = null;
+                navPills.forEach(pill => {
+                    const isMatch = pill.getAttribute('href') === '#' + current;
+                    pill.classList.toggle('active', isMatch);
+                    if (isMatch) matchedPill = pill;
+                });
+
+                if (matchedPill) {
+                    updateUnderline(matchedPill, smoothMotion);
+                    if (pillsContainer && pillsContainer.scrollWidth > pillsContainer.clientWidth) {
+                        matchedPill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+                    }
+                }
+            }
+
+            // Smooth click handling without ScrollSpy conflict
+            navPills.forEach(pill => {
+                pill.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetSec = document.querySelector(targetId);
+                    if (!targetSec) return;
+
+                    // Set active state & glide underline immediately
+                    navPills.forEach(p => p.classList.remove('active'));
+                    this.classList.add('active');
+                    updateUnderline(this, true);
+
+                    // Lock scroll listener to prevent intermediate jumpy updates
+                    isProgrammaticScroll = true;
+                    clearTimeout(scrollTimer);
+
+                    // Smooth scroll with header offset
+                    const headerEl = document.querySelector('.fixed-header');
+                    const headerHeight = headerEl ? headerEl.offsetHeight : 112;
+                    const targetY = targetSec.getBoundingClientRect().top + window.pageYOffset - headerHeight - 14;
+
+                    window.scrollTo({
+                        top: Math.max(0, targetY),
+                        behavior: 'smooth'
+                    });
+
+                    if (pillsContainer && pillsContainer.scrollWidth > pillsContainer.clientWidth) {
+                        this.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+                    }
+
+                    scrollTimer = setTimeout(() => {
+                        isProgrammaticScroll = false;
+                    }, 750);
+                });
+            });
+
+            // 60fps throttled scroll
+            window.addEventListener('scroll', () => {
+                if (!ticking) {
+                    window.requestAnimationFrame(() => {
+                        updatePills(true);
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            }, { passive: true });
+
+            window.addEventListener('resize', () => {
+                const active = document.querySelector('.chap-nav-pill.active');
+                if (active) updateUnderline(active, false);
+            }, { passive: true });
+
+            if (pillsContainer) {
+                pillsContainer.addEventListener('scroll', () => {
+                    const active = document.querySelector('.chap-nav-pill.active');
+                    if (active) updateUnderline(active, false);
+                }, { passive: true });
+            }
+
+            // Initial alignment (immediate)
+            setTimeout(() => {
+                const active = document.querySelector('.chap-nav-pill.active') || navPills[0];
+                if (active) {
+                    active.classList.add('active');
+                    updateUnderline(active, false);
+                }
+            }, 60);
+
+            // 2. Back to top button
+            const btnTop = document.getElementById('btnTop');
+            window.addEventListener('scroll', function () {
+                if (window.scrollY > 400) {
+                    btnTop.classList.add('visible');
+                } else {
+                    btnTop.classList.remove('visible');
+                }
+            }, { passive: true });
+
+            if (btnTop) {
+                btnTop.addEventListener('click', function () {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
+
+            // 4. Image Lightbox click handlers (excluding interactive pan/zoom SVG)
+            document.querySelectorAll('.chart-frame img').forEach(img => {
+                img.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    window.openLightbox(this.src, this.alt);
+                });
+            });
+        });
+    </script>
+
+    <!-- Agent Architecture Diagram: Pan & Zoom Interactive Engine -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const viewer = document.getElementById('agent-architecture-viewer');
+            const viewport = document.getElementById('agent-diagram-viewport');
+            const wrapper = document.getElementById('agent-diagram-wrapper');
+            const diagramEl = document.getElementById('agent-diagram-img');
+            const zoomBadge = document.getElementById('agent-diagram-zoom-level');
+            const btnIn = document.getElementById('agent-diagram-zoom-in');
+            const btnOut = document.getElementById('agent-diagram-zoom-out');
+            const btnFit = document.getElementById('agent-diagram-zoom-fit');
+            const btnActual = document.getElementById('agent-diagram-zoom-actual');
+            const btnFs = document.getElementById('agent-diagram-fullscreen');
+
+            if (!viewer || !viewport || !wrapper || !diagramEl) return;
+
+            let naturalW = 816;
+            let naturalH = 1300;
+
+            if (diagramEl.naturalWidth) {
+                naturalW = diagramEl.naturalWidth;
+                naturalH = diagramEl.naturalHeight;
+            }
+
+            let currentWidth = naturalW;
+            let panX = 0;
+            let panY = 0;
+            let isDragging = false;
+            let startX = 0;
+            let startY = 0;
+
+            function applyTransform(smooth = false) {
+                wrapper.style.transition = smooth ? 'transform 0.18s cubic-bezier(0.16, 1, 0.3, 1)' : 'none';
+                wrapper.style.transform = `translate3d(${Math.round(panX)}px, ${Math.round(panY)}px, 0)`;
+                diagramEl.style.width = Math.round(currentWidth) + 'px';
+                diagramEl.style.height = Math.round(currentWidth * (naturalH / naturalW)) + 'px';
+                if (zoomBadge && naturalW > 0) {
+                    zoomBadge.innerText = Math.round((currentWidth / naturalW) * 100) + '%';
+                }
+            }
+
+            function set1to1(smooth = true) {
+                const vpW = viewport.clientWidth || 1050;
+                currentWidth = naturalW;
+                panX = Math.round((vpW - currentWidth) / 2);
+                panY = 20;
+                applyTransform(smooth);
+            }
+
+            function setFit(smooth = false) {
+                const vpW = viewport.clientWidth || 1050;
+                const vpH = viewport.clientHeight || 600;
+                const scaleW = (vpW - 30) / naturalW;
+                const scaleH = (vpH - 30) / naturalH;
+                const fitScale = Math.min(scaleW, scaleH, 1.0);
+                currentWidth = Math.round(naturalW * fitScale);
+                panX = Math.round((vpW - currentWidth) / 2);
+                panY = Math.round((vpH - (currentWidth * (naturalH / naturalW))) / 2);
+                applyTransform(smooth);
+            }
+
+            if (diagramEl.complete && diagramEl.naturalWidth) {
+                naturalW = diagramEl.naturalWidth;
+                naturalH = diagramEl.naturalHeight;
+                setFit(false);
+            } else {
+                diagramEl.addEventListener('load', () => {
+                    naturalW = diagramEl.naturalWidth || 816;
+                    naturalH = diagramEl.naturalHeight || 1300;
+                    setFit(false);
+                });
+            }
+
+            window.addEventListener('resize', () => {
+                if (!document.fullscreenElement) {
+                    setFit(false);
+                }
+            });
+
+            function zoomAt(originX, originY, factor, smooth = false) {
+                const minW = Math.round((viewport.clientWidth || 1050) * 0.35);
+                const maxW = Math.round(naturalW * 3.0);
+                const newWidth = Math.min(Math.max(currentWidth * factor, minW), maxW);
+                if (Math.abs(newWidth - currentWidth) < 1) return;
+
+                const ratio = newWidth / currentWidth;
+                panX = originX - (originX - panX) * ratio;
+                panY = originY - (originY - panY) * ratio;
+                currentWidth = newWidth;
+
+                applyTransform(smooth);
+            }
+
+            viewport.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                const rect = viewport.getBoundingClientRect();
+                const mouseX = e.clientX - rect.left;
+                const mouseY = e.clientY - rect.top;
+                const factor = e.deltaY < 0 ? 1.18 : 0.84;
+                zoomAt(mouseX, mouseY, factor, false);
+            }, { passive: false });
+
+            viewport.addEventListener('mousedown', (e) => {
+                if (e.button !== 0) return;
+                isDragging = true;
+                viewport.classList.add('is-dragging');
+                startX = e.clientX - panX;
+                startY = e.clientY - panY;
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                panX = e.clientX - startX;
+                panY = e.clientY - startY;
+                wrapper.style.transition = 'none';
+                wrapper.style.transform = `translate3d(${Math.round(panX)}px, ${Math.round(panY)}px, 0)`;
+            });
+
+            window.addEventListener('mouseup', () => {
+                if (isDragging) {
+                    isDragging = false;
+                    viewport.classList.remove('is-dragging');
+                }
+            });
+
+            viewport.addEventListener('dblclick', () => {
+                if (Math.abs(currentWidth - naturalW) < 50) {
+                    setFit(true);
+                } else {
+                    set1to1(true);
+                }
+            });
+
+            let initialTouchDist = 0;
+            viewport.addEventListener('touchstart', (e) => {
+                if (e.touches.length === 1) {
+                    isDragging = true;
+                    startX = e.touches[0].clientX - panX;
+                    startY = e.touches[0].clientY - panY;
+                } else if (e.touches.length === 2) {
+                    isDragging = false;
+                    const dx = e.touches[0].clientX - e.touches[1].clientX;
+                    const dy = e.touches[0].clientY - e.touches[1].clientY;
+                    initialTouchDist = Math.hypot(dx, dy);
+                }
+            }, { passive: true });
+
+            viewport.addEventListener('touchmove', (e) => {
+                if (e.touches.length === 1 && isDragging) {
+                    panX = e.touches[0].clientX - startX;
+                    panY = e.touches[0].clientY - startY;
+                    wrapper.style.transition = 'none';
+                    wrapper.style.transform = `translate3d(${Math.round(panX)}px, ${Math.round(panY)}px, 0)`;
+                } else if (e.touches.length === 2 && initialTouchDist > 0) {
+                    const dx = e.touches[0].clientX - e.touches[1].clientX;
+                    const dy = e.touches[0].clientY - e.touches[1].clientY;
+                    const dist = Math.hypot(dx, dy);
+                    const factor = dist / initialTouchDist;
+                    initialTouchDist = dist;
+                    const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+                    const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+                    const rect = viewport.getBoundingClientRect();
+                    zoomAt(midX - rect.left, midY - rect.top, factor, false);
+                }
+            }, { passive: false });
+
+            viewport.addEventListener('touchend', () => {
+                isDragging = false;
+                initialTouchDist = 0;
+            });
+
+            if (btnIn) {
+                btnIn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    zoomAt(viewport.clientWidth / 2, viewport.clientHeight / 2, 1.25, true);
+                });
+            }
+
+            if (btnOut) {
+                btnOut.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    zoomAt(viewport.clientWidth / 2, viewport.clientHeight / 2, 0.8, true);
+                });
+            }
+
+            if (btnFit) {
+                btnFit.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    setFit(true);
+                });
+            }
+
+            if (btnActual) {
+                btnActual.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    set1to1(true);
+                });
+            }
+
+            if (btnFs) {
+                btnFs.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (!document.fullscreenElement) {
+                        viewer.requestFullscreen().catch(() => { });
+                    } else {
+                        document.exitFullscreen().catch(() => { });
+                    }
+                });
+
+                document.addEventListener('fullscreenchange', () => {
+                    setTimeout(() => {
+                        setFit(false);
+                    }, 150);
+                });
+            }
+
+            window.addEventListener('keydown', (e) => {
+                if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) {
+                    return;
+                }
+                if (e.key === '+' || e.key === '=') {
+                    zoomAt(viewport.clientWidth / 2, viewport.clientHeight / 2, 1.2, true);
+                } else if (e.key === '-' || e.key === '_') {
+                    zoomAt(viewport.clientWidth / 2, viewport.clientHeight / 2, 0.8, true);
+                } else if (e.key === '0') {
+                    setFit(true);
+                } else if (e.key === '1') {
+                    set1to1(true);
+                } else if (e.key.toLowerCase() === 'f' && !e.ctrlKey && !e.metaKey) {
+                    if (!document.fullscreenElement) {
+                        viewer.requestFullscreen().catch(() => { });
+                    } else {
+                        document.exitFullscreen().catch(() => { });
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

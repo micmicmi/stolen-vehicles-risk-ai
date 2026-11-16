@@ -1,0 +1,230 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 816 1300" width="816" height="1300" style="background: transparent;">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap');
+  text {
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    fill: #ffffff;
+  }
+  .subgraph-box {
+    fill: transparent;
+    stroke: #ffffff;
+    stroke-width: 1.5;
+    rx: 8;
+  }
+  .subgraph-title {
+    fill: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+  .node-box {
+    fill: rgba(255, 255, 255, 0.02);
+    stroke: #ffffff;
+    stroke-width: 1.5;
+    rx: 6;
+  }
+  .node-title {
+    fill: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .node-subtitle {
+    fill: #ffffff;
+    font-size: 11.5px;
+    font-weight: 400;
+    opacity: 0.95;
+  }
+  .edge-line {
+    fill: none;
+    stroke: #ffffff;
+    stroke-width: 1.5;
+  }
+  .edge-line-thick {
+    fill: none;
+    stroke: #ffffff;
+    stroke-width: 2.2;
+  }
+  .edge-label-box {
+    fill: #0b0f19;
+    stroke: #ffffff;
+    stroke-width: 1;
+    rx: 4;
+  }
+  .edge-label-text {
+    fill: #ffffff;
+    font-size: 11px;
+    font-weight: 500;
+  }
+</style>
+<defs>
+  <marker id="arrowhead" markerWidth="9" markerHeight="6" refX="8" refY="3" orient="auto">
+    <polygon points="0 0, 9 3, 0 6" fill="#ffffff" stroke="#ffffff" stroke-width="0.5" stroke-linejoin="round" />
+  </marker>
+  <marker id="arrowhead-start" markerWidth="9" markerHeight="6" refX="1" refY="3" orient="auto-start-reverse">
+    <polygon points="9 0, 0 3, 9 6" fill="#ffffff" stroke="#ffffff" stroke-width="0.5" stroke-linejoin="round" />
+  </marker>
+</defs>
+
+<!-- Subgraph 1: Web Client -->
+<g class="subgraph" data-id="WebClient">
+  <rect x="40" y="40" width="735" height="510" class="subgraph-box" />
+  <text x="56" y="68" class="subgraph-title">🌐 Web Client (index.html)</text>
+
+  <!-- Subgraph 1.1: Inline AI Section -->
+  <g class="subgraph" data-id="AgentSection">
+    <rect x="313" y="243" width="446" height="284" class="subgraph-box" stroke-dasharray="5 4" />
+    <text x="328" y="268" class="subgraph-title">🤖 אזור סוכן AI בתחתית הדף (Inline Section)</text>
+  </g>
+</g>
+
+<!-- Subgraph 2: Backend AI Engine -->
+<g class="subgraph" data-id="Backend">
+  <rect x="243" y="677" width="468" height="199" class="subgraph-box" />
+  <text x="258" y="703" class="subgraph-title">🧠 AI Agent Engine (Python / FastAPI)</text>
+</g>
+
+<!-- Subgraph 3: Agent Toolset -->
+<g class="subgraph" data-id="Toolset">
+  <rect x="130" y="936" width="610" height="318" class="subgraph-box" />
+  <text x="146" y="962" class="subgraph-title">🛠️ Agent Toolset (src/agent_tools.py)</text>
+</g>
+
+<!-- Edges / Connectors -->
+<!-- User to Dashboard -->
+<polyline points="295,122 295,133 171,133 171,243" class="edge-line" marker-end="url(#arrowhead)" />
+
+<!-- User to LiveStatus (Parallel background trigger) -->
+<polyline points="350,122 350,135 484,135 484,287" class="edge-line-thick" marker-end="url(#arrowhead)" />
+
+<!-- LiveStatus to AutoEndpoint -->
+<polyline points="427,325 427,336 360,336 360,591 360,721" class="edge-line" marker-end="url(#arrowhead)" marker-start="url(#arrowhead-start)" />
+
+<!-- LiveStatus to CardsGallery -->
+<polyline points="577,325 577,372" class="edge-line" marker-end="url(#arrowhead)" />
+
+<!-- CardsGallery to InlineChat -->
+<polyline points="577,428 577,474" class="edge-line" marker-end="url(#arrowhead)" />
+
+<!-- InlineChat to ChatEndpoint -->
+<polyline points="568,512 568,659 592,659 592,721" class="edge-line" marker-end="url(#arrowhead)" marker-start="url(#arrowhead-start)" />
+
+<!-- AutoEndpoint to Orchestrator -->
+<polyline points="360,775 360,799 476,799 476,823" class="edge-line" marker-end="url(#arrowhead)" />
+
+<!-- ChatEndpoint to Orchestrator -->
+<polyline points="592,775 592,799 476,799 476,823" class="edge-line" marker-end="url(#arrowhead)" />
+
+<!-- Orchestrator to Tool 1 (get_vehicle_risk) -->
+<polyline points="476,861 476,920 310,920 310,980" class="edge-line" marker-end="url(#arrowhead)" />
+
+<!-- Tool 1 to Tool 2 (fetch_bestie_insurance_quotes) -->
+<polyline points="310,1034 310,1082" class="edge-line" marker-end="url(#arrowhead)" />
+
+<!-- Tool 2 to Tool 3 (compare_alternatives) -->
+<polyline points="310,1136 310,1183" class="edge-line" marker-end="url(#arrowhead)" />
+
+<!-- Orchestrator to Tool 4 (simulate_mitigation_discount) -->
+<polyline points="476,861 476,920 584,920 584,980" class="edge-line" marker-end="url(#arrowhead)" />
+
+<!-- Edge Labels -->
+<g class="edge-label">
+  <rect x="110" y="164" width="122" height="28" class="edge-label-box" />
+  <text x="171" y="182" text-anchor="middle" class="edge-label-text">1. בחירת רכב ועיר</text>
+</g>
+
+<g class="edge-label">
+  <rect x="395" y="123" width="178" height="28" class="edge-label-box" />
+  <text x="484" y="141" text-anchor="middle" class="edge-label-text">2. ריצה אוטונומית חרישית ברקע</text>
+</g>
+
+<g class="edge-label">
+  <rect x="275" y="598" width="170" height="28" class="edge-label-box" />
+  <text x="360" y="616" text-anchor="middle" class="edge-label-text">Async Fetch + AbortController</text>
+</g>
+
+<g class="edge-label">
+  <rect x="527" y="598" width="130" height="28" class="edge-label-box" />
+  <text x="592" y="616" text-anchor="middle" class="edge-label-text">Context-Aware Chat</text>
+</g>
+
+<!-- Nodes -->
+<!-- User -->
+<g class="node" data-id="User">
+  <rect x="238" y="84" width="170" height="38" class="node-box" />
+  <text x="323" y="108" text-anchor="middle" class="node-title">משתמש מזין דגם + עיר</text>
+</g>
+
+<!-- Dashboard -->
+<g class="node" data-id="Dashboard">
+  <rect x="56" y="243" width="230" height="38" class="node-box" />
+  <text x="171" y="267" text-anchor="middle" class="node-title">דשבורד תוצאות ML (מיידי - O(1))</text>
+</g>
+
+<!-- LiveStatus / Hero Bubble -->
+<g class="node" data-id="LiveStatus">
+  <rect x="315" y="287" width="340" height="38" class="node-box" />
+  <text x="485" y="311" text-anchor="middle" class="node-title">1️⃣ בועת פתיח שיחתית (Hero Bubble) + חיסכון מרבי</text>
+</g>
+
+<!-- CardsGallery -->
+<g class="node" data-id="CardsGallery">
+  <rect x="427" y="372" width="300" height="56" class="node-box" />
+  <text x="577" y="396" text-anchor="middle" class="node-title">2️⃣ גלריית 4 כרטיסיות Bestie</text>
+  <text x="577" y="415" text-anchor="middle" class="node-subtitle">(רכב נבחר + 3 חלופות עם ביטוח זול יותר)</text>
+</g>
+
+<!-- InlineChat -->
+<g class="node" data-id="InlineChat">
+  <rect x="394" y="474" width="350" height="38" class="node-box" />
+  <text x="569" y="498" text-anchor="middle" class="node-title">3️⃣ אזור צ'אט מובנה לשאלות המשך וסימולציית מיגון</text>
+</g>
+
+<!-- AutoEndpoint -->
+<g class="node" data-id="AutoEndpoint">
+  <rect x="259" y="721" width="202" height="54" class="node-box" />
+  <text x="360" y="744" text-anchor="middle" class="node-title">POST /agent/auto-compare</text>
+  <text x="360" y="763" text-anchor="middle" class="node-subtitle">(ריצה אוטומטית ברקע)</text>
+</g>
+
+<!-- ChatEndpoint -->
+<g class="node" data-id="ChatEndpoint">
+  <rect x="488" y="721" width="208" height="54" class="node-box" />
+  <text x="592" y="744" text-anchor="middle" class="node-title">POST /agent/chat</text>
+  <text x="592" y="763" text-anchor="middle" class="node-subtitle">(מענה לשאלות בצ'אט התחתון)</text>
+</g>
+
+<!-- Orchestrator -->
+<g class="node" data-id="Orchestrator">
+  <rect x="328" y="823" width="296" height="38" class="node-box" />
+  <text x="476" y="847" text-anchor="middle" class="node-title">Agent Orchestrator (Gemini / Hybrid Engine)</text>
+</g>
+
+<!-- Tool 1 -->
+<g class="node" data-id="T1">
+  <rect x="180" y="980" width="260" height="54" class="node-box" />
+  <text x="310" y="1003" text-anchor="middle" class="node-title">get_vehicle_risk(model, city)</text>
+  <text x="310" y="1022" text-anchor="middle" class="node-subtitle">חיזוי XGBoost + ציון סיכון משולב</text>
+</g>
+
+<!-- Tool 2 -->
+<g class="node" data-id="T2">
+  <rect x="145" y="1082" width="330" height="54" class="node-box" />
+  <text x="310" y="1104" text-anchor="middle" class="node-title">fetch_bestie_insurance_quotes(model, city)</text>
+  <text x="310" y="1123" text-anchor="middle" class="node-subtitle">שליפת הצעות Bestie (מקיף + חובה + חברה מובילה)</text>
+</g>
+
+<!-- Tool 3 -->
+<g class="node" data-id="T3">
+  <rect x="145" y="1183" width="330" height="54" class="node-box" />
+  <text x="310" y="1206" text-anchor="middle" class="node-title">compare_alternatives(model, city, top_k=3)</text>
+  <text x="310" y="1225" text-anchor="middle" class="node-subtitle">איתור 3 חלופות בטוחות יותר באותה קטגוריה וחיסכון</text>
+</g>
+
+<!-- Tool 4 -->
+<g class="node" data-id="T4">
+  <rect x="444" y="980" width="280" height="54" class="node-box" />
+  <text x="584" y="1003" text-anchor="middle" class="node-title">simulate_mitigation_discount(measures)</text>
+  <text x="584" y="1022" text-anchor="middle" class="node-subtitle">חישוב הנחת מיגון דינמית לשאלות בצ'אט</text>
+</g>
+
+</svg>

@@ -1,0 +1,4735 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>דוח פרויקט מסכם: מערכת לחיזוי ואפיון סיכוני גניבות רכב בישראל (2017–2025) | קורס מהנדסי AI</title>
+  <meta
+    content="דוח הנדסי ומחקרי מבוקר (CarTheftRisk_final): מכונת מצבים היררכית, פאנל כרונולוגי ללא בחירת אוכלוסייה מהעתיד, Exposure Offset, ולידציה מרחבית GroupKFold, עשירונים משמרי-תיקו וניתוח חשיפת מצבת הלמ״ס 2025."
+    name="description" />
+
+  <!-- Google Fonts: Dose Theme System -->
+  <link href="https://fonts.googleapis.com" rel="preconnect" />
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700&family=Instrument+Sans:wght@400;500&family=DM+Mono:wght@400;500&family=Heebo:wght@400;500;700&display=swap"
+    rel="stylesheet" />
+
+  <!-- KaTeX for Math -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+
+  <style>
+    /* ── (Dose) ──────────────────────────────────────── */
+    :root {
+      --space-3xs: 2px;
+      --space-2xs: 4px;
+      --space-xs: 8px;
+      --space-sm: 12px;
+      --space-md: 16px;
+      --space-lg: 24px;
+      --space-xl: 40px;
+      --space-2xl: 64px;
+      --space-3xl: 96px;
+      --space-4xl: 144px;
+      --text-xs: 0.8125rem;
+      --text-sm: 0.875rem;
+      --text-md: 1.0625rem;
+      --text-lg: 1.25rem;
+      --text-xl: 1.5625rem;
+      --text-2xl: 1.953rem;
+      --text-3xl: 2.441rem;
+      --text-display-s: clamp(2rem, 3.5vw + 0.5rem, 3.25rem);
+      --text-display: clamp(2.35rem, 3.8vw + 0.8rem, 4.25rem);
+      --text-section: clamp(1.75rem, 2vw + 0.9rem, 2.85rem);
+      --text-title: clamp(1.2rem, 0.7vw + 0.85rem, 1.5rem);
+      --text-lead: clamp(1.1rem, 0.35vw + 0.98rem, 1.3rem);
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+      --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+      --dur-micro: 120ms;
+      --dur-short: 220ms;
+      --dur-long: 420ms;
+      --container: 1440px;
+      --gutter: 64px;
+      --gap-columns: 28px;
+      --section-gap-s: 88px;
+      --section-gap: 112px;
+      --section-gap-l: 140px;
+      --z-base: 1;
+      --z-raised: 10;
+      --z-dropdown: 100;
+      --z-sticky: 200;
+      --z-sticky-nav: 300;
+      --z-modal: 400;
+      --z-toast: 500;
+      --z-tooltip: 600;
+      --color-paper: #ffffff;
+      --color-paper-2: oklch(96.5% 0.02 160);
+      --color-paper-3: oklch(93% 0.036 160);
+      --color-ink: oklch(21% 0.025 170);
+      --color-ink-2: oklch(31% 0.02 170);
+      --color-muted: oklch(49% 0.024 165);
+      --color-rule: oklch(86.5% 0.022 140);
+      --color-rule-2: oklch(70% 0.024 150);
+      --color-accent: oklch(50% 0.13 160);
+      --color-accent-deep: oklch(42% 0.11 162);
+      --color-accent-soft: oklch(88% 0.08 160);
+      --color-accent-ink: oklch(99% 0.006 160);
+      --color-focus: oklch(45% 0.14 160);
+      --p-mon: oklch(85% 0.052 22);
+      --p-tue: oklch(87.5% 0.058 64);
+      --p-wed: oklch(91.5% 0.064 98);
+      --p-thu: oklch(86.5% 0.075 160);
+      --p-fri: oklch(87% 0.048 210);
+      --p-sat: oklch(84% 0.045 270);
+      --p-sun: oklch(84% 0.048 322);
+      --light: oklch(99.4% 0.016 84);
+      --glint: oklch(100% 0 0);
+
+      --font-display: "Schibsted Grotesk", "Heebo", ui-sans-serif, sans-serif;
+      --font-body: "Instrument Sans", "Heebo", ui-sans-serif, sans-serif;
+      --font-outlier: "DM Mono", ui-monospace, monospace;
+      --display-weight: 700;
+      --tracking-display: -0.03em;
+      --radius-card: 14px;
+      --radius-inner: 10px;
+      --radius-pill: 999px;
+      --rule-hair: 1px;
+      --shadow-card: 0 1px 2px oklch(30% 0.03 165 / 0.08), 0 24px 48px -24px oklch(40% 0.08 165 / 0.35);
+      --shadow-lift: 0 1px 1px oklch(30% 0.03 165 / 0.10), 8px 18px 28px -14px oklch(36% 0.06 165 / 0.32), 18px 40px 60px -30px oklch(40% 0.08 165 / 0.30);
+      --header-top-h: 64px;
+      --header-nav-h: 48px;
+      --header-h: 112px;
+      --measure: 62ch;
+    }
+
+
+
+
+
+    /* ── base ───────────────────────────────────────────────── */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      overflow-x: clip;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scrollbar-color: var(--color-muted) var(--color-paper);
+      scroll-padding-top: calc(var(--header-h) + var(--space-md));
+    }
+
+    body {
+      margin: 0;
+      padding-top: var(--header-h);
+      padding-bottom: var(--section-gap-s);
+      background-color: var(--color-paper);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23g)' opacity='0.05'/%3E%3C/svg%3E");
+      color: var(--color-ink-2);
+      font-family: var(--font-body);
+      font-size: var(--text-md);
+      line-height: 1.58;
+      font-weight: 400;
+      -webkit-font-smoothing: antialiased;
+      caret-color: var(--color-accent);
+    }
+
+    ::selection {
+      background: color-mix(in oklab, var(--color-accent) 22%, transparent);
+      color: var(--color-ink);
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--color-focus);
+      outline-offset: 2px;
+    }
+
+    a {
+      color: inherit;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 0.2em;
+      text-decoration-color: var(--color-rule-2);
+      transition: text-decoration-color var(--dur-short) var(--ease-out), color var(--dur-short) var(--ease-out);
+    }
+
+    a:hover {
+      text-decoration-color: var(--color-accent);
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5 {
+      margin: 0;
+      font-family: var(--font-display);
+      font-weight: var(--display-weight);
+      font-synthesis: none;
+      font-variant-numeric: lining-nums tabular-nums;
+      letter-spacing: var(--tracking-display);
+      line-height: 1.08;
+      overflow-wrap: break-word;
+      min-width: 0;
+      text-wrap: balance;
+      color: var(--color-ink);
+    }
+
+    h1 {
+      max-width: 22ch;
+      font-size: var(--text-display);
+    }
+
+    h2 {
+      max-width: 34ch;
+      font-size: var(--text-section);
+    }
+
+    h3 {
+      font-size: var(--text-title);
+      line-height: 1.2;
+      letter-spacing: -0.015em;
+    }
+
+    h4,
+    h5 {
+      /* max-width: 48ch; */
+      font-size: var(--text-lg);
+      font-weight: 500;
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+    }
+
+    p {
+      margin: 0;
+      text-wrap: pretty;
+      overflow-wrap: break-word;
+    }
+
+    .lead {
+      font-family: var(--font-body);
+      font-size: 18px;
+      font-weight: 400;
+      line-height: 30px;
+      max-width: 56ch;
+      color: var(--color-ink-2);
+    }
+
+    strong,
+    b {
+      font-weight: 700;
+      color: var(--color-ink);
+    }
+
+    h1 strong,
+    h2 strong,
+    h3 strong,
+    h4 strong,
+    h5 strong,
+    .metric-value strong {
+      font-weight: inherit;
+      color: inherit;
+    }
+
+    img,
+    video {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    svg {
+      display: block;
+    }
+
+    code {
+      font-family: var(--font-outlier);
+      font-weight: 500;
+      font-size: 0.88em;
+      overflow-wrap: break-word;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .container,
+    .page-body {
+      width: var(--container);
+      max-width: 100%;
+      margin-inline: auto;
+      padding-inline: var(--gutter);
+      box-sizing: border-box;
+    }
+
+    .num,
+    .figure,
+    .metric-value,
+    td.num {
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+
+    /* ── the plastic surface language ───────────────────────── */
+    .plastic {
+      border-radius: var(--radius-card);
+      background:
+        linear-gradient(color-mix(in oklab, var(--glint) 32%, transparent), transparent 18%),
+        color-mix(in oklab, var(--t, var(--p-thu)) 62%, transparent);
+      /* box-shadow: inset 0 1.5px 0 var(--glint), inset 0 -24px 36px -28px color-mix(in oklab, var(--t, var(--p-thu)) 45%, var(--color-ink)); */
+    }
+
+    /* ── chrome: fixed header + 6-chapter spine ─────────────── */
+    .fixed-header {
+      position: fixed;
+      inset-block-start: 0;
+      inset-inline: 0;
+      z-index: var(--z-sticky-nav);
+      background: color-mix(in oklab, var(--color-paper) 94%, transparent);
+      backdrop-filter: blur(10px);
+      border-bottom: var(--rule-hair) solid var(--color-rule);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-lg);
+      min-height: var(--header-top-h);
+      width: var(--container);
+      max-width: 100%;
+      margin-inline: auto;
+      padding-inline: var(--gutter);
+      box-sizing: border-box;
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      min-width: 0;
+    }
+
+    .header-brand-icon {
+      color: var(--color-accent);
+      flex-shrink: 0;
+    }
+
+    .header-title {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: var(--text-md);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: var(--color-ink);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-lg);
+      flex-shrink: 0;
+    }
+
+    .btn-secondary-nav {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+      font-family: var(--font-body);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      color: var(--color-ink-2);
+      text-decoration: none;
+      white-space: nowrap;
+      padding-block: var(--space-xs);
+      border-bottom: 1px solid transparent;
+      transition: color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
+    }
+
+    .btn-secondary-nav:hover {
+      color: var(--color-ink);
+      border-bottom-color: var(--color-accent);
+    }
+
+    .btn-live-app {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+      font-family: var(--font-body);
+      font-size: var(--text-sm);
+      font-weight: 700;
+      color: var(--color-accent-deep);
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      background: color-mix(in oklab, var(--color-accent-soft) 65%, transparent);
+      white-space: nowrap;
+      transition: background var(--dur-short) var(--ease-out);
+    }
+
+    .btn-live-app:hover {
+      background: var(--color-accent-soft);
+    }
+
+    .chapter-nav-bar {
+      border-top: var(--rule-hair) solid var(--color-rule);
+      background: var(--color-paper);
+    }
+
+    .chapter-nav-pills {
+      position: relative;
+      display: flex;
+      align-items: stretch;
+      justify-content: space-between;
+      gap: clamp(12px, 1.5vw, 28px);
+      width: var(--container);
+      max-width: 100%;
+      margin-inline: auto;
+      padding-inline: var(--gutter);
+      box-sizing: border-box;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .chapter-nav-pills::-webkit-scrollbar {
+      display: none;
+    }
+
+    .chap-nav-pill {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+      padding-block: var(--space-sm);
+      font-family: var(--font-body);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      color: var(--color-muted);
+      text-decoration: none;
+      white-space: nowrap;
+      transition: color var(--dur-micro) var(--ease-out);
+    }
+
+    .chap-nav-pill:hover {
+      color: var(--color-ink);
+    }
+
+    .chap-nav-pill.active {
+      color: var(--color-ink);
+      font-weight: 700;
+    }
+
+    .pill-num {
+      font-family: var(--font-outlier);
+      font-size: var(--text-xs);
+      font-variant-numeric: tabular-nums;
+      color: var(--color-muted);
+    }
+
+    .chap-nav-pill.active .pill-num {
+      color: var(--color-accent-deep);
+      font-weight: 700;
+    }
+
+    .nav-underline-indicator {
+      position: absolute;
+      inset-block-end: 0;
+      left: 0;
+      height: 3px;
+      border-radius: var(--radius-pill);
+      background: var(--color-accent);
+      pointer-events: none;
+      z-index: 2;
+      transform: translate3d(0, 0, 0);
+      transition: transform 0.28s cubic-bezier(0.2, 0.9, 0.3, 1.2), width 0.24s cubic-bezier(0.2, 0.9, 0.3, 1.2), opacity 0.2s ease-out;
+      opacity: 0;
+    }
+
+    /* ── controls: moulded plastic ──────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-xs);
+      min-height: 48px;
+      padding-inline: var(--space-lg);
+      border: 0;
+      border-radius: var(--radius-inner);
+      background: var(--color-accent-deep);
+      color: var(--color-accent-ink);
+      font-family: var(--font-body);
+      font-weight: 500;
+      font-size: var(--text-md);
+      line-height: 1;
+      white-space: nowrap;
+      text-decoration: none;
+      cursor: pointer;
+      box-shadow: inset 0 1px 0 color-mix(in oklab, var(--glint) 45%, transparent), 0 0 0 1px var(--color-accent-deep), 0 3px 0 var(--color-accent-deep);
+      transition: transform var(--dur-micro) var(--ease-out), background var(--dur-micro) var(--ease-out);
+    }
+
+    .btn:hover {
+      background: var(--color-accent);
+    }
+
+    .btn:active {
+      transform: translateY(2px);
+    }
+
+    .btn--quiet {
+      background: transparent;
+      color: var(--color-ink);
+      box-shadow: inset 0 1px 0 var(--glint), 0 0 0 1px var(--color-rule-2), 0 3px 0 var(--color-rule-2);
+    }
+
+    .btn--quiet:hover {
+      background: var(--color-paper-2);
+    }
+
+    /* ── hero ───────────────────────────────────────────────── */
+    .hero {
+      position: relative;
+      padding-block: var(--space-xl);
+    }
+
+    .study-split {
+      display: grid;
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      gap: var(--space-2xl);
+      align-items: start;
+    }
+
+    .study-copy .lead {
+      margin-top: var(--space-md);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-md);
+      margin-top: var(--space-lg);
+    }
+
+    .hero-figures {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      margin-top: var(--space-xl);
+      padding: var(--space-lg) var(--space-xl);
+      background: var(--color-ink);
+      color: var(--color-paper);
+      border-radius: var(--radius-card);
+    }
+
+    .metric-card {
+      padding-inline: var(--space-lg);
+      border-inline-start: 1px solid color-mix(in oklab, var(--color-paper) 20%, transparent);
+      min-width: 0;
+    }
+
+    .metric-card:first-child {
+      padding-inline-start: 0;
+      border-inline-start: 0;
+    }
+
+    .metric-kicker {
+      font-size: var(--text-xs);
+      color: color-mix(in oklab, var(--color-paper) 75%, transparent);
+      margin-bottom: 4px;
+      font-weight: 500;
+    }
+
+    .metric-value {
+      font-family: var(--font-display);
+      font-size: clamp(1.75rem, 2.2vw + 0.5rem, 2.6rem);
+      font-weight: 700;
+      line-height: 1.02;
+      letter-spacing: var(--tracking-display);
+      color: var(--color-paper);
+      display: inline-block;
+    }
+
+    .metric-card--lead .metric-value {
+      color: var(--color-accent-soft);
+    }
+
+    .metric-label {
+      margin-top: var(--space-xs);
+      font-family: var(--font-body);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      color: var(--color-accent-soft);
+      line-height: 1.4;
+    }
+
+    /* ── research contract tray ─────────────────────────────── */
+    .contract-band {
+      --t: var(--p-thu);
+      padding: var(--space-lg) var(--space-xl);
+      border-radius: var(--radius-card);
+      background:
+        linear-gradient(color-mix(in oklab, var(--glint) 32%, transparent), transparent 18%),
+        color-mix(in oklab, var(--t) 62%, transparent);
+      box-shadow: inset 0 1.5px 0 var(--glint), inset 0 -24px 36px -28px color-mix(in oklab, var(--t) 45%, var(--color-ink));
+    }
+
+    .contract-head {
+      font-family: var(--font-outlier);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      color: var(--color-ink-2);
+    }
+
+    .contract-grid {
+      display: grid;
+      gap: var(--space-xs);
+      margin-top: var(--space-sm);
+    }
+
+    .contract-card {
+      padding: var(--space-sm) var(--space-md);
+      background: color-mix(in oklab, var(--glint) 55%, var(--color-paper));
+      border-radius: var(--radius-inner);
+      border-bottom: 1px dashed color-mix(in oklab, var(--color-rule-2) 70%, transparent);
+    }
+
+    .contract-label {
+      font-size: var(--text-xs);
+      font-weight: 700;
+      color: var(--color-ink-2);
+    }
+
+    .contract-val {
+      margin-top: 2px;
+      font-family: var(--font-outlier);
+      font-size: var(--text-xs);
+      color: var(--color-ink);
+      line-height: 1.45;
+    }
+
+    /* ── chapters & headings ────────────────────────────────── */
+    .report-section {
+      padding-block: var(--section-gap-s);
+      border-top: var(--rule-hair) solid var(--color-rule);
+      scroll-margin-top: calc(var(--header-h) + var(--space-md));
+    }
+
+    .chapter-head {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+      margin-bottom: var(--space-lg);
+    }
+
+    .chapter-num-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-outlier);
+      font-size: var(--text-xs);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: var(--color-accent-deep);
+      background: color-mix(in oklab, var(--color-accent) 10%, var(--color-paper));
+      border: var(--rule-hair) solid color-mix(in oklab, var(--color-accent) 26%, var(--color-rule));
+      padding: 3px 12px;
+      border-radius: var(--radius-pill);
+      line-height: 1.4;
+    }
+
+    .chapter-title {
+      font-family: var(--font-display);
+      font-size: var(--text-section);
+      font-weight: 700;
+      color: var(--color-ink);
+      line-height: 1.18;
+      margin: 2px 0 0 0;
+      letter-spacing: var(--tracking-display);
+    }
+
+    .chapter-subtitle,
+    .chapter-id {
+      font-family: var(--font-outlier);
+      font-size: 0.92rem;
+      font-weight: 500;
+      color: var(--color-muted);
+      direction: ltr;
+      text-align: right;
+      margin: 0;
+      line-height: 1.45;
+    }
+
+    .section-intro {
+      font-size: var(--text-md);
+      color: var(--color-ink-2);
+      line-height: 1.65;
+      /* max-width: 72ch; */
+    }
+
+    .block-head {
+      font-size: var(--text-title);
+      margin-top: var(--space-xl);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+    }
+
+    .block-sub {
+      font-size: var(--text-sm);
+      color: var(--color-muted);
+      margin-top: var(--space-2xs);
+      line-height: 1.55;
+      max-width: 72ch;
+    }
+
+    /* ── grids, bands & trays ───────────────────────────────── */
+    .bands {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--gap-columns);
+      margin-top: var(--space-lg);
+    }
+
+    .band {
+      padding: var(--space-lg) var(--space-xl);
+      min-width: 0;
+    }
+
+    .band h3 {
+      font-size: var(--text-title);
+    }
+
+    .band p,
+    .band ul {
+      font-size: var(--text-sm);
+      color: var(--color-ink-2);
+      margin-top: var(--space-sm);
+      line-height: 1.6;
+    }
+
+    .band ul {
+      padding-inline-start: var(--space-lg);
+    }
+
+    .band li+li {
+      margin-top: 6px;
+    }
+
+    .tray {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--gap-columns);
+      margin-top: var(--space-lg);
+    }
+
+    .comp {
+      padding: var(--space-lg);
+      min-width: 0;
+    }
+
+    .comp h3 {
+      font-size: var(--text-lg);
+    }
+
+    .comp p {
+      margin-top: var(--space-xs);
+      color: var(--color-ink-2);
+      font-size: var(--text-sm);
+      line-height: 1.58;
+    }
+
+    /* ── KPI figures row ────────────────────────────────────── */
+    .figures {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      margin-top: var(--space-lg);
+      padding: var(--space-lg) var(--space-xl);
+      background: var(--color-paper-2);
+      border-radius: var(--radius-card);
+      border: var(--rule-hair) solid var(--color-rule);
+    }
+
+    .figures>div {
+      padding-inline: var(--space-lg);
+      border-inline-start: var(--rule-hair) solid var(--color-rule-2);
+      min-width: 0;
+    }
+
+    .figures> :first-child {
+      border-inline-start: 0;
+      padding-inline-start: 0;
+    }
+
+    .figures b {
+      display: block;
+      direction: ltr;
+      text-align: right;
+      unicode-bidi: isolate;
+      font-family: var(--font-display);
+      font-weight: 700;
+      letter-spacing: var(--tracking-display);
+      font-size: clamp(1.5rem, 2vw, 2.2rem);
+      line-height: 1.05;
+      color: var(--color-ink);
+    }
+
+    .fig-label {
+      font-size: var(--text-sm);
+      font-weight: 700;
+      color: var(--color-ink);
+      margin-top: var(--space-2xs);
+    }
+
+    .fig-sub {
+      font-size: var(--text-xs);
+      color: var(--color-muted);
+      margin-top: 2px;
+    }
+
+    /* ── Engineering Trade-off Decision Cards ──────────── */
+    .tradeoff-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--gap-columns);
+      margin-top: var(--space-lg);
+    }
+
+    .tradeoff-card {
+      background: var(--color-paper-2);
+      border: var(--rule-hair) solid var(--color-rule);
+      border-radius: var(--radius-card);
+      padding: var(--space-lg) var(--space-xl);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+      min-width: 0;
+      transition: transform var(--dur-short) var(--ease-out),
+        box-shadow var(--dur-short) var(--ease-out),
+        border-color var(--dur-short) var(--ease-out);
+    }
+
+    .tradeoff-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--color-rule-2);
+      box-shadow: var(--shadow-card);
+    }
+
+    .tradeoff-card--hero {
+      grid-column: 1 / -1;
+      background: color-mix(in oklab, var(--color-paper-2) 75%, var(--glint));
+      border-color: color-mix(in oklab, var(--color-accent) 25%, var(--color-rule));
+    }
+
+    .tradeoff-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+    }
+
+    .tradeoff-badge {
+      font-family: var(--font-outlier);
+      font-size: var(--text-xs);
+      font-weight: 700;
+      color: var(--color-ink-2);
+      background: var(--color-paper);
+      border: var(--rule-hair) solid var(--color-rule);
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+    }
+
+    .tradeoff-card h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--color-ink);
+      line-height: 1.35;
+      margin: 0;
+    }
+
+    .tradeoff-hero-split {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+      gap: var(--gap-columns);
+      align-items: stretch;
+    }
+
+    .tradeoff-conflict {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+
+    .tradeoff-row {
+      font-size: var(--text-sm);
+      line-height: 1.6;
+      color: var(--color-ink-2);
+    }
+
+    .tradeoff-row p {
+      margin: 0;
+      display: inline;
+    }
+
+    .axis-tag {
+      font-weight: 700;
+      color: var(--color-ink);
+      margin-inline-end: 6px;
+    }
+
+    .tradeoff-verdict {
+      background: var(--color-paper);
+      border: var(--rule-hair) solid var(--color-rule);
+      border-inline-start: 3.5px solid var(--color-accent);
+      border-radius: var(--radius-inner);
+      padding: var(--space-sm) var(--space-md);
+      margin-top: auto;
+    }
+
+    .tradeoff-hero-split .tradeoff-verdict {
+      margin-top: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: var(--space-md) var(--space-lg);
+    }
+
+    .verdict-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: var(--text-xs);
+      font-weight: 700;
+      color: var(--color-accent-deep);
+      margin-bottom: 6px;
+    }
+
+    .verdict-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      background: var(--color-accent-soft);
+      color: var(--color-accent-deep);
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .tradeoff-verdict p {
+      font-size: var(--text-sm);
+      line-height: 1.6;
+      color: var(--color-ink);
+      margin: 0;
+    }
+
+    /* ── NEW: Visual Data Funnel Strip ──────────────────────── */
+    .funnel-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: var(--space-md);
+      margin-top: var(--space-lg);
+    }
+
+    .funnel-node {
+      padding: var(--space-md) var(--space-lg);
+      border-radius: var(--radius-card);
+      background: color-mix(in oklab, var(--glint) 55%, var(--color-paper));
+      border: var(--rule-hair) solid var(--color-rule);
+      box-shadow: var(--shadow-card);
+      position: relative;
+    }
+
+    .funnel-node--active {
+      background: var(--color-ink);
+      color: var(--color-paper);
+      border-color: var(--color-ink);
+    }
+
+    .funnel-step-tag {
+      font-family: var(--font-outlier);
+      font-size: var(--text-xs);
+      color: var(--color-muted);
+    }
+
+    .funnel-node--active .funnel-step-tag {
+      color: var(--color-accent-soft);
+    }
+
+    .funnel-num {
+      font-family: var(--font-display);
+      font-size: var(--text-2xl);
+      font-weight: 700;
+      color: var(--color-ink);
+      margin-top: 4px;
+      line-height: 1.05;
+    }
+
+    .funnel-node--active .funnel-num {
+      color: var(--color-accent-soft);
+    }
+
+    .funnel-desc {
+      font-size: var(--text-xs);
+      color: var(--color-ink-2);
+      margin-top: var(--space-xs);
+      line-height: 1.45;
+    }
+
+    .funnel-node--active .funnel-desc {
+      color: color-mix(in oklab, var(--color-paper) 88%, transparent);
+    }
+
+    /* ── Feature Catalog & Exponential Decay ────────────────── */
+    .feat-catalog {
+      margin-top: var(--space-xl);
+      display: grid;
+      gap: var(--space-lg);
+    }
+
+    .feat-tier {
+      background: var(--color-paper-2);
+      border: var(--rule-hair) solid var(--color-rule);
+      border-radius: var(--radius-card);
+      padding: var(--space-lg);
+    }
+
+    .feat-tier-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-md);
+      padding-bottom: var(--space-sm);
+      border-bottom: var(--rule-hair) solid var(--color-rule);
+    }
+
+    .feat-tier-title {
+      font-size: var(--text-base);
+      font-weight: 700;
+      color: var(--color-ink);
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .feat-grid-compact {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: var(--space-md);
+    }
+
+    .feat-card-compact {
+      background: var(--color-paper);
+      border: var(--rule-hair) solid var(--color-rule);
+      border-radius: var(--radius-inner);
+      padding: var(--space-md);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: transform var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
+    }
+
+    .feat-card-compact:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-card);
+    }
+
+    .feat-badge {
+      /* font-family: var(--font-outlier); */
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--color-accent-deep);
+      background: var(--color-accent-soft);
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+      align-self: flex-start;
+    }
+
+    .feat-badge--danger {
+      color: #991b1b;
+      background: #fee2e2;
+      border: 1px solid #fecaca;
+    }
+
+    .feat-badge--neutral {
+      color: var(--color-muted);
+      background: var(--color-paper-3);
+    }
+
+    .feat-card-compact code {
+      font-family: var(--font-outlier);
+      font-weight: 700;
+      font-size: var(--text-sm);
+      color: var(--color-ink);
+      direction: ltr;
+      display: inline-block;
+    }
+
+    .feat-card-compact .feat-hebrew-title {
+      font-size: var(--text-xs);
+      font-weight: 600;
+      color: var(--color-ink-2);
+    }
+
+    .feat-card-compact .feat-summary {
+      font-size: var(--text-xs);
+      color: var(--color-ink-2);
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .feat-tier-note {
+      margin-top: var(--space-sm);
+      font-size: var(--text-xs);
+      color: var(--color-muted);
+      line-height: 1.5;
+      padding-top: var(--space-xs);
+      border-top: 1px dashed var(--color-rule);
+    }
+
+    .decay-container {
+      background: var(--color-paper-2);
+      border: var(--rule-hair) solid var(--color-rule);
+      border-radius: var(--radius-card);
+      padding: var(--space-lg);
+      margin-top: var(--space-xl);
+    }
+
+    .decay-weights-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: var(--space-sm);
+      margin: var(--space-md) 0;
+    }
+
+    @media (max-width: 680px) {
+      .decay-weights-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .decay-weight-chip {
+      background: var(--color-paper);
+      border: var(--rule-hair) solid var(--color-rule);
+      border-radius: var(--radius-inner);
+      padding: var(--space-sm) var(--space-md);
+      text-align: center;
+    }
+
+    .decay-weight-year {
+      font-family: var(--font-outlier);
+      font-size: var(--text-xs);
+      color: var(--color-muted);
+    }
+
+    .decay-weight-val {
+      font-family: var(--font-display);
+      font-size: var(--text-xl);
+      font-weight: 700;
+      color: var(--color-accent-deep);
+      margin: 2px 0;
+    }
+
+    .decay-weight-desc {
+      font-size: 11px;
+      color: var(--color-ink-2);
+    }
+
+    /* ── NEW: Progressive Disclosure (<details>) ────────────── */
+    details.deep-dive {
+      margin-top: var(--space-lg);
+      border-radius: var(--radius-card);
+      background: var(--color-paper-2);
+      border: var(--rule-hair) solid var(--color-rule-2);
+      overflow: hidden;
+    }
+
+    details.deep-dive summary {
+      padding: var(--space-md) var(--space-lg);
+      font-family: var(--font-body);
+      font-size: var(--text-sm);
+      font-weight: 700;
+      color: var(--color-ink);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      list-style: none;
+      user-select: none;
+      transition: background var(--dur-micro) var(--ease-out);
+    }
+
+    details.deep-dive summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details.deep-dive summary:hover {
+      background: color-mix(in oklab, var(--color-accent-soft) 35%, transparent);
+    }
+
+    details.deep-dive summary::after {
+      content: "＋ הרחבה";
+      /* font-family: var(--font-outlier); */
+      font-size: var(--text-xs);
+      font-weight: 500;
+      color: var(--color-accent-deep);
+      background: var(--color-accent-soft);
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+      flex-shrink: 0;
+    }
+
+    details.deep-dive[open] summary::after {
+      content: "－ סגירה";
+      background: var(--color-ink);
+      color: var(--color-paper);
+    }
+
+    .deep-dive-body {
+      padding: 0 var(--space-lg) var(--space-lg);
+      border-top: var(--rule-hair) solid var(--color-rule);
+    }
+
+    /* ── NEW: Concise 3-Line Insight Strip ──────────────────── */
+    .insight-strip {
+      margin-top: var(--space-sm);
+      padding: var(--space-md) var(--space-lg);
+      border-radius: var(--radius-inner);
+      background: var(--color-paper-2);
+      border-inline-start: 3px solid var(--color-accent);
+      font-size: var(--text-sm);
+      display: grid;
+      gap: 6px;
+    }
+
+    .insight-line {
+      color: var(--color-ink-2);
+      line-height: 1.5;
+    }
+
+    .insight-line strong {
+      color: var(--color-ink);
+    }
+
+    /* ── formulas, bars, tables & chips ─────────────────────── */
+    .formula {
+      direction: ltr;
+      text-align: left;
+      font-family: var(--font-outlier);
+      font-size: var(--text-sm);
+      background: var(--color-paper);
+      border-radius: var(--radius-inner);
+      padding: var(--space-sm) var(--space-md);
+      margin-top: var(--space-sm);
+      box-shadow: inset 0 0 0 1px var(--color-rule);
+      overflow-x: auto;
+      color: var(--color-ink);
+    }
+
+    .math {
+      background: var(--color-paper);
+      border-radius: var(--radius-inner);
+      padding: var(--space-md) var(--space-lg);
+      margin-top: var(--space-md);
+      overflow-x: auto;
+      font-size: var(--text-sm);
+      color: var(--color-ink-2);
+      line-height: 1.65;
+    }
+
+    .bars {
+      margin-top: var(--space-lg);
+      display: grid;
+      gap: var(--space-sm);
+      background: var(--color-paper-2);
+      padding: var(--space-lg) var(--space-xl);
+      border-radius: var(--radius-card);
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 12.5rem minmax(0, 1fr) 4.5rem;
+      align-items: center;
+      gap: var(--space-md);
+      font-size: var(--text-sm);
+    }
+
+    .bar-label {
+      font-family: var(--font-outlier);
+      color: var(--color-ink);
+      direction: ltr;
+      text-align: start;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .bar-track {
+      background: var(--color-paper-3);
+      height: 14px;
+      border-radius: var(--radius-pill);
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      width: var(--w, 0%);
+      background: var(--color-accent);
+      border-radius: var(--radius-pill);
+    }
+
+    .bar-val {
+      font-family: var(--font-outlier);
+      font-variant-numeric: tabular-nums;
+      font-weight: 500;
+      color: var(--color-accent-deep);
+      direction: ltr;
+      text-align: end;
+      white-space: nowrap;
+    }
+
+    .tbl-wrap {
+      overflow-x: auto;
+      margin-top: var(--space-md);
+    }
+
+    .tbl {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--text-sm);
+    }
+
+    .tbl th {
+      font-weight: 700;
+      color: var(--color-ink);
+      text-align: start;
+      padding: var(--space-sm) var(--space-md);
+      border-bottom: 2px solid var(--color-ink);
+      white-space: nowrap;
+    }
+
+    .tbl td {
+      padding: var(--space-sm) var(--space-md);
+      border-bottom: var(--rule-hair) solid var(--color-rule);
+      color: var(--color-ink-2);
+      vertical-align: top;
+    }
+
+    .tbl tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .tbl .c {
+      text-align: center;
+    }
+
+    .tbl .num {
+      font-family: var(--font-outlier);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      color: var(--color-ink);
+    }
+
+    .row-peak td {
+      background: var(--color-ink);
+      color: var(--color-paper);
+      font-weight: 700;
+    }
+
+    .row-peak .num {
+      color: var(--color-paper);
+    }
+
+    .row-peak .chip-mint {
+      color: var(--color-ink);
+    }
+
+    .row-hi td {
+      background: var(--color-paper-2);
+    }
+
+    .row-win td {
+      background: var(--color-accent-soft);
+    }
+
+    .chip {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: var(--radius-pill);
+      font-size: var(--text-xs);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .chip-ink {
+      background: var(--color-ink);
+      color: var(--color-paper);
+    }
+
+    .chip-mint {
+      background: var(--color-accent-soft);
+      color: var(--color-accent-deep);
+    }
+
+    .chip-grey {
+      background: var(--color-paper-2);
+      color: var(--color-muted);
+    }
+
+    .chip-line {
+      border: var(--rule-hair) solid var(--color-rule-2);
+      color: var(--color-muted);
+      font-family: var(--font-outlier);
+    }
+
+    .risk-mid {
+      color: var(--color-muted);
+      font-size: var(--text-xs);
+      font-weight: 500;
+    }
+
+    .note {
+      background: var(--color-paper-2);
+      border-radius: var(--radius-inner);
+      padding: var(--space-md) var(--space-lg);
+      margin-top: var(--space-lg);
+      font-size: var(--text-sm);
+      color: var(--color-ink-2);
+      line-height: 1.65;
+    }
+
+    .note--mint {
+      background: var(--color-accent-soft);
+      color: var(--color-ink);
+    }
+
+    .note-head {
+      font-size: var(--text-md);
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+
+    /* ── Interactive Diagram Viewer ─────────────────────────── */
+    .diagram-viewer-wrap {
+      position: relative;
+      background: var(--color-ink);
+      border: var(--rule-hair) solid var(--color-rule-2);
+      border-radius: var(--radius-card);
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+      margin-top: var(--space-lg);
+      user-select: none;
+    }
+
+    .diagram-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-sm) var(--space-lg);
+      background: color-mix(in oklab, var(--color-ink) 92%, black);
+      border-bottom: 1px solid color-mix(in oklab, var(--color-paper) 14%, transparent);
+      color: var(--color-paper);
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      z-index: 10;
+      position: relative;
+    }
+
+    .diagram-toolbar-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: var(--text-sm);
+      color: var(--color-accent-soft);
+    }
+
+    .diagram-toolbar-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      flex-wrap: wrap;
+    }
+
+    .diagram-tool-btn {
+      background: color-mix(in oklab, var(--color-paper) 10%, transparent);
+      border: 1px solid color-mix(in oklab, var(--color-paper) 20%, transparent);
+      color: var(--color-paper);
+      border-radius: var(--radius-inner);
+      padding: 5px 12px;
+      font-size: var(--text-xs);
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .diagram-tool-btn:hover {
+      background: color-mix(in oklab, var(--color-paper) 20%, transparent);
+    }
+
+    .diagram-zoom-badge {
+      background: color-mix(in oklab, var(--color-accent) 25%, transparent);
+      color: var(--color-accent-soft);
+      border: 1px solid color-mix(in oklab, var(--color-accent-soft) 40%, transparent);
+      padding: 4px 10px;
+      border-radius: var(--radius-inner);
+      font-family: var(--font-outlier);
+      font-size: var(--text-xs);
+      min-width: 58px;
+      text-align: center;
+    }
+
+    .diagram-viewport {
+      position: relative;
+      width: 100%;
+      height: 620px;
+      background: radial-gradient(circle at 50% 40%, oklch(24% 0.025 170) 0%, oklch(15% 0.02 170) 100%);
+      overflow: hidden;
+      cursor: grab;
+      direction: ltr;
+    }
+
+    .diagram-viewport.is-dragging {
+      cursor: grabbing;
+    }
+
+    .diagram-image-wrapper {
+      position: absolute;
+      left: 0;
+      top: 0;
+      transform-origin: 0 0;
+      will-change: transform;
+    }
+
+    .diagram-image-wrapper img {
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-drag: none;
+      max-width: none !important;
+    }
+
+    .diagram-caption {
+      background: color-mix(in oklab, var(--color-ink) 94%, black);
+      color: color-mix(in oklab, var(--color-paper) 82%, transparent);
+      border-top: 1px solid color-mix(in oklab, var(--color-paper) 14%, transparent);
+      padding: var(--space-sm) var(--space-lg);
+      font-size: var(--text-xs);
+      line-height: 1.5;
+    }
+
+    .diagram-caption strong {
+      color: var(--color-accent-soft);
+    }
+
+    /* ── Charts, EDA Tabs, SHAP & Simulator ─────────────────── */
+    .chart {
+      margin: var(--space-lg) 0 0;
+    }
+
+    .charts-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--gap-columns);
+      margin-top: var(--space-lg);
+    }
+
+    .chart-frame {
+      position: relative;
+      border-radius: var(--radius-card);
+      overflow: hidden;
+      cursor: zoom-in;
+      background: var(--color-paper-2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      max-height: 28rem;
+      box-shadow: var(--shadow-card);
+      transition: transform var(--dur-short) var(--ease-out);
+    }
+
+    .chart-frame:hover {
+      transform: translateY(-2px);
+    }
+
+    .chart-frame::after {
+      content: "🔍 לחץ להגדלה";
+      position: absolute;
+      inset-block-end: var(--space-xs);
+      inset-inline-start: var(--space-xs);
+      background: color-mix(in oklab, var(--color-ink) 82%, transparent);
+      color: var(--color-paper);
+      font-size: var(--text-xs);
+      font-weight: 500;
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+      opacity: 0.78;
+      pointer-events: none;
+    }
+
+    .chart figcaption {
+      margin-top: var(--space-xs);
+      font-size: var(--text-xs);
+      color: var(--color-muted);
+      line-height: 1.45;
+    }
+
+    .chart figcaption strong {
+      color: var(--color-ink-2);
+    }
+
+    .eda-filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-xs);
+      margin-top: var(--space-lg);
+      padding: var(--space-xs);
+      background: var(--color-paper-2);
+      border-radius: var(--radius-card);
+      border: var(--rule-hair) solid var(--color-rule);
+    }
+
+    .eda-tab-btn {
+      padding: var(--space-xs) var(--space-md);
+      border: 0;
+      border-radius: var(--radius-inner);
+      background: transparent;
+      color: var(--color-ink-2);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .eda-tab-btn.active {
+      background: var(--color-ink);
+      color: var(--color-paper);
+      font-weight: 700;
+    }
+
+    .case-sim-wrap {
+      margin-top: var(--space-lg);
+      padding: var(--space-xl);
+      border-radius: var(--radius-card);
+      background: var(--color-paper-2);
+      border: var(--rule-hair) solid var(--color-rule-2);
+      box-shadow: var(--shadow-card);
+    }
+
+    .case-sim-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: var(--space-xs);
+      margin-top: var(--space-md);
+    }
+
+    .case-sim-btn {
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--radius-inner);
+      border: var(--rule-hair) solid var(--color-rule-2);
+      background: var(--color-paper);
+      color: var(--color-ink);
+      cursor: pointer;
+      text-align: right;
+      font-size: var(--text-xs);
+      font-weight: 700;
+      transition: all var(--dur-micro) var(--ease-out);
+    }
+
+    .case-sim-btn:hover {
+      border-color: var(--color-accent);
+    }
+
+    .case-sim-btn.active {
+      background: var(--color-ink);
+      color: var(--color-paper);
+      border-color: var(--color-ink);
+    }
+
+    .case-sim-body {
+      display: grid;
+      grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+      gap: var(--space-xl);
+      margin-top: var(--space-lg);
+      padding-top: var(--space-lg);
+      border-top: var(--rule-hair) solid var(--color-rule);
+      align-items: center;
+    }
+
+    .case-sim-score-box {
+      padding: var(--space-lg);
+      border-radius: var(--radius-card);
+      background: var(--color-ink);
+      color: var(--color-paper);
+      text-align: center;
+    }
+
+    .case-sim-score-val {
+      font-family: var(--font-display);
+      font-size: clamp(2.4rem, 3.5vw, 3.4rem);
+      font-weight: 700;
+      line-height: 1;
+      color: var(--color-accent-soft);
+      margin-block: 6px;
+    }
+
+    .case-sim-formula {
+      margin-top: 8px;
+      font-family: var(--font-outlier);
+      font-size: var(--text-xs);
+      color: color-mix(in oklab, var(--color-paper) 80%, transparent);
+      direction: ltr;
+    }
+
+    pre {
+      background: var(--color-ink);
+      color: var(--color-paper);
+      padding: var(--space-md) var(--space-lg);
+      border-radius: var(--radius-inner);
+      overflow-x: auto;
+      font-family: var(--font-outlier);
+      font-size: var(--text-xs);
+      line-height: 1.55;
+      margin-top: var(--space-sm);
+      direction: ltr;
+      text-align: left;
+    }
+
+    /* ── Agent Transition Card & Layer ─────────────────────── */
+    .agent-cta-card {
+      background: color-mix(in oklab, var(--color-accent) 8%, var(--color-paper));
+      border: var(--rule-hair) solid color-mix(in oklab, var(--color-accent) 30%, var(--color-rule));
+      border-inline-start: 4px solid var(--color-accent);
+      border-radius: var(--radius-card);
+      padding: var(--space-md) var(--space-xl);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--space-md);
+      margin-top: var(--space-md);
+      box-shadow: 0 2px 10px color-mix(in oklab, var(--color-accent) 10%, transparent);
+    }
+
+    .agent-cta-copy {
+      flex: 1 1 360px;
+    }
+
+    .agent-cta-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--color-accent-deep);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .agent-cta-desc {
+      font-size: var(--text-sm);
+      color: var(--color-ink-2);
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    .agent-cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--color-accent);
+      color: var(--color-paper);
+      font-family: var(--font-body);
+      font-size: var(--text-sm);
+      font-weight: 700;
+      text-decoration: none;
+      padding: 10px 22px;
+      border-radius: var(--radius-inner);
+      white-space: nowrap;
+      box-shadow: 0 2px 6px color-mix(in oklab, var(--color-accent) 35%, transparent);
+      transition: background var(--dur-short) var(--ease-out),
+        transform var(--dur-short) var(--ease-out);
+    }
+
+    .agent-cta-btn:hover {
+      background: var(--color-accent-deep);
+      color: var(--color-paper);
+      transform: translateY(-1px);
+    }
+
+    .colophon {
+      width: var(--container);
+      max-width: 100%;
+      margin-inline: auto;
+      padding-inline: var(--gutter);
+      margin-top: var(--section-gap-s);
+      padding-top: var(--space-xl);
+      border-top: var(--rule-hair) solid var(--color-rule);
+      color: var(--color-muted);
+      font-size: var(--text-sm);
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm) var(--space-xl);
+      align-items: baseline;
+      justify-content: space-between;
+    }
+
+    .colophon .c-word {
+      font-family: var(--font-display);
+      font-weight: 700;
+      color: var(--color-ink);
+      font-size: var(--text-md);
+    }
+
+    .colophon nav {
+      display: flex;
+      gap: var(--space-lg);
+      flex-wrap: wrap;
+    }
+
+    .katex {
+      direction: ltr;
+      unicode-bidi: isolate;
+      display: inline-block;
+    }
+
+    .katex-display {
+      direction: ltr;
+      text-align: center;
+      overflow-x: auto;
+      margin-block: var(--space-sm);
+    }
+
+    .katex-mathml {
+      display: none !important;
+    }
+
+    .lightbox-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: color-mix(in oklab, var(--color-ink) 85%, transparent);
+      backdrop-filter: blur(8px);
+      z-index: var(--z-modal);
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-lg);
+    }
+
+    .lightbox-modal.active {
+      display: flex;
+    }
+
+    .lightbox-content {
+      position: relative;
+      max-width: 90vw;
+      max-height: 90vh;
+    }
+
+    .lightbox-content img {
+      max-width: 100%;
+      max-height: 85vh;
+      border-radius: var(--radius-card);
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: -40px;
+      right: 0;
+      background: none;
+      border: none;
+      color: var(--glint);
+      font-size: 2rem;
+      cursor: pointer;
+    }
+
+    .btn-top {
+      position: fixed;
+      bottom: var(--space-lg);
+      left: var(--space-lg);
+      width: 44px;
+      height: 44px;
+      background: var(--color-ink);
+      color: var(--color-paper);
+      border-radius: var(--radius-pill);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      box-shadow: var(--shadow-lift);
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--dur-short) var(--ease-out), transform var(--dur-short) var(--ease-out);
+      z-index: var(--z-toast);
+    }
+
+    .btn-top.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* ── responsive ─────────────────────────────────────────── */
+    @media (max-width: 60rem) {
+      :root {
+        --gutter: 24px;
+        --section-gap-s: 64px;
+      }
+
+      .study-split,
+      .bands,
+      .tray,
+      .tradeoff-grid,
+      .tradeoff-hero-split,
+      .charts-2,
+      .case-sim-body {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .hero-figures,
+      .figures,
+      .funnel-strip,
+      .case-sim-tabs {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        row-gap: var(--space-md);
+      }
+
+      .hero-figures> :nth-child(2n + 1),
+      .figures> :nth-child(2n + 1) {
+        padding-inline-start: 0;
+        border-inline-start: 0;
+      }
+    }
+
+    @media (max-width: 40rem) {
+      :root {
+        --gutter: 16px;
+      }
+
+      .hero-figures,
+      .figures,
+      .funnel-strip,
+      .case-sim-tabs {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .metric-card,
+      .figures>div {
+        padding-inline: 0;
+        border-inline-start: 0;
+        border-top: var(--rule-hair) solid var(--color-rule);
+        padding-top: var(--space-sm);
+      }
+
+      .hero-figures> :first-child,
+      .figures> :first-child {
+        border-top: 0;
+        padding-top: 0;
+      }
+
+      .bar-row {
+        grid-template-columns: 1fr auto;
+      }
+
+      .bar-row .bar-track {
+        grid-column: 1 / -1;
+        order: 3;
+      }
+    }
+
+    /* ── Chapter 02 Redesigned Reader-First Layout ──────────── */
+    .ch2-step-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      margin-top: var(--space-xl);
+      margin-bottom: var(--space-md);
+      padding-bottom: var(--space-xs);
+      border-bottom: var(--rule-hair) solid var(--color-rule);
+    }
+
+    .ch2-step-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .ch2-step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-outlier);
+      font-size: var(--text-xs);
+      font-weight: 700;
+      color: var(--color-paper);
+      background: var(--color-ink);
+      padding: 3px 9px;
+      border-radius: var(--radius-pill);
+      flex-shrink: 0;
+    }
+
+    .ch2-step-title {
+      font-size: var(--text-title);
+      color: var(--color-ink);
+      margin: 0;
+    }
+
+    .ch2-funnel-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: var(--space-md);
+      margin-top: var(--space-md);
+    }
+
+    .ch2-funnel-card {
+      position: relative;
+      padding: var(--space-lg);
+      border-radius: var(--radius-card);
+      background: color-mix(in oklab, var(--glint) 65%, var(--color-paper));
+      border: var(--rule-hair) solid var(--color-rule);
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .ch2-funnel-card:not(:last-child)::after {
+      content: "←";
+      position: absolute;
+      inset-inline-end: -15px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--color-paper);
+      border: var(--rule-hair) solid var(--color-rule-2);
+      color: var(--color-accent-deep);
+      font-family: var(--font-outlier);
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 3;
+      box-shadow: 0 2px 6px oklch(25% 0.02 165 / 0.08);
+    }
+
+    .ch2-funnel-card--final {
+      background: var(--color-ink);
+      color: var(--color-paper);
+      border-color: var(--color-ink);
+    }
+
+    .ch2-funnel-kicker {
+      font-family: var(--font-outlier);
+      font-size: var(--text-xs);
+      font-weight: 700;
+      color: var(--color-accent-deep);
+    }
+
+    .ch2-funnel-card--final .ch2-funnel-kicker {
+      color: var(--color-accent-soft);
+    }
+
+    .ch2-funnel-number {
+      font-family: var(--font-display);
+      font-size: clamp(1.45rem, 1.9vw, 2rem);
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: var(--tracking-display);
+      color: var(--color-ink);
+      direction: ltr;
+      text-align: right;
+      unicode-bidi: isolate;
+    }
+
+    .ch2-funnel-card--final .ch2-funnel-number {
+      color: var(--color-paper);
+    }
+
+    .ch2-funnel-title {
+      font-size: var(--text-sm);
+      font-weight: 700;
+      color: var(--color-ink);
+    }
+
+    .ch2-funnel-card--final .ch2-funnel-title {
+      color: var(--color-accent-soft);
+    }
+
+    .ch2-funnel-text {
+      font-size: var(--text-xs);
+      color: var(--color-ink-2);
+      line-height: 1.52;
+      margin: 0;
+    }
+
+    .ch2-funnel-card--final .ch2-funnel-text {
+      color: color-mix(in oklab, var(--color-paper) 86%, transparent);
+    }
+
+    .ch2-diag-split {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--gap-columns);
+      margin-top: var(--space-md);
+      align-items: stretch;
+    }
+
+    .ch2-panel-card {
+      background: var(--color-paper-2);
+      border: var(--rule-hair) solid var(--color-rule);
+      border-radius: var(--radius-card);
+      padding: var(--space-lg) var(--space-xl);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+
+    .ch2-panel-card--accent {
+      background: color-mix(in oklab, var(--p-thu) 38%, var(--color-paper));
+      border-color: color-mix(in oklab, var(--color-accent) 30%, var(--color-rule));
+    }
+
+    .ch2-mini-stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-sm);
+    }
+
+    .ch2-mini-stat {
+      background: var(--color-paper);
+      border: var(--rule-hair) solid var(--color-rule);
+      border-radius: var(--radius-inner);
+      padding: var(--space-sm) var(--space-md);
+    }
+
+    .ch2-mini-stat-val {
+      font-family: var(--font-display);
+      font-size: var(--text-xl);
+      font-weight: 700;
+      color: var(--color-ink);
+      direction: ltr;
+      text-align: right;
+      unicode-bidi: isolate;
+      line-height: 1.1;
+    }
+
+    .ch2-mini-stat-lbl {
+      font-size: var(--text-xs);
+      font-weight: 700;
+      color: var(--color-ink);
+      margin-top: 3px;
+    }
+
+    .ch2-mini-stat-sub {
+      font-size: 11.5px;
+      color: var(--color-muted);
+      margin-top: 2px;
+      line-height: 1.4;
+    }
+
+    .ch2-offset-steps {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-xs);
+    }
+
+    .ch2-offset-box {
+      background: var(--color-paper);
+      border: var(--rule-hair) solid var(--color-rule);
+      border-radius: var(--radius-inner);
+      padding: var(--space-sm);
+      text-align: center;
+    }
+
+    .ch2-offset-box--highlight {
+      background: var(--color-ink);
+      border-color: var(--color-ink);
+      color: var(--color-paper);
+    }
+
+    .ch2-offset-kicker {
+      font-size: 11px;
+      color: var(--color-muted);
+      font-weight: 600;
+    }
+
+    .ch2-offset-box--highlight .ch2-offset-kicker {
+      color: var(--color-accent-soft);
+    }
+
+    .ch2-offset-val {
+      font-family: var(--font-display);
+      font-size: var(--text-lg);
+      font-weight: 700;
+      color: var(--color-accent-deep);
+      direction: ltr;
+      unicode-bidi: isolate;
+      margin: 2px 0;
+    }
+
+    .ch2-offset-box--highlight .ch2-offset-val {
+      color: var(--color-paper);
+    }
+
+    .ch2-offset-sub {
+      font-size: 11px;
+      color: var(--color-ink-2);
+      line-height: 1.35;
+    }
+
+    .ch2-offset-box--highlight .ch2-offset-sub {
+      color: color-mix(in oklab, var(--color-paper) 82%, transparent);
+    }
+
+    .ch2-takeaway {
+      margin-top: auto;
+      padding: var(--space-sm) var(--space-md);
+      background: var(--color-paper);
+      border-radius: var(--radius-inner);
+      border-inline-start: 3px solid var(--color-accent);
+      font-size: var(--text-xs);
+      color: var(--color-ink-2);
+      line-height: 1.55;
+    }
+
+    .ch2-guard-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-md);
+      margin-top: var(--space-md);
+    }
+
+    .ch2-guard-card {
+      background: var(--color-paper-2);
+      border: var(--rule-hair) solid var(--color-rule);
+      border-radius: var(--radius-card);
+      padding: var(--space-md) var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .ch2-guard-card--strict {
+      background: #fffafa;
+      border-color: #fecaca;
+    }
+
+    @media (max-width: 980px) {
+      .ch2-funnel-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .ch2-funnel-card::after {
+        display: none !important;
+      }
+
+      .ch2-diag-split,
+      .ch2-guard-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+
+      .ch2-funnel-grid,
+      .ch2-mini-stats,
+      .ch2-offset-steps {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    /* ── Chapter 03 Compact Dual-Track Exposure Bars ────────── */
+    .bars--compact {
+      margin-top: 0;
+      padding: var(--space-md) var(--space-lg);
+      background: var(--color-paper);
+      border: var(--rule-hair) solid var(--color-rule);
+      border-radius: var(--radius-inner);
+      gap: 10px;
+    }
+
+    .bars--compact .bar-row {
+      grid-template-columns: 10.5rem minmax(0, 1fr) 4.2rem;
+      gap: var(--space-sm);
+      font-size: var(--text-xs);
+    }
+
+    .bar-fill--warn {
+      background: oklch(58% 0.16 32);
+    }
+
+    .bar-fill--avg {
+      background: var(--color-ink);
+      opacity: 0.42;
+    }
+
+    .bar-fill--low {
+      background: var(--color-accent);
+      opacity: 0.65;
+    }
+
+    @media (max-width: 640px) {
+      .bars--compact .bar-row {
+        grid-template-columns: 1fr auto;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Fixed Header + 7-Chapter Spine -->
+  <header class="fixed-header">
+    <div class="header-inner">
+      <div class="header-brand">
+        <div aria-hidden="true" class="header-brand-icon" style="transform: scaleX(-1);">
+          <svg fill="none" height="22" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+            stroke-width="2" viewBox="0 0 24 24" width="22">
+            <path
+              d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 10.7 2 11 2 11.3V16c0 .6.4 1 1 1h2">
+            </path>
+            <circle cx="7" cy="17" r="2"></circle>
+            <path d="M9 17h6"></path>
+            <circle cx="17" cy="17" r="2"></circle>
+          </svg>
+        </div>
+        <p class="header-title">מערכת לחיזוי ואפיון סיכוני גניבות רכב בישראל</p>
+      </div>
+      <div class="header-actions">
+        <a class="btn-live-app" href="index.html" title="מעבר לממשק החיפוש האינטראקטיבי">
+          <span>לבדיקת סיכון גניבת רכב</span>
+        </a>
+        <a class="btn-secondary-nav" href="https://colab.research.google.com/" target="_blank"
+          rel="noopener noreferrer">
+          <span>פתיחה ב-Colab</span>
+        </a>
+        <a class="btn-secondary-nav" href="agent_report.html">
+          <span>דוח סוכן AI</span>
+        </a>
+      </div>
+    </div>
+
+    <nav class="chapter-nav-bar" aria-label="ניווט בפרקי הליבה">
+      <div class="chapter-nav-pills" id="chapterNavPills">
+        <div class="nav-underline-indicator" id="navUnderlineIndicator" aria-hidden="true"></div>
+        <a class="chap-nav-pill active" href="#ch1"><span class="pill-num">01</span> ארכיטקטורה</a>
+        <a class="chap-nav-pill" href="#ch2"><span class="pill-num">02</span> נתונים ואי-זליגה</a>
+        <a class="chap-nav-pill" href="#ch3"><span class="pill-num">03</span> חשיפת למ״ס</a>
+        <a class="chap-nav-pill" href="#ch4"><span class="pill-num">04</span> ניתוח EDA</a>
+        <a class="chap-nav-pill" href="#ch5"><span class="pill-num">05</span> התלבטויות הנדסיות</a>
+        <a class="chap-nav-pill" href="#ch6"><span class="pill-num">06</span> ביצועי מודלים</a>
+        <a class="chap-nav-pill" href="#ch7"><span class="pill-num">07</span> מוצר וסוכן AI</a>
+        <a class="chap-nav-pill" href="#ch8"><span class="pill-num">08</span> מגבלות וסיכום</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container page-body">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="study-split">
+        <div class="study-copy">
+          <h1>מערכת לחיזוי ואפיון<br>סיכוני גניבות רכב בישראל</h1>
+          <p class="lead">
+            בישראל נגנבים מדי שנה כ-20,000 כלי רכב, ומעל 94% מהתיקים נסגרים ללא פענוח ("עבריין לא נודע").
+            הפרויקט מצליב את נתוני משטרת ישראל עם מצבת הרכבים של הלמ״ס (2017–2025), ובונה מודל החוזה את היקף הגניבות
+            הצפוי בשנה הבאה לפי דגם, שנתון ויישוב. לצד המודל פותחה שכבת מוצר נפרדת הכוללת מדד סיכון יחסי וסוכן AI
+            להשוואת חלופות רכב, מיגון וביטוח.
+          </p>
+          <div class="hero-actions">
+            <a class="btn" href="index.html">פתיחת סימולטור הסיכון</a>
+            <a class="btn btn--quiet" href="agent_report.html">ארכיטקטורת סוכן ה-AI</a>
+          </div>
+        </div>
+
+        <section class="contract-band" aria-labelledby="contract-head">
+          <h2 class="contract-head" id="contract-head">המחקר והגדרת גבולות הגזרה (CarTheftRisk_final)</h2>
+          <div class="contract-grid">
+            <div class="contract-card">
+              <div class="contract-label">יחידת הניתוח (Unit of Analysis)</div>
+              <div class="contract-val">Maker × Model × Model Year × City × Event Year</div>
+            </div>
+            <div class="contract-card">
+              <div class="contract-label">קוהורט טרום-חיתוך וכיול חשיפה</div>
+              <div class="contract-val">Train 2024: n=17,389 (12m) | Blind Test 2025: n=16,853 (9m, Offset 0.75)</div>
+            </div>
+            <div class="contract-card">
+              <div class="contract-label">שני מסלולי ML + שכבת הדגמה מוצרית</div>
+              <div class="contract-val">Track 1: Poisson Count | Track 2: Score 0–100 | UI: אינדקס היוריסטי 50/45/5
+              </div>
+            </div>
+            <div class="contract-card">
+              <div class="contract-label">גבול גזרה מתודולוגי (מה המערכת אינה מתיימרת לעשות)</div>
+              <div class="contract-val">אינה מנבאת אם רכב פרטי בודד ייגנב הלילה ואינה מהווה תעריף ביטוחי מסחרי, אלא
+                דירוג סיכון קבוצתי יחסי מבוקר</div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- 4 Clean, Single-Number KPIs -->
+      <div class="hero-figures">
+        <div class="metric-card">
+          <div class="metric-kicker">אירועי גניבה מאומתים</div>
+          <div class="metric-value" dir="ltr">105,711</div>
+          <div class="metric-label">במאגר הדגמים הרב-שנתי (2017–2025), אפס נתונים סינתטיים</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-kicker">מבחן עיוור טרום-חיתוך (2025)</div>
+          <div class="metric-value" dir="ltr">16,853</div>
+          <div class="metric-label">צירופי רכב-עיר במבחן (מול 17,389 באימון 2024), אפס זליגה</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-kicker">שיעור גניבה ארצי נצפה</div>
+          <div class="metric-value" dir="ltr">3.51‰</div>
+          <div class="metric-label">ממוצע ארצי ל-1,000 רכבים פרטיים (ומדד פרוקסי 37.0‰ בקורולה)</div>
+        </div>
+        <div class="metric-card metric-card--lead">
+          <div class="metric-kicker">כושר הפרדה בעשירון העליון</div>
+          <div class="metric-value" dir="ltr">58.18%</div>
+          <div class="metric-label">מהגניבות במבחן נלכדות בעשירון 10 (Lift 109.4x, ρ = 0.4089)</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         CHAPTER 01: הבעיה העסקית וארכיטקטורת שתי השכבות
+         ===================================================================== -->
+    <section class="report-section" id="ch1">
+      <header class="chapter-head">
+        <div class="chapter-num-badge">פרק 01</div>
+        <h2 class="chapter-title">הבעיה העסקית וארכיטקטורת שתי השכבות</h2>
+        <p class="chapter-subtitle">Problem Statement &amp; Two-Layer Architecture</p>
+      </header>
+      <p class="section-intro">
+        ענף ביטוחי הרכב בישראל מתמודד עם ריכוזיות גניבות חריפה בדגמים מבוקשים לפירוק חלפים לצד שיעורי פענוח נמוכים.
+        כדי להימנע מעירוב מתודולוגי בין <strong>חיזוי סטטיסטי אמפירי</strong> לבין <strong>ממשק מוצרי להערכת
+          סיכון</strong>,
+        המערכת מפרידה באופן קשיח בין שכבת למידת המכונה (המאומנת ונבחנת על ספירות אמת תחת חיתוך זמן עיוור) לבין שכבת
+        התמיכה בהחלטות בדשבורד, המציגה אינדקס סיכון יחסי אחיד וסימולציית המלצות מיגון.
+      </p>
+
+      <!-- 3-Engine Clarity Blueprint -->
+      <div class="tray">
+        <div class="comp plastic" style="--t: var(--p-thu);">
+          <span class="chip chip-mint" style="margin-bottom: 8px;">מנוע 1 · ML Track 1 (Count + Offset)</span>
+          <h3>XGBoost Poisson</h3>
+          <p>
+            <strong>מה הוא חוזה:</strong> תוחלת מספר הגניבות <span dir="ltr">$(\hat{\mu}_{i,T})$</span> לכל צירוף
+            יצרן-דגם-שנתון-עיר, מכוילת ל-9 חודשי 2025 (<code>Offset log(0.75)</code>).<br />
+            <strong>תוצאה מובילה:</strong> <code>RMSE = 1.2898</code>, <code>R² = +0.1984</code>, צמצום שגיאת הזנב
+            ב-<strong>41.1%</strong> מול החציון וריכוז <strong>58.18%</strong> מהגניבות בעשירון 10.<br />
+            <strong>תפקיד:</strong> מודל הספירה המחקרי הראשי לדירוג מוקדים.
+          </p>
+        </div>
+        <div class="comp plastic" style="--t: var(--p-fri);">
+          <span class="chip chip-mint" style="margin-bottom: 8px;">מנוע 2 · ML Track 2 (Continuous)</span>
+          <h3>Random Forest (0–100)</h3>
+          <p>
+            <strong>מה הוא חוזה:</strong> ציון עצימות רציף מכויל לוגריתמית (0–100) ביחס לתקרת האימון של 2024 בלבד
+            (<code>TRAIN_MAX_LOG = 4.25</code>).<br />
+            <strong>תוצאה מובילה:</strong> מקדם קביעה <strong>$R^2 = +0.3157$</strong> ו-<code>MAE = 5.60</code> נק׳ ללא
+            זליגת סקאלה משנת המבחן.<br />
+            <strong>תפקיד:</strong> אימות יציבות עצי ההחלטה בסקאלה לוגריתמית ממותנת-אפסים.
+          </p>
+        </div>
+        <div class="comp plastic" style="--t: var(--p-sat);">
+          <span class="chip chip-ink" style="margin-bottom: 8px;">מנוע 3 · Product Decision Prototype</span>
+          <h3>אינדקס מוצרי (50/45/5)</h3>
+          <p>
+            <strong>מה הוא מחשב:</strong> מדד סיכון יחסי שקוף לממשק המשתמש מנתוני טרום-2025:
+            <code>0.50×Model + 0.45×City + 0.05×Macro(50)</code> (ללא צירי מילוט).<br />
+            <strong>תוצאה מובילה:</strong> כיסוי מלא ב-$O(1)$ גם לדגמים ויישובים דלילים (<code>Cold-Start</code>).<br />
+            <strong>תפקיד:</strong> תצוגת מד הסיכון בדשבורד ומנוע המלצות מיגון להדגמה מוצרית.
+          </p>
+        </div>
+      </div>
+
+      <!-- Interactive Two-Layer Architecture Diagram Viewer -->
+      <div class="diagram-viewer-wrap" id="architecture-viewer">
+        <div class="diagram-toolbar" dir="rtl">
+          <div class="diagram-toolbar-title">
+            <span>דיאגרמת ארכיטקטורת שתי השכבות והתהליך (Interactive Pan &amp; Zoom)</span>
+          </div>
+          <div class="diagram-toolbar-actions">
+            <button class="diagram-tool-btn" id="arch-diagram-zoom-in" title="zoom in [+]" type="button"><span>+</span>
+              zoom in</button>
+            <button class="diagram-tool-btn" id="arch-diagram-zoom-out" title="zoom out [-]"
+              type="button"><span>−</span>
+              zoom out</button>
+            <span class="diagram-zoom-badge" id="arch-diagram-zoom-level">100%</span>
+            <button class="diagram-tool-btn" id="arch-diagram-zoom-fit" title="התאם לחלון [0]"
+              type="button"><span>↺</span> התאם לחלון</button>
+            <button class="diagram-tool-btn" id="arch-diagram-zoom-actual" title="גודל מקורי [1]"
+              type="button"><span>1:1</span> גודל מקורי</button>
+            <button class="diagram-tool-btn" id="arch-diagram-fullscreen" title="מסך מלא [F]"
+              type="button"><span>⛶</span> מסך מלא</button>
+          </div>
+        </div>
+        <div class="diagram-viewport" id="arch-diagram-viewport">
+          <div class="diagram-image-wrapper" id="arch-diagram-wrapper">
+            <img alt="דיאגרמת ארכיטקטורת שתי השכבות והתהליך" id="arch-diagram-img" loading="eager"
+              src="assets/images/two_layer_architecture.svg" />
+          </div>
+        </div>
+        <div class="diagram-caption">
+          <strong>איור 1.1 — ארכיטקטורת שתי השכבות:</strong> זרימת הנתונים מקובצי המקור המקומיים (משטרת ישראל והלמ״ס,
+          2017–2025)
+          דרך מכונת המצבים וההסגר אל פאנל החיזוי הדו-מסלולי (<code>XGBoost Poisson</code> ו-<code>Random Forest</code>)
+          ואל שכבת ההדגמה המוצרית (<code>50/45/5</code>) בדשבורד. <em>ניתן לגלול לזום ולגרור להזזה.</em>
+        </div>
+      </div>
+
+      <details class="deep-dive">
+        <summary>פירוט 4 שאלות המחקר והמענה המתודולוגי המבוקר לכל אחת</summary>
+        <div class="deep-dive-body">
+          <div class="tbl-wrap">
+            <table class="tbl">
+              <thead>
+                <tr>
+                  <th>שאלת מחקר</th>
+                  <th>האתגר ההנדסי והמתודולוגי</th>
+                  <th>המתודולוגיה במחברת <code>CarTheftRisk_final</code></th>
+                  <th>הממצא המאומת</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Q1: דגם מול גיאוגרפיה</strong></td>
+                  <td>מה תרומת היסטוריית הדגם-עיר מול נפח הגניבות העירוני ומדדי האכיפה?</td>
+                  <td>ניתוח <code>SHAP TreeExplainer</code> על מודל הספירה הנקי מזליגה + ולידציה מרחבית
+                    <code>GroupKFold</code> לפי עיר.
+                  </td>
+                  <td><code>lag_1_thefts</code> ו-<code>city_lag_1_thefts</code> מובילים את כוח הניבוי; בשכבת ה-UI מוגדר
+                    אינדקס שקוף (50/45/5).</td>
+                </tr>
+                <tr>
+                  <td><strong>Q2: נירמול חשיפה (למ״ס)</strong></td>
+                  <td>איך מבחינים בין נפח גניבות גבוה הנובע מתפוצת הרכב לבין סיכון יחסי חריג?</td>
+                  <td>הפרדה דו-שכבתית בנספח D: שיעורים נצפים ישירים (מותגי EV וארץ ייצור) מול אינדקס פרוקסי דטרמיניסטי
+                    לדגם.</td>
+                  <td>פער חד בתוך שוק ה-EV (אורה 27.47‰ מול טסלה 0.16‰); במדד הפרוקסי קורולה 37.00‰ מול ממוצע פרטי נצפה
+                    3.51‰.</td>
+                </tr>
+                <tr>
+                  <td><strong>Q3: ספירות דלילות ופערי תקופה</strong></td>
+                  <td>איך חוזים ספירות כש-83.8% מתאי המבחן הם אפס ושנת 2025 כוללת 9 חודשים בלבד?</td>
+                  <td>קוהורט טרום-חיתוך סימטרי, כוונון <code>max_depth=3</code> ב-CV מרחבי, והיסט פואסוני
+                    <code>base_margin = log(0.75)</code>.
+                  </td>
+                  <td><code>R² = +0.1984</code>, צמצום שגיאת הזנב ב-41.1% מול החציון וריכוז 72.32% מהגניבות בשני
+                    העשירונים העליונים.</td>
+                </tr>
+                <tr>
+                  <td><strong>Q4: בידוד מחקר מריצה חיה</strong></td>
+                  <td>איך מייצאים תחזיות ב-$O(1)$ מבלי לדרוס נכסי ריצה של אפליקציית ה-Web והסוכן?</td>
+                  <td>ייצוא מבודד ל-<code>notebooks/data_final.json</code> (8,099 צירופים חזויים) לצד שמירת חוזה הריצה
+                    ב-<code>web/assets/data.json</code>.</td>
+                  <td>12 אסרטציות הנדסיות במחברת + 21 בדיקות <code>pytest</code> עוברות ב-100% ללא התנגשות.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <!-- =====================================================================
+         CHAPTER 02: הנדסת הנתונים, משפך הסינון ומניעת זליגת עתיד
+         ===================================================================== -->
+    <section class="report-section" id="ch2">
+      <header class="chapter-head">
+        <div class="chapter-num-badge">פרק 02</div>
+        <h2 class="chapter-title">מהקבצים הגולמיים לפאנל חיזוי נקי מזליגה</h2>
+        <p class="chapter-subtitle">Data Pipeline, Quarantine &amp; Feature Governance</p>
+      </header>
+      <p class="section-intro">
+        קובצי הגניבות של משטרת ישראל מגיעים כדוחות היררכיים מקוננים עם שורות סיכום, ערכים חסרים ותקופת דיווח חלקית בשנת
+        2025 (9 חודשים בלבד).
+        פרק זה מציג בשלושה צעדים ברורים כיצד זוקקו הקבצים המקומיים (<code>data/raw/</code>) לפאנל אימון ומבחן אמין, ללא
+        המצאת נתונים סינתטיים וללא הצצה לנתוני העתיד.
+      </p>
+
+      <!-- ── STEP 2.1: DATA FUNNEL & CLEANING DECISIONS ── -->
+      <div class="ch2-step-header">
+        <div class="ch2-step-title-wrap">
+          <span class="ch2-step-num">2.1</span>
+          <h3 class="ch2-step-title">משפך זיקוק הנתונים (4 שלבים מרמת הקובץ ועד פאנל המודל)</h3>
+        </div>
+        <span class="chip chip-line">במקביל לציר רב-שנתי של 105,711 גניבות ב-1,271 דגמים (2017–2025)</span>
+      </div>
+
+      <div class="ch2-funnel-grid" aria-label="משפך זיקוק הנתונים בארבעה שלבים">
+        <div class="ch2-funnel-card">
+          <span class="ch2-funnel-kicker">שלב 01 · קובץ העץ הגולמי</span>
+          <div class="ch2-funnel-number">39,328</div>
+          <div class="ch2-funnel-title">שורות בדוח המשטרה (2023–2025)</div>
+          <p class="ch2-funnel-text">
+            מבנה עץ בן 5 רמות (סוג רכב ← שנתון ← יצרן ← דגם ← יישוב), מול שורת סיכום עליונה של <code>53,992</code>
+            גניבות.
+          </p>
+        </div>
+
+        <div class="ch2-funnel-card">
+          <span class="ch2-funnel-kicker">שלב 02 · חילוץ רשומות עלה</span>
+          <div class="ch2-funnel-number">26,802</div>
+          <div class="ch2-funnel-title">שורות עלה נקיות (54,007 גניבות)</div>
+          <p class="ch2-funnel-text">
+            אלגוריתם <code>State-Machine</code> המאפס רמות בן בכל החלפת אב וחוסם זליגת שמות על פני <code>2,439</code>
+            בלוקים חסרים (<code>'-'</code>).
+          </p>
+        </div>
+
+        <div class="ch2-funnel-card">
+          <span class="ch2-funnel-kicker">שלב 03 · הסגר ואיחוד מפתחות</span>
+          <div class="ch2-funnel-number">23,831</div>
+          <div class="ch2-funnel-title">צירופים מוניציפליים מזוהים</div>
+          <p class="ch2-funnel-text">
+            מפתחות ייחודיים של <code>(יצרן, דגם, שנתון, עיר)</code> המכסים <code>48,717</code> גניבות, לאחר העברת
+            <code>2,444</code> שורות חסרות להסגר.
+          </p>
+        </div>
+
+        <div class="ch2-funnel-card ch2-funnel-card--final">
+          <span class="ch2-funnel-kicker">שלב 04 · פאנל החיזוי הנקי</span>
+          <div class="ch2-funnel-number">17,389 → 16,853</div>
+          <div class="ch2-funnel-title">אימון (2024) ומבחן עיוור (2025)</div>
+          <p class="ch2-funnel-text">
+            צירופים שהיו מוכרים בשנה הקודמת בלבד (ללא צירופים שנולדו בשנת היעד), על פני <code>1,205</code> רשויות
+            מאוחדות.
+          </p>
+        </div>
+      </div>
+
+      <!-- 3 Tactile Quality Pillars -->
+      <div class="tray">
+        <div class="comp plastic" style="--t: var(--p-thu);">
+          <span class="chip chip-mint" style="margin-bottom: 6px;">כלל ניקוי 1 · State-Machine</span>
+          <h3>איפוס ענפים קשיח</h3>
+          <p>
+            בכל מעבר ליצרן או שנתון חדש בעץ המשטרה מתאפסים מיד כל ערכי הבן, כך שדגם משורה קודמת לעולם אינו "גולש" לשורות
+            סיכום או לבלוקים ריקים.
+          </p>
+        </div>
+        <div class="comp plastic" style="--t: var(--p-wed);">
+          <span class="chip chip-mint" style="margin-bottom: 6px;">כלל ניקוי 2 · Quarantine</span>
+          <h3>הסגר במקום המצאת נתונים</h3>
+          <p>
+            <code>2,444</code> שורות עלה ללא שנת ייצור או ללא יישוב מזוהה (<code>5,290</code> גניבות) נשמרות בטבלת הסגר
+            נפרדת במקום להשלים עבורן שנתון מלאכותי.
+          </p>
+        </div>
+        <div class="comp plastic" style="--t: var(--p-fri);">
+          <span class="chip chip-mint" style="margin-bottom: 6px;">כלל ניקוי 3 · Series Break</span>
+          <h3>הפרדת שבר הסדרה ב-2023</h3>
+          <p>
+            בקבצים העירוניים מופרדים במפורש <strong>תיקי חקירה שנפתחו</strong> (<code>2018–2022</code>) מ<strong>כלי רכב
+              שנגנבו</strong> (<code>2023–2025</code>), ללא סכימה מבלבלת ביניהם.
+          </p>
+        </div>
+      </div>
+
+      <!-- ── STEP 2.2: COUNT DISTRIBUTION & EXPOSURE OFFSET SIDE-BY-SIDE ── -->
+      <div class="ch2-step-header">
+        <div class="ch2-step-title-wrap">
+          <span class="ch2-step-num">2.2</span>
+          <h3 class="ch2-step-title">מבנה הנתונים הסטטיסטי וכיול 9 חודשי 2025</h3>
+        </div>
+        <span class="chip chip-line">למה בחרנו במודל Poisson ואיך השווינו שנה מלאה לשנה חלקית</span>
+      </div>
+
+      <div class="ch2-diag-split">
+        <!-- Right Card: Zero Inflation & Overdispersion -->
+        <div class="ch2-panel-card">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap;">
+            <h4 style="margin: 0; font-weight: 700; color: var(--color-ink);">אבחון התפלגות הספירות בפאנל האימון (2024)
+            </h4>
+            <span class="chip chip-line">n = 17,389</span>
+          </div>
+          <p style="font-size: var(--text-sm); color: var(--color-ink-2);">
+            רוב שילובי הדגם והעיר אינם חווים גניבה בשנה נתונה, בעוד מספר קטן של מוקדים עירוניים מרכז עשרות ומאות גניבות:
+          </p>
+
+          <div class="ch2-mini-stats">
+            <div class="ch2-mini-stat">
+              <div class="ch2-mini-stat-val">82.7%</div>
+              <div class="ch2-mini-stat-lbl">תאים עם 0 גניבות</div>
+              <div class="ch2-mini-stat-sub">82.7% באימון (2024) ו-83.8% במבחן (2025)</div>
+            </div>
+            <div class="ch2-mini-stat">
+              <div class="ch2-mini-stat-val">9.3%</div>
+              <div class="ch2-mini-stat-lbl">גניבה בודדת (Y = 1)</div>
+              <div class="ch2-mini-stat-sub">אירועים נקודתיים פזורים ברשויות</div>
+            </div>
+            <div class="ch2-mini-stat">
+              <div class="ch2-mini-stat-val">0.84%</div>
+              <div class="ch2-mini-stat-lbl">מוקדים כבדים (Y ≥ 10)</div>
+              <div class="ch2-mini-stat-sub">146 צירופים המרכזים את עיקר הנזק</div>
+            </div>
+            <div class="ch2-mini-stat">
+              <div class="ch2-mini-stat-val">7.87x</div>
+              <div class="ch2-mini-stat-lbl">פיזור-יתר (Overdispersion)</div>
+              <div class="ch2-mini-stat-sub">שונות <code>3.79</code> מול תוחלת <code>0.48</code></div>
+            </div>
+          </div>
+
+          <div class="ch2-takeaway">
+            <strong>משמעות למודל:</strong> רגרסיה רגילה (<code>MSE</code>) עלולה לנבא ערכים שליליים ונמשכת לחריגים. לכן
+            נבחרה פונקציית מטרה פואסונית (<code>count:poisson</code>) המבטיחה תחזיות אי-שליליות ודירוג יציב בזנב.
+          </div>
+        </div>
+
+        <!-- Left Card: Exposure Offset -->
+        <div class="ch2-panel-card ch2-panel-card--accent">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap;">
+            <h4 style="margin: 0; font-weight: 700; color: var(--color-ink);">כיול אורך התקופה: 12 חודשים מול 9 חודשים
+            </h4>
+            <span class="chip chip-mint">Exposure Offset</span>
+          </div>
+          <p style="font-size: var(--text-sm); color: var(--color-ink-2);">
+            שנת האימון 2024 כוללת שנה מלאה (<strong>12 חודשים</strong>), בעוד נתוני 2025 מסתיימים בספטמבר וכוללים
+            <strong>9 חודשים בלבד</strong> (75% משנה). כדי לבחון את המודל בצורה הוגנת מבלי לגעת בנתוני המבחן, הקצב השנתי
+            החזוי מוכפל ב-<code>0.75</code>:
+          </p>
+
+          <div class="formula"
+            style="text-align: center; font-size: var(--text-sm); padding: 10px 12px; margin-top: 0;">
+            $$\hat{\mu}_{i,\text{9m}} = 0.75 \times \hat{\lambda}_{i,\text{12m}} \quad \Longleftrightarrow \quad
+            \text{base\_margin} = \log(0.75) = -0.2877$$
+          </div>
+
+          <div class="ch2-offset-steps">
+            <div class="ch2-offset-box">
+              <div class="ch2-offset-kicker">אימון 2024</div>
+              <div class="ch2-offset-val">e = 1.00</div>
+              <div class="ch2-offset-sub">12 חודשי דיווח מלאים</div>
+            </div>
+            <div class="ch2-offset-box">
+              <div class="ch2-offset-kicker">מבחן 2025</div>
+              <div class="ch2-offset-val">e = 0.75</div>
+              <div class="ch2-offset-sub">ינואר–ספטמבר (9 חודשים)</div>
+            </div>
+            <div class="ch2-offset-box ch2-offset-box--highlight">
+              <div class="ch2-offset-kicker">שיפור ה-R² במבחן</div>
+              <div class="ch2-offset-val">+0.1984</div>
+              <div class="ch2-offset-sub">לעומת <code>-0.0628</code> ללא כיול</div>
+            </div>
+          </div>
+
+          <div class="ch2-takeaway">
+            <strong>שקיפות מלאה:</strong> בפרק 05 מוצגים ביצועי המודל הן לאחר כיול ל-9 חודשים והן כתחזית שנתית גולמית
+            ללא כיול.
+          </div>
+        </div>
+      </div>
+
+      <!-- ── STEP 2.3: 5 CORE ML FEATURES & FIREWALL ── -->
+      <div class="ch2-step-header">
+        <div class="ch2-step-title-wrap">
+          <span class="ch2-step-num">2.3</span>
+          <h3 class="ch2-step-title">מפת המשתנים: 5 מאפיינים במודל החיזוי והפרדת שכבות</h3>
+        </div>
+        <span class="chip chip-mint">אפס זליגת עתיד · נבדק באסרטציות קוד אוטומטיות</span>
+      </div>
+
+      <p style="font-size: var(--text-sm); color: var(--color-ink-2); margin-bottom: var(--space-xs);">
+        למודלי הספירה והרגרסיה מוזנים <strong>5 משתנים היסטוריים בלבד</strong> שערכם ידוע בוודאות לפני תחילת שנת החיזוי:
+      </p>
+
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>המשתנה ושמו בקוד</th>
+              <th>חלון הזמן שממנו חושב</th>
+              <th>מה הוא מודד ותפקידו בחיזוי</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>גניבות הדגם בעיר אשתקד</strong><br /><code>lag_1_thefts</code></td>
+              <td class="num">שנה קודמת בלבד ($T-1$)</td>
+              <td>מספר הגניבות של אותו יצרן, דגם ושנתון באותה רשות מקומית בשנה החולפת. האות החזק ביותר במודל.</td>
+            </tr>
+            <tr>
+              <td><strong>נפח גניבות עירוני אשתקד</strong><br /><code>city_lag_1_thefts</code></td>
+              <td class="num">שנה קודמת בלבד ($T-1$)</td>
+              <td>סך כל הרכבים שנגנבו ברשות המקומית בשנה הקודמת (מחליף סיכום רב-שנתי כדי למנוע זליגת עתיד).</td>
+            </tr>
+            <tr>
+              <td><strong>שנת ייצור הרכב</strong><br /><code>model_year</code></td>
+              <td class="num">קבוע ($\le T-1$)</td>
+              <td>מייצג את גיל הרכב על הכביש, דור מערכות המיגון והביקוש לחלפים (שיא הגניבות בשנתוני 2019–2022).</td>
+            </tr>
+            <tr>
+              <td><strong>שיעור גילוי חשודים בעיר</strong><br /><code>city_detection_rate</code></td>
+              <td class="num">היסטוריה קפואה (2018–2022)</td>
+              <td>אחוז התיקים שבהם אותר חשוד ברשות מתוך סדרת האכיפה ההיסטורית (לפני שנות האימון והמבחן).</td>
+            </tr>
+            <tr>
+              <td><strong>שיעור סגירת תיקי על״ן בעיר</strong><br /><code>city_unsolved_rate</code></td>
+              <td class="num">היסטוריה קפואה (2018–2022)</td>
+              <td>אחוז התיקים שנסגרו ללא פענוח ברשות המקומית, ומשקף קושי אכיפתי מבני באזור.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Compact 3-Card Exclusion Firewall -->
+      <p
+        style="font-size: var(--text-sm); font-weight: 700; color: var(--color-ink); margin-top: var(--space-lg); margin-bottom: 4px;">
+        אילו נתונים הושארו בכוונה מחוץ למודל ה-ML, ומדוע?
+      </p>
+      <div class="ch2-guard-grid">
+        <div class="ch2-guard-card">
+          <span class="feat-badge">נרמול חיצוני · פרק 03</span>
+          <strong style="font-size: var(--text-sm); color: var(--color-ink);">מצבת הרכבים והאוכלוסייה (למ״ס
+            2025)</strong>
+          <p class="feat-summary">
+            נתוני <code>4,348,275</code> כלי הרכב המנועיים (ו-<code>3,789,429</code> הפרטיים) מפורסמים ברמה ארצית בלבד
+            ולא לפי <code>דגם × שנתון × עיר</code>, ולכן משמשים לנרמול שיעורי חשיפה בנספח D.
+          </p>
+        </div>
+
+        <div class="ch2-guard-card">
+          <span class="feat-badge feat-badge--neutral">ניתוח שטח ואשכולות · EDA</span>
+          <strong style="font-size: var(--text-sm); color: var(--color-ink);">תיוג ערי ציר ואשכולות K-Means</strong>
+          <p class="feat-summary">
+            קבוצת 9 ערי הציר הראשיות (חציון <code>561</code> גניבות מול <code>5.5</code>) וסיווג הערים הבלתי-מונחה על
+            <code>2018–2022</code> נועדו להבנת דפוסי השטח מבלי להזריק משקולות ידניות למודל.
+          </p>
+        </div>
+
+        <div class="ch2-guard-card ch2-guard-card--strict">
+          <span class="feat-badge feat-badge--danger">נחסם באסרטציית קוד</span>
+          <strong style="font-size: var(--text-sm); color: #991b1b;">מדדי ממשק המשתמש (נוסחת 50/45/5)</strong>
+          <p class="feat-summary">
+            הציונים <code>model_risk_score</code>, <code>city_risk_score</code> ו-<code>composite_theft_score</code> הם
+            תוצרי שכבת ההדגמה המוצרית בלבד ונחסמים בבדיקת <code>assert col not in FEATURES</code> למניעת זליגה מעגלית.
+          </p>
+        </div>
+      </div>
+
+      <!-- ── STEP 2.4: COLLAPSIBLE RAW SOURCES AUDIT TABLE ── -->
+      <details class="deep-dive">
+        <summary>פירוט 5 קובצי המקור הרשמיים בתיקיית data/raw וחתימות ה-SHA-256 שלהם</summary>
+        <div class="deep-dive-body">
+          <div class="tbl-wrap">
+            <table class="tbl">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>מקור נתונים וקובץ (<code>data/raw/</code>)</th>
+                  <th>תקופה</th>
+                  <th>היקף גולמי ובקרת שלמות</th>
+                  <th>תפקיד במערכת</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="num">1</td>
+                  <td><strong>יומן גניבות היררכי מפורט</strong><br /><code>stolen_cars_models_2023_2025_FULL.csv</code>
+                  </td>
+                  <td class="num">2023–2025 (9m)</td>
+                  <td>39,328 שורות ← 26,802 עלים (54,007 גניבות מול 53,992 ב-Row 1; <code>SHA: 147d7b4aece5</code>)</td>
+                  <td>חילוץ 23,831 מפתחות פאנל מוניציפליים ובניית קוהורט האימון (17,389) והמבחן (16,853).</td>
+                </tr>
+                <tr>
+                  <td class="num">2</td>
+                  <td><strong>מאגר דגמים היסטורי ארצי</strong><br /><code>stolen_cars_models_2017_2023.csv</code></td>
+                  <td class="num">2017–2023</td>
+                  <td>105 שורות דגמים ארציות (84,997 גניבות היסטוריות; <code>SHA: 3b45dc853174</code>)</td>
+                  <td>איחוד רב-שנתי ל-1,271 צמדי יצרן-דגם (105,711 גניבות ב-2017–2025; שנת 2023 מאומתת על 19,990 ללא
+                    כפל).</td>
+                </tr>
+                <tr>
+                  <td class="num">3</td>
+                  <td><strong>תיקי חקירה ואכיפה מוניציפליים (Tab 1)</strong><br /><code>stolen_cars_by_area.csv</code>
+                  </td>
+                  <td class="num">2018–05/2023</td>
+                  <td>5,768 שורות (תיקים שנפתחו/נסגרו, חשודים ועל״ן; <code>SHA: 295bd025223f</code>)</td>
+                  <td>חישוב שיעורי גילוי ועל״ן היסטוריים קפואים (2018–2022) ואימון אשכולות <code>K-Means</code>
+                    ו-<code>DBSCAN</code>.</td>
+                </tr>
+                <tr>
+                  <td class="num">4</td>
+                  <td><strong>מפקד יישובים ואוכלוסייה (למ״ס)</strong><br /><code>population_list.csv</code></td>
+                  <td class="num">2024–2025</td>
+                  <td>1,297 רשויות ויישובים (<code>SHA: 8c900d375293</code>)</td>
+                  <td>איחוד שמות יישובים ל-1,205 רשויות מקומיות קנוניות והסגר שורות מחוזיות כלליות.</td>
+                </tr>
+                <tr>
+                  <td class="num">5</td>
+                  <td><strong>מצבת כלי הרכב בישראל (למ״ס)</strong><br /><code>כלי רכב מנועים 2025/*.xlsx</code></td>
+                  <td class="num">סוף 2025</td>
+                  <td>3 קובצי אקסל רשמיים: 4,348,275 מנועיים ו-3,789,429 פרטיים (203,947 חשמליים)</td>
+                  <td>חישוב שיעורים אמפיריים נצפים (מותגי EV וארץ ייצור) ואינדקס חשיפה פרוקסי דטרמיניסטי לדגם בנספח D.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <!-- =====================================================================
+         CHAPTER 03: פירוק אשליית הנפח: נתוני למ״ס ודפוסי שטח
+         ===================================================================== -->
+    <section class="report-section" id="ch3">
+      <header class="chapter-head">
+        <div class="chapter-num-badge">פרק 03</div>
+        <h2 class="chapter-title">פירוק אשליית הנפח: מצבת הרכב (למ״ס 2025) ודפוסי השטח</h2>
+        <p class="chapter-subtitle">CBS 2025 Fleet Exposure &amp; Municipal Crime Patterns</p>
+      </header>
+      <p class="section-intro">
+        מספר הגניבות הגולמי מושפע ישירות מתפוצת הרכב על הכביש ולא רק מרמת הסיכון שלו.
+        כדי למדוד <strong>סיכון יחסי אמיתי</strong> (לכל 1,000 רכבים פעילים), הצלבנו את נתוני המשטרה עם <strong>מצבת
+          הרכב של הלמ״ס לסוף 2025</strong> (<code>4,348,275</code> מנועיים, מתוכם <code>3,789,429</code> פרטיים) לפי
+        מותגי רכב חשמלי ונתחי שוק של יצרנים, המהווים בסיס להשוואה בהעדר מפקד פתוח ברמת דגם ויישוב.
+      </p>
+
+      <!-- ── STEP 3.1: NATIONAL FLEET & THEFT ANCHORS ── -->
+      <div class="ch2-step-header">
+        <div class="ch2-step-title-wrap">
+          <span class="ch2-step-num">3.1</span>
+          <h3 class="ch2-step-title">תמונת המאקרו הארצית (מצבת הרכב מול היקף הגניבות ב-2025)</h3>
+        </div>
+        <span class="chip chip-line">למ״ס סוף 2025 · הודעה 102/2026</span>
+      </div>
+
+      <div class="figures" style="margin-top: var(--space-md);">
+        <div>
+          <b>4,348,275</b>
+          <div class="fig-label">כלל כלי הרכב המנועיים (4.68‰)</div>
+          <div class="fig-sub">שיעור ארצי של 4.68 גניבות ל-1,000 רכבים (על בסיס קצב שנתי של 20,344 גניבות)</div>
+        </div>
+        <div>
+          <b>3,789,429</b>
+          <div class="fig-label">רכבים פרטיים פעילים (3.51‰)</div>
+          <div class="fig-sub">שיעור נצפה של 3.51 ל-1,000 רכבים פרטיים (9,974 גניבות ב-9 חודשים / 13,299 שנתי)</div>
+        </div>
+        <div>
+          <b>20.5%</b>
+          <div class="fig-label">חשמלי והיברידי בצי הפרטי</div>
+          <div class="fig-sub">203,947 חשמליים מלאים (5.38%) ו-587,314 היברידיים (15.14% מהפרטיים)</div>
+        </div>
+        <div>
+          <b>~90%</b>
+          <div class="fig-label">פרטי ודו-גלגלי מסך הגניבות</div>
+          <div class="fig-sub">70.7% רכבים פרטיים ורכבי שטח (38,186) + 18.9% דו-גלגלי (10,197) בנתוני 2023–2025</div>
+        </div>
+      </div>
+
+      <!-- ── STEP 3.2: TWO-TRACK METHODOLOGY & SIDE-BY-SIDE COMPARISON ── -->
+      <div class="ch2-step-header">
+        <div class="ch2-step-title-wrap">
+          <span class="ch2-step-num">3.2</span>
+          <h3 class="ch2-step-title">שיעור הגניבה ל-1,000 רכבים: נתוני אמת ישירים מול אומדן ברמת דגם</h3>
+        </div>
+        <span class="chip chip-mint">נספח D · תאים 55–57 במחברת</span>
+      </div>
+
+      <div class="ch2-panel-card ch2-panel-card--accent" style="margin-top: var(--space-sm);">
+        <p style="font-size: var(--text-sm); color: var(--color-ink-2); line-height: 1.6;">
+          עבור <strong>כלל הצי, ארצות הייצור ומותגי הרכב החשמלי</strong> חושב <strong>שיעור גניבה ישיר מנתוני
+            הלמ״ס</strong>, מאחר שמספר הרכבים הפעילים על הכביש ידוע במדויק.
+          עבור <strong>דגמים ספציפיים</strong>, שבהם הלמ״ס מפרסמת את נתח היצרן בלבד ללא חלוקה פנימית בין הדגמים שלו,
+          פיתחנו אומדן מצבה מחושב לדגם בשלושה צעדים:
+        </p>
+        <div class="ch2-guard-grid" style="margin-top: 2px;">
+          <div class="ch2-guard-card" style="background: var(--color-paper);">
+            <span class="feat-badge">צעד 1 · חלוקה פנימית</span>
+            <strong style="font-size: var(--text-sm); color: var(--color-ink);">חלוקת מצבת היצרן בין הדגמים שלו</strong>
+            <p class="feat-summary">
+              כל דגם מקבל רצפת בסיס של 30% בתוספת 70% לפי משקלו היחסי אצל אותו יצרן
+              (<code>0.3 + 0.7 × משקל פנימי</code>), כדי שגם דגמים שנגנבים מעט לא יקבלו מצבה אפסית.
+            </p>
+          </div>
+          <div class="ch2-guard-card" style="background: var(--color-paper);">
+            <span class="feat-badge">צעד 2 · כיול ארצי</span>
+            <strong style="font-size: var(--text-sm); color: var(--color-ink);">התאמה למצבה הרשמית של הלמ״ס</strong>
+            <p class="feat-summary">
+              המשקולות מתורגמות למספר רכבים פעילים כך שסך כל הדגמים מסתכם בדיוק ב-<code>3,789,429</code> הרכבים הפרטיים
+              בישראל.
+            </p>
+          </div>
+          <div class="ch2-guard-card" style="background: var(--color-paper);">
+            <span class="feat-badge">צעד 3 · יציבות סטטיסטית</span>
+            <strong style="font-size: var(--text-sm); color: var(--color-ink);">סינון דגמי קצה נדירים</strong>
+            <p class="feat-summary">
+              הדירוג כולל רק דגמים נפוצים (לפחות <code>3,000</code> רכבים פעילים ולפחות <code>20</code> גניבות בשנה),
+              כדי למנוע מדגמים נדירים לעוות את ראש הטבלה בגלל מכנה קטן.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Side-by-Side Comparison: Direct Pure EV Rates vs. Top Model Proxy Rates -->
+      <div class="ch2-diag-split" style="margin-top: var(--space-lg);">
+        <!-- Right Column: Direct Observed Pure EV Brands -->
+        <div class="ch2-panel-card">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px;">
+            <h4 style="margin: 0; font-weight: 700; color: var(--color-ink);">מסלול 1 (ישיר): מותגי רכב חשמלי מלא</h4>
+            <span class="chip chip-mint">מצבה מדויקת מקובץ הלמ״ס (רכב חשמלי לפי יצרן 2025)</span>
+          </div>
+          <p style="font-size: var(--text-xs); color: var(--color-ink-2);">
+            בחינת המצבה הרשמית מפריכה את ההנחה שכל רכב חשמלי חסין גניבה, וחושפת פער חד בין המותגים:
+          </p>
+
+          <div class="bars bars--compact" role="img" aria-label="שיעור גניבה שנתי נצפה במותגי רכב חשמלי ל-1,000 רכבים">
+            <div class="bar-row">
+              <span class="bar-label">אורה (ORA)</span>
+              <div class="bar-track">
+                <div class="bar-fill bar-fill--warn" style="--w: 100%;"></div>
+              </div>
+              <span class="bar-val">27.47 ‰</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">ג׳ילי (GEELY)</span>
+              <div class="bar-track">
+                <div class="bar-fill bar-fill--warn" style="--w: 71%;"></div>
+              </div>
+              <span class="bar-val">19.51 ‰</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">סרס (SERES)</span>
+              <div class="bar-track">
+                <div class="bar-fill bar-fill--warn" style="--w: 65%;"></div>
+              </div>
+              <span class="bar-val">17.87 ‰</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">ממוצע רכב פרטי ארצי</span>
+              <div class="bar-track">
+                <div class="bar-fill bar-fill--avg" style="--w: 13%;"></div>
+              </div>
+              <span class="bar-val">3.51 ‰</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">בי-ווי-די (BYD)</span>
+              <div class="bar-track">
+                <div class="bar-fill bar-fill--low" style="--w: 5.6%;"></div>
+              </div>
+              <span class="bar-val">1.53 ‰</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">אקספנג (XPENG)</span>
+              <div class="bar-track">
+                <div class="bar-fill bar-fill--low" style="--w: 1.5%;"></div>
+              </div>
+              <span class="bar-val">0.26 ‰</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">טסלה (TESLA)</span>
+              <div class="bar-track">
+                <div class="bar-fill bar-fill--low" style="--w: 1.0%;"></div>
+              </div>
+              <span class="bar-val">0.16 ‰</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">זיקר (ZEEKR)</span>
+              <div class="bar-track">
+                <div class="bar-fill bar-fill--low" style="--w: 0%;"></div>
+              </div>
+              <span class="bar-val">0.00 ‰</span>
+            </div>
+          </div>
+
+          <div class="ch2-takeaway">
+            <strong>תובנה מרכזית:</strong> מותגים עם נעילת תוכנה ומעקב רציף (כגון טסלה, אקספנג ו-BYD לאחר עדכון האבטחה
+            ב-2025) כמעט אינם נגנבים, בעוד ג׳ילי, אורה וסרס מציגים חשיפה גבוהה פי 5 עד 8 מהממוצע הארצי.
+          </div>
+        </div>
+
+        <!-- Left Column: Deterministic Proxy Top Models -->
+        <div class="ch2-panel-card">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px;">
+            <h4 style="margin: 0; font-weight: 700; color: var(--color-ink);">מסלול 2 (אומדן דגם): הדגמים החשופים ביותר
+            </h4>
+            <span class="chip chip-line">אומדן מצבה דטרמיניסטי · תא 57</span>
+          </div>
+          <p style="font-size: var(--text-xs); color: var(--color-ink-2);">
+            דירוג יחסי ל-1,000 רכבים משוערים בקרב דגמים פרטיים נפוצים (לפחות 3,000 רכבים ו-20 גניבות בשנה):
+          </p>
+
+          <div class="bars bars--compact" role="img" aria-label="מדד חשיפה פרוקסי דטרמיניסטי לדגם ל-1,000 רכבים פרטיים">
+            <div class="bar-row">
+              <span class="bar-label">טויוטה COROLLA</span>
+              <div class="bar-track">
+                <div class="bar-fill" style="--w: 100%;"></div>
+              </div>
+              <span class="bar-val">37.00 ‰</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">טויוטה YARIS</span>
+              <div class="bar-track">
+                <div class="bar-fill" style="--w: 99%;"></div>
+              </div>
+              <span class="bar-val">36.80 ‰</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">יונדאי ELANTRA</span>
+              <div class="bar-track">
+                <div class="bar-fill" style="--w: 60%;"></div>
+              </div>
+              <span class="bar-val">22.17 ‰</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">טויוטה LAND CRUISER</span>
+              <div class="bar-track">
+                <div class="bar-fill" style="--w: 56%;"></div>
+              </div>
+              <span class="bar-val">20.77 ‰</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">קיה SELTOS</span>
+              <div class="bar-track">
+                <div class="bar-fill" style="--w: 52%;"></div>
+              </div>
+              <span class="bar-val">19.39 ‰</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">יונדאי IONIQ</span>
+              <div class="bar-track">
+                <div class="bar-fill" style="--w: 42%;"></div>
+              </div>
+              <span class="bar-val">15.67 ‰</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">קיה NIRO</span>
+              <div class="bar-track">
+                <div class="bar-fill" style="--w: 42%;"></div>
+              </div>
+              <span class="bar-val">15.39 ‰</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">מאזדה MAZDA 3</span>
+              <div class="bar-track">
+                <div class="bar-fill" style="--w: 36%;"></div>
+              </div>
+              <span class="bar-val">13.33 ‰</span>
+            </div>
+          </div>
+
+          <div class="ch2-takeaway">
+            <strong>תובנה והסתייגות:</strong> דגמים יפניים וקוריאניים מבוקשים לחלפים מובילים את המדד היחסי. מאחר שהמכנה
+            נאמד מנתח היצרן בלמ״ס, יש לקרוא ערכים אלו כמדד דירוג השוואתי ולא כנתון רישוי רשמי.
+          </div>
+        </div>
+      </div>
+
+      <!-- Collapsible Full Tables -->
+      <details class="deep-dive">
+        <summary>לצפייה בטבלאות המלאות: פילוח סוגי הרכב, 7 מותגי ה-EV וכל 15 הדגמים המובילים</summary>
+        <div class="deep-dive-body">
+
+
+          <h4 style="margin-top: var(--space-lg); color: var(--color-ink);">מסלול 1: שיעור גניבות ישיר למותגי רכב חשמלי
+            מלא (מתוך נתוני הלמ״ס: התפלגות רכבים חשמליים לפי יצרן 2025)</h4>
+          <div class="tbl-wrap">
+            <table class="tbl">
+              <thead>
+                <tr>
+                  <th>מותג חשמלי מלא</th>
+                  <th class="c">מצבה פעילה רשמית (סוף 2025)</th>
+                  <th class="c">גניבות 2024</th>
+                  <th class="c">גניבות 2025 (9 חודשים)</th>
+                  <th class="c">קצב שנתי 2025</th>
+                  <th class="c">שיעור שנתי נצפה ל-1,000</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="row-hi">
+                  <td><strong>אורה (ORA)</strong></td>
+                  <td class="c num">2,719</td>
+                  <td class="c num">22</td>
+                  <td class="c num">56</td>
+                  <td class="c num">74.7</td>
+                  <td class="c num"><strong>27.47‰</strong></td>
+                </tr>
+                <tr class="row-hi">
+                  <td><strong>ג׳ילי (GEELY)</strong></td>
+                  <td class="c num">20,774</td>
+                  <td class="c num">607</td>
+                  <td class="c num">304</td>
+                  <td class="c num">405.3</td>
+                  <td class="c num"><strong>19.51‰</strong></td>
+                </tr>
+                <tr class="row-hi">
+                  <td><strong>סרס (SERES)</strong></td>
+                  <td class="c num">4,924</td>
+                  <td class="c num">24</td>
+                  <td class="c num">66</td>
+                  <td class="c num">88.0</td>
+                  <td class="c num"><strong>17.87‰</strong></td>
+                </tr>
+                <tr>
+                  <td>בי-ווי-די (BYD)</td>
+                  <td class="c num">41,759</td>
+                  <td class="c num">544</td>
+                  <td class="c num">48</td>
+                  <td class="c num">64.0</td>
+                  <td class="c num">1.53‰ (צניחה חדה לאחר עדכון אבטחה)</td>
+                </tr>
+                <tr>
+                  <td>אקספנג (XPENG)</td>
+                  <td class="c num">10,584</td>
+                  <td class="c num">0</td>
+                  <td class="c num">2</td>
+                  <td class="c num">2.7</td>
+                  <td class="c num">0.26‰</td>
+                </tr>
+                <tr>
+                  <td>טסלה (TESLA)</td>
+                  <td class="c num">32,420</td>
+                  <td class="c num">6</td>
+                  <td class="c num">4</td>
+                  <td class="c num">5.3</td>
+                  <td class="c num">0.16‰</td>
+                </tr>
+                <tr>
+                  <td>זיקר (ZEEKR)</td>
+                  <td class="c num">4,596</td>
+                  <td class="c num">0</td>
+                  <td class="c num">0</td>
+                  <td class="c num">0.0</td>
+                  <td class="c num">0.00‰</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h4 style="margin-top: var(--space-lg); color: var(--color-ink);">מסלול 2: טבלת 15 הדגמים הפרטיים המובילים לפי
+            אומדן המצבה הדטרמיניסטי</h4>
+          <div class="tbl-wrap">
+            <table class="tbl">
+              <thead>
+                <tr>
+                  <th class="c">#</th>
+                  <th>יצרן ודגם</th>
+                  <th class="c">גניבות 2025 (9m)</th>
+                  <th class="c">קצב שנתי (Run-Rate)</th>
+                  <th class="c">אומדן מצבה פעילה</th>
+                  <th class="c">מדד יחסי ל-1,000</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="row-hi">
+                  <td class="c num">1</td>
+                  <td>טויוטה קורולה (COROLLA)</td>
+                  <td class="c num">1,380</td>
+                  <td class="c num">1,840</td>
+                  <td class="c num">49,727</td>
+                  <td class="c num"><strong>37.00‰</strong></td>
+                </tr>
+                <tr class="row-hi">
+                  <td class="c num">2</td>
+                  <td>טויוטה יאריס (YARIS)</td>
+                  <td class="c num">477</td>
+                  <td class="c num">636</td>
+                  <td class="c num">17,282</td>
+                  <td class="c num"><strong>36.80‰</strong></td>
+                </tr>
+                <tr class="row-hi">
+                  <td class="c num">3</td>
+                  <td>יונדאי אלנטרה (ELANTRA)</td>
+                  <td class="c num">361</td>
+                  <td class="c num">481</td>
+                  <td class="c num">21,695</td>
+                  <td class="c num"><strong>22.17‰</strong></td>
+                </tr>
+                <tr class="row-hi">
+                  <td class="c num">4</td>
+                  <td>טויוטה לנד קרוזר (LAND CRUISER)</td>
+                  <td class="c num">311</td>
+                  <td class="c num">415</td>
+                  <td class="c num">19,982</td>
+                  <td class="c num"><strong>20.77‰</strong></td>
+                </tr>
+                <tr>
+                  <td class="c num">5</td>
+                  <td>קיה סלטוס (SELTOS)</td>
+                  <td class="c num">167</td>
+                  <td class="c num">223</td>
+                  <td class="c num">11,500</td>
+                  <td class="c num"><strong>19.39‰</strong></td>
+                </tr>
+                <tr>
+                  <td class="c num">6</td>
+                  <td>יונדאי איוניק (IONIQ)</td>
+                  <td class="c num">431</td>
+                  <td class="c num">575</td>
+                  <td class="c num">36,701</td>
+                  <td class="c num"><strong>15.67‰</strong></td>
+                </tr>
+                <tr>
+                  <td class="c num">7</td>
+                  <td>קיה נירו (NIRO)</td>
+                  <td class="c num">270</td>
+                  <td class="c num">360</td>
+                  <td class="c num">23,396</td>
+                  <td class="c num"><strong>15.39‰</strong></td>
+                </tr>
+                <tr>
+                  <td class="c num">8</td>
+                  <td>מאזדה 3 (MAZDA 3)</td>
+                  <td class="c num">268</td>
+                  <td class="c num">357</td>
+                  <td class="c num">26,776</td>
+                  <td class="c num"><strong>13.33‰</strong></td>
+                </tr>
+                <tr>
+                  <td class="c num">9</td>
+                  <td>קיה סורנטו (SORENTO)</td>
+                  <td class="c num">151</td>
+                  <td class="c num">201</td>
+                  <td class="c num">15,587</td>
+                  <td class="c num"><strong>12.90‰</strong></td>
+                </tr>
+                <tr>
+                  <td class="c num">10</td>
+                  <td>קיה ספורטאז׳ (SPORTAGE)</td>
+                  <td class="c num">216</td>
+                  <td class="c num">288</td>
+                  <td class="c num">23,623</td>
+                  <td class="c num"><strong>12.19‰</strong></td>
+                </tr>
+                <tr>
+                  <td class="c num">11</td>
+                  <td>מיצובישי אאוטלנדר (OUTLANDER)</td>
+                  <td class="c num">164</td>
+                  <td class="c num">219</td>
+                  <td class="c num">19,126</td>
+                  <td class="c num"><strong>11.45‰</strong></td>
+                </tr>
+                <tr>
+                  <td class="c num">12</td>
+                  <td>יונדאי i20</td>
+                  <td class="c num">161</td>
+                  <td class="c num">215</td>
+                  <td class="c num">19,226</td>
+                  <td class="c num"><strong>11.18‰</strong></td>
+                </tr>
+                <tr>
+                  <td class="c num">13</td>
+                  <td>קיה סטוניק (STONIC)</td>
+                  <td class="c num">127</td>
+                  <td class="c num">169</td>
+                  <td class="c num">15,732</td>
+                  <td class="c num"><strong>10.74‰</strong></td>
+                </tr>
+                <tr>
+                  <td class="c num">14</td>
+                  <td>יונדאי איוניק היבריד (IONIQ HYBRID)</td>
+                  <td class="c num">144</td>
+                  <td class="c num">192</td>
+                  <td class="c num">18,466</td>
+                  <td class="c num"><strong>10.40‰</strong></td>
+                </tr>
+                <tr>
+                  <td class="c num">15</td>
+                  <td>יונדאי סונטה (SONATA)</td>
+                  <td class="c num">149</td>
+                  <td class="c num">199</td>
+                  <td class="c num">19,166</td>
+                  <td class="c num"><strong>10.38‰</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </details>
+
+      <!-- ── STEP 3.3: MUNICIPAL CLUSTERS & CORRIDOR CITIES ── -->
+      <div class="ch2-step-header">
+        <div class="ch2-step-title-wrap">
+          <span class="ch2-step-num">3.3</span>
+          <h3 class="ch2-step-title">דפוסי הפשיעה המרחביים ב-1,205 הרשויות בישראל</h3>
+        </div>
+        <span class="chip chip-line">סיווג רשויות היסטורי (2018–2022) ומוקדי צירי הרוחב</span>
+      </div>
+
+      <p style="font-size: var(--text-sm); color: var(--color-ink-2); line-height: 1.6; margin-top: var(--space-sm);">
+        גניבות רכב בישראל הן תופעה מרחבית מובהקת המושפעת מצירי תנועה מהירים, קרבה לקו התפר, ורמת השיטור העירונית. פרק זה
+        מפרט כיצד אלגוריתמי אשכול בלתי מונחים (Unsupervised Clustering בנספח B, תאים 51–52) חילצו את דפוסי הסיכון על פני
+        1,206 רשויות ויישובים (על בסיס מאגר האכיפה של 2018–2023), וכיצד תובנות אלו מזינות את רכיב הסיכון העירוני (45%)
+        בנוסחת התמחור של הממשק.
+      </p>
+
+      <div class="bands" style="margin-top: var(--space-md);">
+        <div class="band plastic" style="--t: var(--p-fri);">
+          <span class="chip chip-mint" style="margin-bottom: 8px;">סיווג אוטומטי · K-Means (K=4)</span>
+          <h3>4 פרופילים מוניציפליים לפי היקף תיקים ואכיפה</h3>
+          <ul>
+            <li><strong>337 מוקדים עירוניים ראשיים:</strong> ממוצע של <code>161.8</code> תיקי חקירה היסטוריים לרשות,
+              גילוי נמוך (<code>11.2%</code>) ו-<code>95.4%</code> סגירה ללא פענוח (ת״א-יפו, פתח תקווה, ראשון לציון,
+              ירושלים, באר שבע ונתניה).</li>
+            <li><strong>160 רשויות ביניים:</strong> היקף מתון (<code>6.4</code> תיקים בממוצע) ושיעור גילוי גבוה יחסית
+              (<code>50.6%</code>).</li>
+            <li><strong>708 יישובים שקטים וכפריים:</strong> <code>680</code> יישובים בפעילות נמוכה ו-<code>28</code>
+              יישובים כפריים שקטים (מדד הפרדה <code>Silhouette = 0.469</code>, ו-<code>2</code> ערי קצה חריגות
+              ב-<code>DBSCAN</code>).</li>
+          </ul>
+        </div>
+        <div class="band plastic" style="--t: var(--p-tue);">
+          <span class="chip chip-mint" style="margin-bottom: 8px;">השוואה גיאוגרפית · 9 ערי ציר</span>
+          <h3>מוקדי צירי הרוחב המהירים וקו התפר</h3>
+          <ul>
+            <li><strong>קבוצת הייחוס:</strong> 9 ערים מרכזיות היושבות לאורך כביש 6, כביש 1 וכביש 443 (ירושלים, פתח
+              תקווה, כפר סבא, ראש העין, מודיעין, רמלה, לוד, טייבה וקלנסווה).</li>
+            <li><strong>פער חד בשנת 2024:</strong> חציון של <strong>561 גניבות</strong> ב-9 ערי הציר
+              (ו-<code>96.3%</code> סגירת על״ן) לעומת חציון של <strong>5.5 גניבות בלבד</strong> ביתר 280 היישובים
+              הפעילים.</li>
+            <li><strong>הפרדה מהמודל:</strong> תיוג זה משמש לניתוח גיאוגרפי תיאורי בלבד ואינו מוזן כמשקולת ידנית למודלי
+              ה-ML.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ── שילוב התרשימים המרחביים של האשכולות והתפלגות ציוני הסיכון ── -->
+      <div class="charts-2" style="margin-top: var(--space-lg);">
+        <figure class="chart" style="margin-top: 0;">
+          <div class="chart-frame" onclick="openLightbox('assets/charts/final_kmeans_clusters.png')" role="button"
+            tabindex="0">
+            <img alt="אשכולות K-Means וחריגי DBSCAN על נתוני אכיפה היסטוריים"
+              src="assets/charts/final_kmeans_clusters.png" />
+          </div>
+          <figcaption><strong>איור 3.1 (נספח B):</strong> פילוח 1,205 הרשויות ל-4 אשכולות עצימות על נתוני 2018–2022
+            (<code>Silhouette = 0.469</code>) </figcaption>
+        </figure>
+        <figure class="chart" style="margin-top: 0;">
+          <div class="chart-frame" onclick="openLightbox('assets/charts/visual_city_dist.png')" role="button"
+            tabindex="0">
+            <img alt="התפלגות ציוני הסיכון העירוניים על פני הרשויות המקומיות"
+              src="assets/charts/visual_city_dist.png" />
+          </div>
+          <figcaption><strong>איור 3.2:</strong> התפלגות ציוני הסיכון העירוניים (15–100) על פני הרשויות בישראל: חציון
+            33.0, ממוצע 35.6 וזנב ימני של ערי המוקד.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         CHAPTER 04: ניתוח נתונים חקרני (Visual EDA)
+         ===================================================================== -->
+    <section class="report-section" id="ch4">
+      <header class="chapter-head">
+        <div class="chapter-num-badge">פרק 04</div>
+        <h2 class="chapter-title">ניתוח נתונים חקרני</h2>
+        <p class="chapter-subtitle">Exploratory Data Analysis (EDA) &amp; Research Visualizations</p>
+      </header>
+      <p class="section-intro">
+        מחברת המחקר <code>CarTheftRisk_final</code> כוללת מערך של 8 תרשימים חקרניים מרכזיים (EDA) הממפים את עקומת הפארטו
+        של הדגמים, מגמות רב-שנתיות, שנתוני ייצור, מוקדי ערים ודפוסי אכיפה היסטוריים.
+        גלריה אינטראקטיבית זו מאפשרת סינון נושאי של התרשימים ולחיצה על כל תרשים לצפייה מוגדלת ברזולוציה מלאה:
+      </p>
+
+      <div class="eda-filter-bar" role="tablist" aria-label="סינון תרשימי מחקר ו-EDA"
+        style="margin-top: var(--space-sm);">
+        <span style="font-size: 0.85rem; font-weight: 700; color: var(--color-ink); margin-inline: 8px;">סינון לפי
+          נושא:</span>
+        <button type="button" class="eda-tab-btn" data-eda-filter="all">הצג הכל (8)</button>
+        <button type="button" class="eda-tab-btn active" data-eda-filter="spatial">חשיפת למ״ס ואשכולות (2)</button>
+        <button type="button" class="eda-tab-btn" data-eda-filter="national">מגמות ארציות ופארטו (2)</button>
+        <button type="button" class="eda-tab-btn" data-eda-filter="models">שנתונים ומפת חום דגמים (2)</button>
+        <button type="button" class="eda-tab-btn" data-eda-filter="cities">ערים ואכיפה (2)</button>
+      </div>
+
+      <!-- Group 1: Spatial & CBS Exposure (Default Visible) -->
+      <div class="charts-2 eda-group" data-eda-cat="spatial">
+        <figure class="chart">
+          <div class="chart-frame" onclick="openLightbox('assets/charts/final_cbs_exposure.png')" role="button"
+            tabindex="0">
+            <img alt="למ״ס 2025: שיעור אמפירי במותגי EV מול אינדקס פרוקסי דטרמיניסטי לדגם"
+              src="assets/charts/final_cbs_exposure.png" />
+          </div>
+          <figcaption><strong>איור 4.1 (נספח D):</strong> השוואת שיעור הגניבות הישיר במותגי רכב חשמלי מלא (מימין) מול
+            אומדן החשיפה ל-15 הדגמים הפרטיים המובילים (משמאל).</figcaption>
+        </figure>
+        <figure class="chart">
+          <div class="chart-frame" onclick="openLightbox('assets/charts/final_kmeans_clusters.png')" role="button"
+            tabindex="0">
+            <img alt="אשכולות K-Means וחריגי DBSCAN על נתוני אכיפה היסטוריים"
+              src="assets/charts/final_kmeans_clusters.png" />
+          </div>
+          <figcaption><strong>איור 4.2 (נספח B):</strong> פילוח 1,205 הרשויות ל-4 אשכולות על נתוני 2018–2022
+            (<code>Silhouette = 0.469</code>) וזיהוי 2 ערי קצה חריגות ב-DBSCAN.</figcaption>
+        </figure>
+      </div>
+
+      <!-- Group 2: National & Pareto -->
+      <div class="charts-2 eda-group" data-eda-cat="national" style="display: none;">
+        <figure class="chart">
+          <div class="chart-frame" onclick="openLightbox('assets/charts/final_national_trends.png')" role="button"
+            tabindex="0">
+            <img alt="סך גניבות רכב בישראל לאורך השנים 2017–2025" src="assets/charts/final_national_trends.png" />
+          </div>
+          <figcaption><strong>איור 4.3 (סעיף 4.1):</strong> מגמות גניבות ארציות בשנים 2017–2025: קפיצת מדרגה מ-2021 לשיא
+            של 19,990 ב-2023 ו-15,258 ב-9 חודשי 2025 (קצב שנתי 20,344).</figcaption>
+        </figure>
+        <figure class="chart">
+          <div class="chart-frame" onclick="openLightbox('assets/charts/final_model_pareto.png')" role="button"
+            tabindex="0">
+            <img alt="ריכוזיות דגמים ועקומת פארטו" src="assets/charts/final_model_pareto.png" />
+          </div>
+          <figcaption><strong>איור 4.4 (סעיף 4.2):</strong> עקומת פארטו על פני 946 דגמים מזוהים: 10 דגמים מרכזים 42.3%
+            מהגניבות ו-50 דגמים מרכזים 76.3%.</figcaption>
+        </figure>
+      </div>
+
+      <!-- Group 3: Models & Years -->
+      <div class="charts-2 eda-group" data-eda-cat="models" style="display: none;">
+        <figure class="chart">
+          <div class="chart-frame" onclick="openLightbox('assets/charts/final_model_year_dist.png')" role="button"
+            tabindex="0">
+            <img alt="התפלגות הגניבות לפי שנת ייצור הרכב" src="assets/charts/final_model_year_dist.png" />
+          </div>
+          <figcaption><strong>איור 4.5 (סעיף 13.1):</strong> התפלגות הגניבות לפי שנת ייצור בפאנל 2023–2025 (שיא של 6,053
+            בשנתון 2021; שנתוני 2024–2025 שהו זמן קצר יותר על הכביש).</figcaption>
+        </figure>
+        <figure class="chart">
+          <div class="chart-frame" onclick="openLightbox('assets/charts/final_heatmap_top15.png')" role="button"
+            tabindex="0">
+            <img alt="מפת חום: 15 הדגמים המובילים לאורך השנים" src="assets/charts/final_heatmap_top15.png" />
+          </div>
+          <figcaption><strong>איור 4.6 (סעיף 4.3):</strong> מפת חום רב-שנתית (2017–2025) של 15 הדגמים המובילים: הובלה
+            עקבית של קורולה (10,573 מצטבר) וזינוק חד בדגמים היברידיים.</figcaption>
+        </figure>
+      </div>
+
+      <!-- Group 4: Cities & Enforcement -->
+      <div class="charts-2 eda-group" data-eda-cat="cities" style="display: none;">
+        <figure class="chart">
+          <div class="chart-frame" onclick="openLightbox('assets/charts/final_city_trends.png')" role="button"
+            tabindex="0">
+            <img alt="מגמות ב-5 הרשויות המובילות כולל סימון שבר הסדרה ב-2023"
+              src="assets/charts/final_city_trends.png" />
+          </div>
+          <figcaption><strong>איור 4.7 (סעיף 4.4):</strong> 5 הערים המובילות עם סימון מפורש של שבר הסדרה ב-2023 (ב-2024
+            מובילות תל אביב-יפו עם 2,414 ופתח תקווה עם 1,556 רכבים).</figcaption>
+        </figure>
+        <figure class="chart">
+          <div class="chart-frame" onclick="openLightbox('assets/charts/final_enforcement_scatter.png')" role="button"
+            tabindex="0">
+            <img alt="הקשר בין נפח תיקים היסטורי לשיעור גילוי חשודים"
+              src="assets/charts/final_enforcement_scatter.png" />
+          </div>
+          <figcaption><strong>איור 4.8 (סעיף 4.5):</strong> סדרת האכיפה ההיסטורית (2018–2022, $n=160$ יישובים עם $\ge
+            25$ תיקים, $\rho = 0.178$): התכנסות שיעור הגילוי בערים הגדולות סביב ~13% ומעל 94% סגירה בעל״ן.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         CHAPTER 05: התלבטויות הנדסיות
+         ===================================================================== -->
+    <section class="report-section" id="ch5">
+      <header class="chapter-head">
+        <div class="chapter-num-badge">פרק 05</div>
+        <h2 class="chapter-title">התלבטויות הנדסיות</h2>
+        <p class="chapter-subtitle">Engineering Dilemmas &amp; Methodological Trade-offs</p>
+      </header>
+      <p class="section-intro">
+        מעבר מקובצי משטרה גולמיים למערכת חיזוי מבוקרת מחייב הכרעות הנדסיות שבהן לכל בחירה יש מחיר מתמטי או תפעולי.
+        להלן 5 צומתי ההחלטה המרכזיים שעוצבו במחברת <code>CarTheftRisk_final</code>:
+      </p>
+
+      <div class="tradeoff-grid">
+        <!-- Trade-off 1 -->
+        <article class="tradeoff-card tradeoff-card--hero">
+          <div class="tradeoff-head">
+            <span class="tradeoff-badge">צומת 01 · בחירת אוכלוסייה נקייה מזליגה מול כיסוי ממשק</span>
+            <span class="chip chip-mint">Pre-Cutoff Cohort + O(1) UI</span>
+          </div>
+          <h3>פאנל חיזוי טרום-חיתוך מול שכבת תמיכה בהחלטות בדשבורד</h3>
+          <div class="tradeoff-hero-split">
+            <div class="tradeoff-conflict">
+              <div class="tradeoff-row">
+                <span class="axis-tag">הדילמה:</span>
+                <p>אם בונים את פאנל המבחן של 2025 מכל הצירופים שהופיעו אי-פעם ב-2023–2025, צירופים שנגנבו לראשונה ב-2025
+                  נכנסים למבחן בדיעבד (זליגת בחירת אוכלוסייה). מנגד, קוהורט טרום-חיתוך אינו מכסה כל דגם נדיר ביישוב קטן
+                  בדשבורד.</p>
+              </div>
+              <div class="tradeoff-row">
+                <span class="axis-tag">המחיר והסיכון:</span>
+                <p>הקפדה על בניית קוהורט סימטרית ממידע עד $T-1$ בלבד (<code>17,389</code> באימון ו-<code>16,853</code>
+                  במבחן) מעלה את שיעור האפסים ל-<code>83.8%</code> ודורשת מנגנון נפרד עבור שאילתות Cold-Start בממשק.</p>
+              </div>
+            </div>
+            <div class="tradeoff-verdict">
+              <div class="verdict-label"><span class="verdict-icon">✓</span> ההכרעה והתוצאה ההנדסית</div>
+              <p>הפרדה כפולה: פאנל ה-ML נבנה בקשיחות ממידע טרום-חיתוך בלבד (פעילים ב-$T-1$ + רשת <code>120×80</code>
+                מ-$T-1$), ולצידו שכבת UI היוריסטית שקופה (<code>50/45/5</code> על נתוני טרום-2025) המספקת מענה ב-$O(1)$
+                לכל 1,271 הדגמים ו-1,205 הרשויות.</p>
+            </div>
+          </div>
+        </article>
+
+        <!-- Trade-off 2 -->
+        <article class="tradeoff-card">
+          <div class="tradeoff-head">
+            <span class="tradeoff-badge">צומת 02 · פרדוקס האפסים וכיול 9 חודשים</span>
+            <span class="chip chip-mint">Tail MAE −41.1% · R² +0.198</span>
+          </div>
+          <h3>ניחוש האפס הנאיבי מול דיוק מכויל-חשיפה במוקדי הפשיעה</h3>
+          <div class="tradeoff-conflict">
+            <div class="tradeoff-row">
+              <span class="axis-tag">הדילמה:</span>
+              <p>כאשר <code>83.8%</code> מתאי המבחן הם אפס, ניחוש קבוע של <code>0</code> משיג אוטומטית את
+                ה-<code>MAE</code> הגלובלי הנמוך ביותר (<code>0.3802</code> מול <code>0.4776</code> ב-XGBoost). הסתמכות
+                על MAE כללי לבדו תכתיר מודל עיוור לחלוטין למוקדים.</p>
+            </div>
+            <div class="tradeoff-row">
+              <span class="axis-tag">המחיר והסיכון:</span>
+              <p>ויתור מודע על כ-0.10 נקודות ב-MAE של תאי האפס כדי לדייק במוקדים הכבדים (<code>Y ≥ 10</code>) ולכייל את
+                פערי 9 החודשים של 2025.</p>
+            </div>
+          </div>
+          <div class="tradeoff-verdict">
+            <div class="verdict-label"><span class="verdict-icon">✓</span> ההכרעה והתוצאה ההנדסית</div>
+            <p>אימון פואסוני עם <code>Exposure Offset = log(0.75)</code> וכוונון <code>max_depth=3</code>
+              ב-<code>GroupKFold</code> מרחבי: צמצום שגיאת הזנב ב-<strong>41.1%</strong> מול החציון (מ-14.73 ל-8.67),
+              שיפור של <strong>33.0%</strong> ב-MAE מול התמדה מכוילת, ו-<code>R² = +0.1984</code>.</p>
+          </div>
+        </article>
+
+        <!-- Trade-off 3 -->
+        <article class="tradeoff-card">
+          <div class="tradeoff-head">
+            <span class="tradeoff-badge">צומת 03 · עצי החלטה מול Deep Learning</span>
+            <span class="chip chip-mint">Tail 8.67 מול 10.17 ב-MLP</span>
+          </div>
+          <h3>XGBoost Poisson מול רשת עצבית מבוקרת (CountMLP + Early Stopping)</h3>
+          <div class="tradeoff-conflict">
+            <div class="tradeoff-row">
+              <span class="axis-tag">הדילמה:</span>
+              <p>בנספח A אומנה רשת <code>PyTorch CountMLP</code> עם ולידציה מרחבית אמיתית ועצירה מוקדמת (Epoch 20),
+                שהשיגה כיווץ חלק ו-<code>RMSE</code> גלובלי נמוך יותר (<code>1.2036</code>, <code>R² = +0.3019</code>).
+              </p>
+            </div>
+            <div class="tradeoff-row">
+              <span class="axis-tag">המחיר והסיכון:</span>
+              <p>הכיווץ החלק של הרשת העצבית שמרני מדי במוקדי הקצה הקיצוניים (<code>Tail MAE = 10.17</code> לעומת
+                <code>8.67</code> ב-XGBoost) ומקשה על הפקת הסברי SHAP מדויקים לחיתום.
+              </p>
+            </div>
+          </div>
+          <div class="tradeoff-verdict">
+            <div class="verdict-label"><span class="verdict-icon">✓</span> ההכרעה והתוצאה ההנדסית</div>
+            <p>בחירה ב-<strong>XGBoost Poisson</strong> כמודל הראשי בזכות חדות עדיפה במוקדי הקצה (<code>8.67</code>),
+              הסבריות מובנית ב-<code>TreeExplainer</code> ואפס תלות ב-PyTorch בזמן ריצה.</p>
+          </div>
+        </article>
+
+        <!-- Trade-off 4 -->
+        <article class="tradeoff-card">
+          <div class="tradeoff-head">
+            <span class="tradeoff-badge">צומת 04 · הסגר נתונים חסרים</span>
+            <span class="chip chip-mint" dir="ltr">Zero Fake Imputation</span>
+          </div>
+          <h3>הסגר מתועד (Quarantine) מול השלמת שנתונים סינתטית</h3>
+          <div class="tradeoff-conflict">
+            <div class="tradeoff-row">
+              <span class="axis-tag">הדילמה:</span>
+              <p>בקובץ המשטרה קיימות <code>2,444</code> שורות עלה (<code>5,290</code> גניבות) ללא שנתון ייצור או עם שיוך
+                מחוזי כללי במקום עיר, וכן העדר פירוט עירוני בשנים 2017–2022. האם להשלים להן
+                <code>model_year = 2020</code> ולייצר פאנל סינתטי?
+              </p>
+            </div>
+            <div class="tradeoff-row">
+              <span class="axis-tag">המחיר והסיכון:</span>
+              <p>השלמה מלאכותית מעוותת את עקומת השנתונים (יוצרת פיק מזויף בשנתון 2020) ומזריקה רעש מעגלי למודל.</p>
+            </div>
+          </div>
+          <div class="tradeoff-verdict">
+            <div class="verdict-label"><span class="verdict-icon">✓</span> ההכרעה והתוצאה ההנדסית</div>
+            <p>העברת 2,444 השורות החלקיות ל<strong>טבלת הסגר מתועדת</strong> (<code>df_quarantine_leaves</code>) ושימור
+              פאנל מוניציפלי טהור (<code>23,831</code> מפתחות) עם 0 נתונים מומצאים.</p>
+          </div>
+        </article>
+
+        <!-- Trade-off 5 -->
+        <article class="tradeoff-card">
+          <div class="tradeoff-head">
+            <span class="tradeoff-badge">צומת 05 · שיעור נצפה מול פרוקסי בלמ״ס</span>
+            <span class="chip chip-mint">Two-Tier Exposure</span>
+          </div>
+          <h3>מכנה למ״ס ישיר למותגי EV מול אומדן דטרמיניסטי לתת-דגם</h3>
+          <div class="tradeoff-conflict">
+            <div class="tradeoff-row">
+              <span class="axis-tag">הדילמה:</span>
+              <p>הלמ״ס מפרסם מצבה מדויקת ליצרנים ולמותגי רכב חשמלי (תרשים 10), אך לא מפקד פתוח ברמת תת-דגם
+                בנזין/היברידי. האם לוותר כליל על השוואת דגמים או להציג אומדן כנתון רשמי?</p>
+            </div>
+            <div class="tradeoff-row">
+              <span class="axis-tag">המחיר והסיכון:</span>
+              <p>הצגת אומדן פנימי כשיעור רשמי פוגעת באמינות המדעית; מנגד, התעלמות ממצבת היצרן מותירה אשליית נפח מלאה.
+              </p>
+            </div>
+          </div>
+          <div class="tradeoff-verdict">
+            <div class="verdict-label"><span class="verdict-icon">✓</span> ההכרעה והתוצאה ההנדסית</div>
+            <p>הפרדה שקופה לשני רבדים: שיעורים אמפיריים מדויקים למותגי EV ולארץ ייצור (רובד D.1), לצד <strong>אינדקס
+                פרוקסי דטרמיניסטי</strong> מוצהר לדגמים פרטיים מרכזיים (רובד D.2: קורולה 37.00‰ ויאריס 36.80‰ מול 3.51‰
+              ארצי).</p>
+          </div>
+        </article>
+      </div>
+
+      <!-- Figure 4.1 -->
+      <figure class="chart" style="margin-top: var(--space-xl);">
+        <div class="chart-frame" onclick="openLightbox('assets/charts/final_count_diagnostics.png')" role="button"
+          tabindex="0">
+          <img alt="התפלגות ספירת הגניבות בפאנל האימון" src="assets/charts/final_count_diagnostics.png"
+            loading="lazy" />
+        </div>
+        <figcaption>
+          <strong>איור 4.1 (Section 8.1 — אבחון ספירה לצומת 02):</strong> התפלגות ספירת הגניבות בפאנל האימון (2024,
+          $n=17,389$) —
+          82.7% תצפיות אפס לצד זנב ימני כבד (יחס פיזור-יתר <code>7.87x</code>), הממחישה מדוע הערכת מודלים חייבת לשלב
+          <code>Poisson Deviance</code>, <code>RMSE</code> ושגיאת זנב לצד ה-<code>MAE</code> הגלובלי.
+        </figcaption>
+      </figure>
+
+    </section>
+
+    <!-- =====================================================================
+         CHAPTER 06: תוצאות המודלים ומבחן העשירונים האקטוארי
+         ===================================================================== -->
+    <section class="report-section" id="ch6">
+      <header class="chapter-head">
+        <div class="chapter-num-badge">פרק 06</div>
+        <h2 class="chapter-title">תוצאות המודלים ומבחן העשירונים</h2>
+        <p class="chapter-subtitle">Spatial GroupKFold, Blind 2025 Holdout &amp; Cluster-Bootstrapped Deciles</p>
+      </header>
+      <p class="section-intro">
+        בחירת עומק העץ (<code>max_depth = 3</code>) בוצעה בוולידציה צולבת מרחבית (<code>5-Fold GroupKFold</code> לפי
+        רשות מקומית על אימון 2024 בלבד: <code>CV R² = +0.3343</code>).
+        לאחר מכן נבחנו כלל המודלים פעם אחת ויחידה במבחן עיוור על שנת 2025 (<code>n = 16,853</code> תצפיות,
+        <code>6,408</code> גניבות ב-9 חודשים) תחת התאמת חשיפה <code>Exposure = 0.75</code>,
+        עם רווחי סמך בדגימת אשכולות עיר (<code>City-Clustered Bootstrap, B=500</code>).
+      </p>
+
+      <!-- Key Empirical KPIs -->
+      <div class="figures">
+        <div>
+          <b>ρ = 0.4089</b>
+          <div class="fig-label">מתאם דירוג ספירמן</div>
+          <div class="fig-sub">95% Cluster CI: <span dir="ltr">[0.3386, 0.4561]</span></div>
+        </div>
+        <div>
+          <b>-41.1%</b>
+          <div class="fig-label">צמצום שגיאת זנב (<span dir="ltr">Y ≥ 10</span>)</div>
+          <div class="fig-sub">ירידה מ-14.73 בחציון ל-8.67 ב-XGBoost Poisson</div>
+        </div>
+        <div>
+          <b>+0.1984</b>
+          <div class="fig-label">מקדם קביעה $R^2$ בספירות</div>
+          <div class="fig-sub"><code>RMSE = 1.2898</code> | שיפור 33.0% ב-MAE מול התמדה</div>
+        </div>
+        <div>
+          <b>R² = +0.3157</b>
+          <div class="fig-label">אלוף המסלול הרציף (0–100)</div>
+          <div class="fig-sub">Random Forest בתקרת אימון בלבד (<span dir="ltr">MAE = 5.60</span>)</div>
+        </div>
+      </div>
+
+      <!-- Concise Dual-Track Benchmark Table -->
+      <h3 class="block-head">
+        <span>השוואת מודלים דו-מסלולית במבחן עיוור על שנת 2025 (מותאם חשיפה 0.75)</span>
+        <span class="chip chip-line">CarTheftRisk_final · Sections 10–11 &amp; Appendix A</span>
+      </h3>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>מסלול ומודל</th>
+              <th class="c">Overall MAE</th>
+              <th class="c">RMSE</th>
+              <th class="c">$R^2$</th>
+              <th class="c">Poisson Deviance</th>
+              <th class="c">Tail MAE <span dir="ltr">(≥ 10)</span></th>
+              <th class="c">מעמד ומסקנה</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="row-win">
+              <td><strong>Track 1 · XGBoost Poisson (<code>Offset log(0.75)</code>, depth=3)</strong></td>
+              <td class="c num"><strong>0.4776</strong></td>
+              <td class="c num"><strong>1.2898</strong></td>
+              <td class="c num"><strong>+0.1984</strong></td>
+              <td class="c num"><strong>0.9690</strong></td>
+              <td class="c num"><strong>8.6687 (-41.1%)</strong></td>
+              <td class="c"><span class="chip chip-mint">אלוף מודלי הספירה (מוקדים + Deviance)</span></td>
+            </tr>
+            <tr>
+              <td>Track 1 · Random Forest (<code>Exposure 0.75</code>)</td>
+              <td class="c num">0.4824</td>
+              <td class="c num">1.3808</td>
+              <td class="c num">+0.0813</td>
+              <td class="c num">0.9866</td>
+              <td class="c num">8.7185</td>
+              <td class="c"><span class="chip chip-line">סגן יציב בעצי החלטה</span></td>
+            </tr>
+            <tr>
+              <td>Track 1 · HistGradientBoosting (<code>Exposure 0.75</code>)</td>
+              <td class="c num">0.5018</td>
+              <td class="c num">1.4977</td>
+              <td class="c num">-0.0809</td>
+              <td class="c num">1.0246</td>
+              <td class="c num">8.8187</td>
+              <td class="c"><span class="risk-mid">רגיש לקפיצות בערי קצה</span></td>
+            </tr>
+            <tr>
+              <td>Track 1 · Poisson GLM (<code>Exposure 0.75</code>)</td>
+              <td class="c num">0.6241</td>
+              <td class="c num">1.4407</td>
+              <td class="c num">-0.0002</td>
+              <td class="c num">1.6965</td>
+              <td class="c num">14.3640</td>
+              <td class="c"><span class="risk-mid">קו בסיס ליניארי-לוגריתמי</span></td>
+            </tr>
+            <tr>
+              <td>Track 1 · PyTorch CountMLP (נספח A, Early-Stopped Ep.20)</td>
+              <td class="c num">0.4463</td>
+              <td class="c num">1.2036</td>
+              <td class="c num">+0.3019</td>
+              <td class="c num">0.9697</td>
+              <td class="c num">10.1654</td>
+              <td class="c"><span class="risk-mid">כיווץ חלק גלובלי, פחות חד בזנב</span></td>
+            </tr>
+            <tr>
+              <td>Track 1 · Baseline Persistence <span dir="ltr">$(0.75 \cdot Y_{t-1})$</span></td>
+              <td class="c num">0.7125</td>
+              <td class="c num">1.5731</td>
+              <td class="c num">-0.1924</td>
+              <td class="c num">2.6385</td>
+              <td class="c num">8.2562</td>
+              <td class="c"><span class="risk-mid">התמדה נאיבית מכוילת חשיפה</span></td>
+            </tr>
+            <tr>
+              <td>Track 1 · Baseline Median <span dir="ltr">$(\hat{Y}=0)$</span></td>
+              <td class="c num">0.3802*</td>
+              <td class="c num">1.4899</td>
+              <td class="c num">-0.0697</td>
+              <td class="c num">10.7058</td>
+              <td class="c num">14.7250 (קריסה)</td>
+              <td class="c"><span class="chip chip-grey">מלכודת האפסים (83.8% אפסים)</span></td>
+            </tr>
+            <tr class="row-win">
+              <td><strong>Track 2 · Random Forest (ציון רציף 0–100, תקרת אימון בלבד)</strong></td>
+              <td class="c num"><strong>5.5951 נק׳</strong></td>
+              <td class="c num"><strong>9.7390</strong></td>
+              <td class="c num"><strong>+0.3157</strong></td>
+              <td class="c num">—</td>
+              <td class="c num"><strong>17.4883 (Top 10%)</strong></td>
+              <td class="c"><span class="chip chip-mint">אלוף המסלול הרציף</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Visual Comparison & Decile Lift Chart Side by Side -->
+      <div class="charts-2">
+        <figure class="chart">
+          <div class="chart-frame" onclick="openLightbox('assets/charts/final_dual_track_benchmark.png')" role="button"
+            tabindex="0">
+            <img alt="השוואה ויזואלית דו-מסלולית והשפעת התאמת החשיפה"
+              src="assets/charts/final_dual_track_benchmark.png" />
+          </div>
+          <figcaption>
+            <strong>איור 5.1 (Section 11.2):</strong> השוואת מדדי השגיאה המותאמים לחשיפה, שגיאות הזנב במוקדים כבדים,
+            והשיפור ב-$R^2$ בעקבות היסט החשיפה.
+          </figcaption>
+        </figure>
+        <figure class="chart">
+          <div class="chart-frame" onclick="openLightbox('assets/charts/final_decile_lift.png')" role="button"
+            tabindex="0">
+            <img alt="מבחן עשירוני סיכון משמרי-תיקו ורווחי סמך באשכולות עיר"
+              src="assets/charts/final_decile_lift.png" />
+          </div>
+          <figcaption>
+            <strong>איור 5.2 (Section 11.5):</strong> מונוטוניות מלאה על פני כל 10 העשירונים — עשירון 10 לוכד 58.18%
+            מכלל גניבות המבחן (פי 109.4 מעשירון 1).
+          </figcaption>
+        </figure>
+      </div>
+
+
+
+      <div class="insight-strip">
+        <div class="insight-line"><strong>ממצא ריכוזיות מונוטוני:</strong> חלוקת העשירונים באמצעות דירוג ממוצע משמר-תיקו
+          (<code>rank(method='average')</code>) מבטיחה מונוטוניות מלאה מעשירון 1 ועד 10: העשירון העליון לבדו לוכד
+          <strong>58.18% מגניבות המבחן</strong> (3,728 מתוך 6,408; <code>95% Cluster CI: [47.68%, 63.42%]</code>).
+        </div>
+        <div class="insight-line"><strong>משמעות יישומית:</strong> שני העשירונים העליונים שסימן המודל (Deciles 9–10,
+          המהווים 20% מתאי הקוהורט) מכסים יחד <strong>72.32% מכלל הגניבות</strong> (4,634 מתוך 6,408 אירועים).</div>
+      </div>
+
+      <details class="deep-dive">
+        <summary>טבלת מבחן 10 העשירונים המלאה (Tie-Preserving Decile Lift Table)</summary>
+        <div class="deep-dive-body">
+          <div class="tbl-wrap">
+            <table class="tbl">
+              <thead>
+                <tr>
+                  <th class="c">עשירון (Decile)</th>
+                  <th class="c">כמות רשומות</th>
+                  <th class="c">ממוצע תחזית (9m)</th>
+                  <th class="c">סך גניבות בפועל (2025 9m)</th>
+                  <th class="c">ממוצע גניבות לתצפית</th>
+                  <th class="c">נתח מסך הגניבות</th>
+                  <th class="c">מכפיל Lift מול עשירון 1</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="c">Decile 1 (הנמוך ביותר)</td>
+                  <td class="c num">1,681</td>
+                  <td class="c num">0.0208</td>
+                  <td class="c num">34</td>
+                  <td class="c num">0.0202</td>
+                  <td class="c num">0.53%</td>
+                  <td class="c num">1.00x</td>
+                </tr>
+                <tr>
+                  <td class="c">Decile 2</td>
+                  <td class="c num">1,694</td>
+                  <td class="c num">0.0298</td>
+                  <td class="c num">55</td>
+                  <td class="c num">0.0325</td>
+                  <td class="c num">0.86%</td>
+                  <td class="c num">1.61x</td>
+                </tr>
+                <tr>
+                  <td class="c">Decile 3</td>
+                  <td class="c num">1,682</td>
+                  <td class="c num">0.0396</td>
+                  <td class="c num">86</td>
+                  <td class="c num">0.0511</td>
+                  <td class="c num">1.34%</td>
+                  <td class="c num">2.53x</td>
+                </tr>
+                <tr>
+                  <td class="c">Decile 4</td>
+                  <td class="c num">1,673</td>
+                  <td class="c num">0.0526</td>
+                  <td class="c num">127</td>
+                  <td class="c num">0.0759</td>
+                  <td class="c num">1.98%</td>
+                  <td class="c num">3.75x</td>
+                </tr>
+                <tr>
+                  <td class="c">Decile 5</td>
+                  <td class="c num">1,696</td>
+                  <td class="c num">0.0679</td>
+                  <td class="c num">150</td>
+                  <td class="c num">0.0884</td>
+                  <td class="c num">2.34%</td>
+                  <td class="c num">4.37x</td>
+                </tr>
+                <tr>
+                  <td class="c">Decile 6</td>
+                  <td class="c num">1,678</td>
+                  <td class="c num">0.1546</td>
+                  <td class="c num">292</td>
+                  <td class="c num">0.1740</td>
+                  <td class="c num">4.56%</td>
+                  <td class="c num">8.60x</td>
+                </tr>
+                <tr>
+                  <td class="c">Decile 7</td>
+                  <td class="c num">1,693</td>
+                  <td class="c num">0.2228</td>
+                  <td class="c num">397</td>
+                  <td class="c num">0.2345</td>
+                  <td class="c num">6.20%</td>
+                  <td class="c num">11.59x</td>
+                </tr>
+                <tr>
+                  <td class="c">Decile 8</td>
+                  <td class="c num">1,677</td>
+                  <td class="c num">0.3824</td>
+                  <td class="c num">633</td>
+                  <td class="c num">0.3775</td>
+                  <td class="c num">9.88%</td>
+                  <td class="c num">18.66x</td>
+                </tr>
+                <tr class="row-hi">
+                  <td class="c"><strong>Decile 9</strong></td>
+                  <td class="c num">1,694</td>
+                  <td class="c num">0.6269</td>
+                  <td class="c num">906</td>
+                  <td class="c num">0.5348</td>
+                  <td class="c num">14.14%</td>
+                  <td class="c num">26.44x</td>
+                </tr>
+                <tr class="row-peak">
+                  <td class="c">Decile 10 (המסוכן ביותר)</td>
+                  <td class="c num">1,685</td>
+                  <td class="c num">2.7802</td>
+                  <td class="c num">3,728</td>
+                  <td class="c num">2.2125</td>
+                  <td class="c num">58.18% מכלל הגניבות!</td>
+                  <td class="c num"><strong>109.39x</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <!-- =====================================================================
+         CHAPTER 07: מהמודל למוצר וממשק הסוכן
+         ===================================================================== -->
+    <section class="report-section" id="ch7">
+      <header class="chapter-head">
+        <div class="chapter-num-badge">פרק 07</div>
+        <h2 class="chapter-title">מהמודל למוצר וממשק הסוכן</h2>
+        <p class="chapter-subtitle">Heuristic UI Index (50/45/5), Prescriptive Prototype &amp; Bestie Copilot</p>
+      </header>
+      <p class="section-intro">
+        שכבת ההדגמה המוצרית מתרגמת את נתוני העבר הטרום-2025 לאינדקס סיכון יחסי שקוף
+        (<code>50% דגם + 45% עיר + 5% מאקרו</code>, ללא צירי מילוט בנוסחה)
+        ול<strong>מנוע המלצות מיגון פרוטוטייפי</strong> ב-4 מדרגות חומרה. המדד מיועד להמחשה תפעולית בממשק ואינו מהווה
+        הסתברות גניבה או תעריף ביטוחי מחייב.
+        בחרו תרחיש בסימולטור לבחינת פירוק הרכיבים (מסונכרן לתא <code>14.1</code> במחברת
+        <code>CarTheftRisk_final</code>):
+      </p>
+
+      <!-- Interactive Case-Study Simulator -->
+      <div class="case-sim-wrap" id="caseSimulator">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+          <div>
+            <strong style="font-size: 1rem; color: var(--color-ink);">🎛️ סימולטור הדגמה מוצרית (אינדקס היוריסטי
+              טרום-2025 + המלצות מיגון)</strong>
+          </div>
+          <span class="chip chip-mint">Heuristic UI: 0.50×Model + 0.45×City + 0.05×50</span>
+        </div>
+        <div class="case-sim-tabs" role="tablist">
+          <button type="button" class="case-sim-btn active" data-case-idx="0">1. טויוטה COROLLA בת״א (98/100)</button>
+          <button type="button" class="case-sim-btn" data-case-idx="1">2. יונדאי IONIQ בירושלים (90/100)</button>
+          <button type="button" class="case-sim-btn" data-case-idx="2">3. קיה PICANTO בחיפה (86/100)</button>
+          <button type="button" class="case-sim-btn" data-case-idx="3">4. סובארו FORESTER בגבעתיים (64/100)</button>
+        </div>
+        <div class="case-sim-body">
+          <div class="case-sim-score-box" id="simScoreBox">
+            <span style="font-size: 0.75rem; font-weight: 700; opacity: 0.8;">אינדקס מוצרי משוקלל</span>
+            <div class="case-sim-score-val" id="simScoreVal" style="color: #dc2626;">98</div>
+            <span class="chip chip-ink" id="simRiskTier">מדרגה גבוהה מאוד (Critical Prototype Tier)</span>
+            <div class="case-sim-formula" id="simFormula">0.50×(100) + 0.45×(100) + 0.05×(50) = 97.5 ≈ 98</div>
+          </div>
+          <div style="display: flex; flex-direction: column; justify-content: space-between; gap: 12px;">
+            <div>
+              <h4 id="simTitle" style="margin: 0 0 6px; font-size: 1.05rem; color: var(--color-ink);">טויוטה קורולה
+                (COROLLA) — תל אביב-יפו</h4>
+              <p id="simBreakdown" style="margin: 0; font-size: 0.88rem; color: var(--color-ink-2); line-height: 1.6;">
+                <strong>פירוק רכיבים (טרום-2025):</strong> ציון דגם היסטורי = <code>100/100</code> (משקל 50% ← 50.0 נק׳)
+                · ציון עיר היסטורי =
+                <code>100/100</code> (משקל 45% ← 45.0 נק׳) · בסיס מאקרו קבוע = <code>50/100</code> (משקל 5% ← 2.5 נק׳).
+                ב-2024 נרשמו לצמד זה <strong>163 גניבות</strong> בתל אביב-יפו (ותחזית המודל ל-9 חודשי 2025:
+                <strong>83.6</strong> מול <strong>117</strong> בפועל).
+              </p>
+            </div>
+            <div class="note" style="margin: 0; padding: 12px 16px;">
+              <strong style="font-size: 0.85rem; color: var(--color-ink);">🛡️ פלט מנוע המלצות המיגון (להדגמה):</strong>
+              <p id="simPrescription"
+                style="margin: 4px 0 0; font-size: 0.86rem; color: var(--color-ink-2); line-height: 1.55;">
+                1. איתור פעיל דו-ערוצי + עלוקה אלחוטית. 2. חסימת שקע OBD פיזית מפני שכפול מפתח. 3. חניה סגורה/מוארת או
+                מנעול הגה מכני.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cold-Start Fallback Mechanism Callout -->
+      <div class="note"
+        style="margin-top: var(--space-lg); margin-bottom: var(--space-lg); border-right: 4px solid var(--color-accent); background: var(--color-paper-2); padding: 12px 18px;">
+        <strong style="color: var(--color-ink); font-size: 0.95rem;">❄️ מנגנון ה-Cold-Start לשאילתות חדשות:</strong>
+        <p style="margin: 6px 0 0; font-size: 0.88rem; line-height: 1.6; color: var(--color-ink-2);">
+          במצב שבו מבוקש דגם חדש (ללא היסטוריית גניבות קודמת) או יישוב קטן שאינו מופיע במילוני ה-Lookup, המערכת אינה
+          מאפסת את הסיכון ל-0 ואינה מחזירה שגיאת <code>KeyError</code>.
+          במחברת הוגדר עוגן סיכון בסיסי דטרמיניסטי (<code>default = 30–35</code> נקודות), ובממשק ה-Live Web המנגנון
+          שוכלל לנסיגה היררכית מרובעת:
+          <code>דגם×עיר &larr; ממוצע דגם ארצי &larr; ממוצע יצרן &larr; עוגן ארצי (32.4)</code>, בלוויית תגית שקיפות
+          מפורשת למשתמש.
+        </p>
+      </div>
+
+      <!-- ממשק הדשבורד בפרודקשן -->
+      <h3 class="block-head" style="margin-top: var(--space-xl);">
+        <span>ממשק ה-Decision Support בפרוטוטייפ החי (Live Interface)</span>
+        <span class="chip chip-mint">Live Dashboard · index.html</span>
+      </h3>
+      <p class="block-sub">
+        אפליקציית ה-Web האינטראקטיבית מדגימה שליפת פרופיל סיכון ב-$O(1)$, שקיפות בחלון פירוק הציון, השוואת חלופות רכב
+        מאותה קטגוריה ואנליטיקת מגמות מקומית:
+      </p>
+
+      <div class="charts-2">
+        <figure class="chart">
+          <div class="chart-frame" onclick="openLightbox('assets/live_system_search_results.png')" role="button"
+            tabindex="0">
+            <img alt="מסך שאילתה מרכזי: שליפת פרופיל סיכון O(1) לשילוב דגם-עיר"
+              src="assets/live_system_search_results.png" loading="lazy" />
+          </div>
+          <figcaption>
+            <strong>איור 6.1 (מסך שאילתה מרכזי):</strong> שליפת פרופיל סיכון ב-$O(1)$ לשילוב דגם-עיר, מד סיכון ויזואלי
+            ומדרגת מיגון מומלצת.
+          </figcaption>
+        </figure>
+
+        <figure class="chart">
+          <div class="chart-frame" onclick="openLightbox('assets/live_system_breakdown.png')" role="button"
+            tabindex="0">
+            <img alt="שקיפות אלגוריתמית: פירוט תרומת רכיבי הנוסחה" src="assets/live_system_breakdown.png"
+              loading="lazy" />
+          </div>
+          <figcaption>
+            <strong>איור 6.2 (שקיפות חישובית):</strong> חלון פירוט מרכיבי האינדקס המוצרי והבחנה ברורה בין נתוני עבר לבין
+            תחזית המודל.
+          </figcaption>
+        </figure>
+
+        <figure class="chart">
+          <div class="chart-frame" onclick="openLightbox('assets/live_system_comparison.png')" role="button"
+            tabindex="0">
+            <img alt="השוואת חלופות: איתור רכבים דומים בעלי רמת סיכון נמוכה יותר"
+              src="assets/live_system_comparison.png" loading="lazy" />
+          </div>
+          <figcaption>
+            <strong>איור 6.3 (השוואת חלופות סימולטיבית):</strong> איתור רכבים מקבילים מאותה קטגוריה בעלי רמת סיכון נמוכה
+            יותר להערכת חיסכון יחסי.
+          </figcaption>
+        </figure>
+
+        <figure class="chart">
+          <div class="chart-frame" onclick="openLightbox('assets/live_system_analytics_charts.png')" role="button"
+            tabindex="0">
+            <img alt="ניתוח מגמות מקומי: הצגת היסטוריית גניבות רב-שנתית בדגם ובעיר"
+              src="assets/live_system_analytics_charts.png" loading="lazy" />
+          </div>
+          <figcaption>
+            <strong>איור 6.4 (אנליטיקת שטח ומגמות):</strong> תצוגת היסטוריית הגניבות בחיתוך מוניציפלי ודגמי.
+          </figcaption>
+        </figure>
+      </div>
+
+      <!-- שכבת סוכן ה-AI האוטונומי -->
+      <h3 class="block-head" style="margin-top: var(--space-xl);">
+        <span>שכבת סוכן ה-AI ההיברידי (Bestie Copilot Simulation)</span>
+        <span class="chip chip-ink">Agentic AI Extension · ReAct Architecture</span>
+      </h3>
+      <p class="block-sub">
+        מעל שכבת הנתונים פותח סוכן מבוסס <strong>ReAct</strong> המפעיל 4 כלי Python דטרמיניסטיים לחישוב סיכון, סימולציית
+        הצעות מחיר מחקריות, השוואת חלופות והערכת הנחת מיגון — כך שכל חישוב כספי מתבצע בקוד מבוקר ללא הזיות LLM:
+      </p>
+
+      <div class="agent-cta-card">
+        <div class="agent-cta-copy">
+          <div class="agent-cta-title">
+            <span>🤖</span> תיעוד הנדסי מלא: סוכן ה-AI לביטוח (Bestie Copilot)
+          </div>
+          <p class="agent-cta-desc">
+            ארכיטקטורת 4 כלי ה-Python הדטרמיניסטיים, מנגנון ה Gurdrails, ReAct וחבילת 21 בדיקות ה-Pytest מרוכזים
+            בדוח הסוכן הייעודי.
+          </p>
+        </div>
+        <a class="agent-cta-btn" href="agent_report.html" title="מעבר לדוח סוכן ה-AI">
+          <span>דוח סוכן ה-AI &larr;</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         CHAPTER 08: מגבלות, המלצות וסיכום
+         ===================================================================== -->
+    <section class="report-section" id="ch8">
+      <header class="chapter-head">
+        <div class="chapter-num-badge">פרק 08</div>
+        <h2 class="chapter-title">מגבלות, המלצות וסיכום</h2>
+        <p class="chapter-subtitle">Methodological Limitations, Operational Takeaways &amp; Isolated Export Schema</p>
+      </header>
+      <p class="section-intro">
+        שמירה על יושרה מדעית מחייבת תיעוד גלוי של גבולות הגזרה של הנתונים והמודלים, לצד מסקנות יישומיות המבוססות ישירות
+        על הממצאים האמפיריים:
+      </p>
+
+      <div class="bands">
+        <div class="band plastic" style="--t: var(--p-wed);">
+          <h3>4 מגבלות מתודולוגיות מפורשות</h3>
+          <ul>
+            <li><strong>1. העדר מפקד חשיפה <code>דגם × עיר</code> ורזולוציה היסטורית:</strong> מצבת הלמ״ס מתפרסמת ברמה
+              ארצית (לכן שיעורי הדגמים ברובד D.2 הם אינדקס פרוקסי דטרמיניסטי), ונתוני 2017–2022 לדגמים הם ארציים בלבד —
+              ולכן לא ניתן לבצע <code>Rolling-Origin Backtest</code> רב-שנתי ברמת דגם-עיר לפני 2023.</li>
+            <li><strong>2. דלילות אפסים בקוהורט טרום-חיתוך:</strong> <code>83.8%</code> מתאי המבחן הם אפסים. כוחו של
+              מודל ה-XGBoost Poisson הוא בדירוג הקבוצתי היחסי (<span dir="ltr">$\rho = 0.4089$</span>,
+              <code>D10 = 58.18%</code>) ובצמצום שגיאת הזנב ב-<code>41.1%</code>, ולא בחיזוי אירוע לרכב בודד.
+            </li>
+            <li><strong>3. שבר הסדרה ב-2023 וחשיפת 9 חודשים ב-2025:</strong> נתוני הערים ב-2018–2022 סופרים תיקי חקירה
+              בעוד 2023–2025 סופרים כלי רכב גנובים; שנת 2025 מכסה 9 חודשים וכווילה במודל באמצעות
+              <code>Exposure Offset = 0.75</code>.
+            </li>
+            <li><strong>4. הפרדת פרוטוטייפ מתעריף מסחרי:</strong> אינדקס ה-UI (<code>50/45/5</code>) וסימולציית מחירי
+              הסוכן הם כלי הדגמה מחקריים ואינם הצעות ביטוח חיות.</li>
+          </ul>
+        </div>
+        <div class="band plastic" style="--t: var(--p-thu);">
+          <h3>המלצות אופרטיביות מבוססות-ממצאים</h3>
+          <ul>
+            <li><strong>לחתמים ואנליסטים בענף הביטוח:</strong> שימוש בדירוג העשירונים המונוטוני (עשירונים 9–10 לוכדים
+              <strong>72.32%</strong> מהגניבות, ועשירון 10 לבדו <strong>58.18%</strong>) למיקוד דרישות מיגון ב-50 הדגמים
+              המובילים (<code>76.3%</code> מהנפח), תוך הבחנה חדה בין מותגי EV בסיכון גבוה (אורה 27.47‰, ג׳ילי 19.51‰)
+              לנמוך (בי-ווי-די 1.53‰, טסלה 0.16‰).
+            </li>
+            <li><strong>למערכי אכיפה ושיטור:</strong> תגבור אמצעי תצפית וחסימה ברשויות אשכול העצימות הגבוהה ובערים
+              המרכזיות על צירי הרוחב (חציון 561 גניבות בשנה לעומת 5.5 בשאר היישובים).</li>
+            <li><strong>להמשך מחקר ופיתוח:</strong> חיבור טבלת רישוי רשמית של משרד התחבורה ברזולוציית
+              <code>יצרן × דגם × שנתון × יישוב</code> להחלפת אינדקס הפרוקסי במכנה חשיפה מדויק בתוך פונקציית ההפסד
+              הפואסונית.
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <details class="deep-dive">
+        <summary>
+          <p>נספח הנדסי: סכמת הייצוא המבודדת (<code>notebooks/data_final.json</code>) ובדיקות השלמות</p>
+        </summary>
+        <div class="deep-dive-body">
+          <p style="font-size: var(--text-sm); margin-top: var(--space-md);">
+            מחברת המחקר הקנונית (<code>CarTheftRisk_final.ipynb</code>) מייצאת את כל המילונים ותחזיות ה-XGBoost האמיתיות
+            (8,099 צירופי דגם-עיר חזויים, 1,271 דגמים, 1,205 רשויות ו-916 פרופילי שנתון) לקובץ מבודד
+            <code>notebooks/data_final.json</code>, תוך וידוא ב-SHA-256 שקובץ הריצה החי
+            <code>web/assets/data.json</code> נותר ללא דריסה:
+          </p>
+          <pre><code>{
+  "metadata": {
+    "notebook_version": "CarTheftRisk_final",
+    "exposure_protocol": "2024 Train = 12m (1.0), 2025 Test = 9m (0.75 Poisson Exposure Offset)",
+    "champion_count_model": "XGBoost Poisson (Offset log(0.75))",
+    "selected_xgb_max_depth_cv2024": 3,
+    "heuristic_formula": "0.50 * Model_Pre2025 + 0.45 * City_Pre2025 + 0.05 * Macro(50) [No Corridors]"
+  },
+  "model_location": {
+    "טויוטה|COROLLA|תל אביב-יפו": {
+      "predicted_count_9m": 83.5711,
+      "predicted_count_12m_equiv": 111.4281,
+      "lag_2024_actual": 163,
+      "holdout_2025_9m_actual": 117,
+      "continuous_track2_score": 28.95,
+      "heuristic_composite_score": 98,
+      "model_version": "CarTheftRisk_final"
+    }
+  },
+  "model_year_profile": {
+    "טויוטה|COROLLA": { "2019": 376, "2020": 440, "2021": 651, "2022": 515 }
+  }
+}</code></pre>
+        </div>
+      </details>
+    </section>
+
+  </main>
+
+  <!-- Lightbox Modal -->
+  <div class="lightbox-modal" id="lightbox" onclick="closeLightbox()">
+    <div class="lightbox-content" onclick="event.stopPropagation()">
+      <button aria-label="סגירת התצוגה המוגדלת" class="lightbox-close" onclick="closeLightbox()">×</button>
+      <img alt="Enlarged Visual Chart" id="lightbox-img"
+        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='1'%3E%3C/svg%3E" />
+    </div>
+  </div>
+
+  <!-- Back to top floating button -->
+  <button class="btn-top" id="btnTop" title="חזרה לראש העמוד" aria-label="חזרה לראש העמוד">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+      stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="18 15 12 9 6 15"></polyline>
+    </svg>
+  </button>
+
+  <!-- Footer -->
+  <footer class="colophon container">
+    <span>דוח פרויקט מסכם — קורס AI Engineering. כל המדדים, הטבלאות והתרשימים מסונכרנים במדויק עם מחברת המחקר המבוקרת
+      CarTheftRisk_final.ipynb ועם SINGLE_SOURCE_OF_TRUTH.md.</span>
+    <nav>
+      <a href="index.html">סימולטור ודשבורד</a>
+      <a href="agent_report.html">דוח סוכן AI</a>
+    </nav>
+  </footer>
+
+  <!-- Interactive Scripts -->
+  <script>
+    window.openLightbox = function (src, alt) {
+      const lightbox = document.getElementById('lightbox');
+      const lightboxImg = document.getElementById('lightbox-img');
+      if (lightbox && lightboxImg) {
+        lightboxImg.src = src;
+        if (alt) lightboxImg.alt = alt;
+        lightbox.classList.add('active');
+      }
+    };
+
+    window.closeLightbox = function () {
+      const lightbox = document.getElementById('lightbox');
+      if (lightbox) {
+        lightbox.classList.remove('active');
+      }
+    };
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        window.closeLightbox();
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+      // 1. Smooth ScrollSpy & Motion Indicator for 6-Chapter Nav Pills
+      const sections = document.querySelectorAll('section.report-section');
+      const navPills = document.querySelectorAll('.chap-nav-pill');
+      const pillsContainer = document.getElementById('chapterNavPills');
+      const underline = document.getElementById('navUnderlineIndicator');
+      let isProgrammaticScroll = false;
+      let scrollTimer = null;
+      let ticking = false;
+
+      function updateUnderline(activePill, smooth = true) {
+        if (!activePill || !underline || !pillsContainer) return;
+        const leftOffset = activePill.offsetLeft;
+        const width = activePill.offsetWidth;
+
+        underline.style.transition = smooth
+          ? 'transform 0.28s cubic-bezier(0.2, 0.9, 0.3, 1.2), width 0.24s cubic-bezier(0.2, 0.9, 0.3, 1.2), opacity 0.2s ease-out'
+          : 'none';
+        underline.style.width = `${Math.round(width)}px`;
+        underline.style.transform = `translate3d(${Math.round(leftOffset)}px, 0, 0)`;
+        underline.style.opacity = '1';
+      }
+
+      function updatePills(smoothMotion = true) {
+        if (isProgrammaticScroll || sections.length === 0) return;
+
+        // Check if user is scrolled to the bottom of the page
+        const atBottom = (window.innerHeight + window.scrollY) >= (document.documentElement.scrollHeight - 70);
+        let current = sections[0].getAttribute('id');
+
+        if (atBottom) {
+          current = sections[sections.length - 1].getAttribute('id');
+        } else {
+          const headerEl = document.querySelector('.fixed-header');
+          const headerHeight = headerEl ? headerEl.offsetHeight : 112;
+          const triggerPoint = headerHeight + 80;
+
+          sections.forEach(sec => {
+            const rect = sec.getBoundingClientRect();
+            if (rect.top <= triggerPoint) {
+              current = sec.getAttribute('id');
+            }
+          });
+        }
+
+        const activePill = document.querySelector('.chap-nav-pill.active');
+        if (activePill && activePill.getAttribute('href') === '#' + current) {
+          return; // Already on current section, avoid redundant transitions
+        }
+
+        let matchedPill = null;
+        navPills.forEach(pill => {
+          const isMatch = pill.getAttribute('href') === '#' + current;
+          pill.classList.toggle('active', isMatch);
+          if (isMatch) matchedPill = pill;
+        });
+
+        if (matchedPill) {
+          updateUnderline(matchedPill, smoothMotion);
+          if (pillsContainer && pillsContainer.scrollWidth > pillsContainer.clientWidth) {
+            matchedPill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+          }
+        }
+      }
+
+      // Smooth click handling without ScrollSpy conflict
+      navPills.forEach(pill => {
+        pill.addEventListener('click', function (e) {
+          e.preventDefault();
+          const targetId = this.getAttribute('href');
+          const targetSec = document.querySelector(targetId);
+          if (!targetSec) return;
+
+          // Set active state & glide underline immediately
+          navPills.forEach(p => p.classList.remove('active'));
+          this.classList.add('active');
+          updateUnderline(this, true);
+
+          // Lock scroll listener to prevent intermediate jumpy updates
+          isProgrammaticScroll = true;
+          clearTimeout(scrollTimer);
+
+          // Smooth scroll with header offset
+          const headerEl = document.querySelector('.fixed-header');
+          const headerHeight = headerEl ? headerEl.offsetHeight : 112;
+          const targetY = targetSec.getBoundingClientRect().top + window.pageYOffset - headerHeight - 14;
+
+          window.scrollTo({
+            top: Math.max(0, targetY),
+            behavior: 'smooth'
+          });
+
+          if (pillsContainer && pillsContainer.scrollWidth > pillsContainer.clientWidth) {
+            this.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+          }
+
+          scrollTimer = setTimeout(() => {
+            isProgrammaticScroll = false;
+          }, 750);
+        });
+      });
+
+      // 60fps throttled scroll
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          window.requestAnimationFrame(() => {
+            updatePills(true);
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }, { passive: true });
+
+      window.addEventListener('resize', () => {
+        const active = document.querySelector('.chap-nav-pill.active');
+        if (active) updateUnderline(active, false);
+      }, { passive: true });
+
+      function initNavAlignment() {
+        const active = document.querySelector('.chap-nav-pill.active') || navPills[0];
+        if (active) {
+          active.classList.add('active');
+          updateUnderline(active, false);
+        }
+      }
+
+      initNavAlignment();
+      setTimeout(() => initNavAlignment(), 60);
+      if (document.fonts) {
+        document.fonts.ready.then(() => initNavAlignment());
+      }
+
+      // 2. Back to top button
+      const btnTop = document.getElementById('btnTop');
+      window.addEventListener('scroll', function () {
+        if (window.scrollY > 400) {
+          btnTop.classList.add('visible');
+        } else {
+          btnTop.classList.remove('visible');
+        }
+      }, { passive: true });
+
+      if (btnTop) {
+        btnTop.addEventListener('click', function () {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      }
+
+      // 3. Lightbox on chart frames
+      document.querySelectorAll('.chart-frame img').forEach(img => {
+        img.addEventListener('click', function (e) {
+          e.stopPropagation();
+          window.openLightbox(this.src, this.alt);
+        });
+      });
+
+      // 4. Interactive EDA Filter Tabs (Chapter 03)
+      const edaButtons = document.querySelectorAll('.eda-tab-btn');
+      const edaGroups = document.querySelectorAll('#ch4 .eda-group');
+      edaButtons.forEach(btn => {
+        btn.addEventListener('click', function () {
+          const filter = this.getAttribute('data-eda-filter');
+          edaButtons.forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          edaGroups.forEach(grp => {
+            if (filter === 'all' || grp.getAttribute('data-eda-cat') === filter) {
+              grp.style.display = '';
+            } else {
+              grp.style.display = 'none';
+            }
+          });
+        });
+      });
+
+      // 5. Interactive Case-Study Simulator (Chapter 06)
+      const caseScenarios = [
+        {
+          title: 'טויוטה קורולה (COROLLA) — תל אביב-יפו',
+          score: 98,
+          color: '#dc2626',
+          tier: 'מדרגה גבוהה מאוד (Critical Prototype Tier)',
+          tierClass: 'chip chip-ink',
+          formula: '0.50×(100) + 0.45×(100) + 0.05×(50) = 97.5 ≈ 98',
+          breakdown: '<strong>פירוק רכיבים (טרום-2025):</strong> ציון דגם היסטורי = <code>100/100</code> (משקל 50% ← 50.0 נק׳) · ציון עיר היסטורי = <code>100/100</code> (משקל 45% ← 45.0 נק׳) · בסיס מאקרו קבוע = <code>50/100</code> (משקל 5% ← 2.5 נק׳). ב-2024 נרשמו לצמד זה <strong>163 גניבות</strong> בתל אביב-יפו (ותחזית המודל ל-9 חודשי 2025: <strong>83.6</strong> מול <strong>117</strong> בפועל).',
+          prescription: '1. איתור פעיל דו-ערוצי + עלוקה אלחוטית. 2. חסימת שקע OBD פיזית מפני שכפול מפתח. 3. חניה סגורה/מוארת או מנעול הגה מכני.'
+        },
+        {
+          title: 'יונדאי איוניק (IONIQ) — ירושלים',
+          score: 90,
+          color: '#dc2626',
+          tier: 'מדרגה גבוהה מאוד (Critical Prototype Tier)',
+          tierClass: 'chip chip-ink',
+          formula: '0.50×(86) + 0.45×(98) + 0.05×(50) = 89.6 ≈ 90',
+          breakdown: '<strong>פירוק רכיבים (טרום-2025):</strong> ציון דגם היסטורי = <code>86/100</code> (משקל 50% ← 43.0 נק׳) · ציון עיר היסטורי = <code>98/100</code> (משקל 45% ← 44.1 נק׳, ללא רכיב צירי מילוט בנוסחה) · בסיס מאקרו קבוע = <code>50/100</code> (2.5 נק׳). דגם היברידי בעל ביקוש גבוה לחלפים.',
+          prescription: '1. איתור פעיל דו-ערוצי + עלוקה אלחוטית סמויה. 2. חסימת שקע OBD פיזית. 3. חניה מוארת או מנעול הגה מכני בשעות הלילה.'
+        },
+        {
+          title: 'קיה פיקנטו (PICANTO) — חיפה',
+          score: 86,
+          color: '#ea580c',
+          tier: 'מדרגה גבוהה מאוד (Critical Prototype Tier)',
+          tierClass: 'chip chip-ink',
+          formula: '0.50×(90) + 0.45×(85) + 0.05×(50) = 85.75 ≈ 86',
+          breakdown: '<strong>פירוק רכיבים (טרום-2025):</strong> ציון דגם היסטורי = <code>90/100</code> (משקל 50% ← 45.0 נק׳) · ציון עיר היסטורי = <code>85/100</code> (משקל 45% ← 38.25 נק׳) · בסיס מאקרו קבוע = <code>50/100</code> (2.5 נק׳).',
+          prescription: '1. איתור פעיל דו-ערוצי + עלוקה אלחוטית. 2. חסימת שקע OBD ומנעול הגה מכני בחניית רחוב לילית.'
+        },
+        {
+          title: 'סובארו פורסטר (FORESTER) — גבעתיים',
+          score: 64,
+          color: '#0284c7',
+          tier: 'מדרגה בינונית (Medium Prototype Tier)',
+          tierClass: 'risk-mid',
+          formula: '0.50×(53) + 0.45×(77) + 0.05×(50) = 63.65 ≈ 64',
+          breakdown: '<strong>פירוק רכיבים (טרום-2025):</strong> ציון דגם היסטורי = <code>53/100</code> (משקל 50% ← 26.5 נק׳) · ציון עיר היסטורי = <code>77/100</code> (משקל 45% ← 34.65 נק׳) · בסיס מאקרו קבוע = <code>50/100</code> (2.5 נק׳). חשיפה מתונה יחסית בזכות היקף גניבות נמוך של הדגם.',
+          prescription: '1. אימובילייזר מקורי תקין + קודן ניתוק. 2. הקפדה על נעילה מלאה והימנעות מהשארת מפתח חכם בקרבת דלת הכניסה.'
+        }
+      ];
+
+      const caseBtns = document.querySelectorAll('.case-sim-btn');
+      const simScoreVal = document.getElementById('simScoreVal');
+      const simRiskTier = document.getElementById('simRiskTier');
+      const simFormula = document.getElementById('simFormula');
+      const simTitle = document.getElementById('simTitle');
+      const simBreakdown = document.getElementById('simBreakdown');
+      const simPrescription = document.getElementById('simPrescription');
+
+      caseBtns.forEach(btn => {
+        btn.addEventListener('click', function () {
+          const idx = parseInt(this.getAttribute('data-case-idx'), 10);
+          const sc = caseScenarios[idx];
+          if (!sc) return;
+          caseBtns.forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          if (simScoreVal) {
+            simScoreVal.textContent = sc.score;
+            simScoreVal.style.color = sc.color;
+          }
+          if (simRiskTier) {
+            simRiskTier.textContent = sc.tier;
+            simRiskTier.className = sc.tierClass;
+          }
+          if (simFormula) simFormula.textContent = sc.formula;
+          if (simTitle) simTitle.textContent = sc.title;
+          if (simBreakdown) simBreakdown.innerHTML = sc.breakdown;
+          if (simPrescription) simPrescription.textContent = sc.prescription;
+        });
+      });
+    });
+  </script>
+
+  <!-- Two-Layer Architecture Diagram: Pan & Zoom Interactive Engine -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const viewer = document.getElementById('architecture-viewer');
+      const viewport = document.getElementById('arch-diagram-viewport');
+      const wrapper = document.getElementById('arch-diagram-wrapper');
+      const diagramEl = document.getElementById('arch-diagram-img');
+      const zoomBadge = document.getElementById('arch-diagram-zoom-level');
+      const btnIn = document.getElementById('arch-diagram-zoom-in');
+      const btnOut = document.getElementById('arch-diagram-zoom-out');
+      const btnFit = document.getElementById('arch-diagram-zoom-fit');
+      const btnActual = document.getElementById('arch-diagram-zoom-actual');
+      const btnFs = document.getElementById('arch-diagram-fullscreen');
+
+      if (!viewer || !viewport || !wrapper || !diagramEl) return;
+
+      let naturalW = 920;
+      let naturalH = 1320;
+
+      if (diagramEl.naturalWidth) {
+        naturalW = diagramEl.naturalWidth;
+        naturalH = diagramEl.naturalHeight;
+      }
+
+      let currentWidth = naturalW;
+      let panX = 0;
+      let panY = 0;
+      let isDragging = false;
+      let startX = 0;
+      let startY = 0;
+
+      function applyTransform(smooth = false) {
+        wrapper.style.transition = smooth ? 'transform 0.18s cubic-bezier(0.16, 1, 0.3, 1)' : 'none';
+        wrapper.style.transform = `translate3d(${Math.round(panX)}px, ${Math.round(panY)}px, 0)`;
+        diagramEl.style.width = Math.round(currentWidth) + 'px';
+        diagramEl.style.height = Math.round(currentWidth * (naturalH / naturalW)) + 'px';
+        if (zoomBadge && naturalW > 0) {
+          zoomBadge.innerText = Math.round((currentWidth / naturalW) * 100) + '%';
+        }
+      }
+
+      function set1to1(smooth = true) {
+        const vpW = viewport.clientWidth || 1050;
+        currentWidth = naturalW;
+        panX = Math.round((vpW - currentWidth) / 2);
+        panY = 20;
+        applyTransform(smooth);
+      }
+
+      function setFit(smooth = false) {
+        const vpW = viewport.clientWidth || 1050;
+        const vpH = viewport.clientHeight || 620;
+        const scaleW = (vpW - 30) / naturalW;
+        const scaleH = (vpH - 30) / naturalH;
+        const fitScale = Math.min(scaleW, scaleH, 1.0);
+        currentWidth = Math.round(naturalW * fitScale);
+        panX = Math.round((vpW - currentWidth) / 2);
+        panY = Math.round((vpH - (currentWidth * (naturalH / naturalW))) / 2);
+        applyTransform(smooth);
+      }
+
+      if (diagramEl.complete && diagramEl.naturalWidth) {
+        naturalW = diagramEl.naturalWidth;
+        naturalH = diagramEl.naturalHeight;
+        setFit(false);
+      } else {
+        diagramEl.addEventListener('load', () => {
+          naturalW = diagramEl.naturalWidth || 920;
+          naturalH = diagramEl.naturalHeight || 1320;
+          setFit(false);
+        });
+      }
+
+      window.addEventListener('resize', () => {
+        if (!document.fullscreenElement) {
+          setFit(false);
+        }
+      });
+
+      function zoomAt(originX, originY, factor, smooth = false) {
+        const minW = Math.round((viewport.clientWidth || 1050) * 0.35);
+        const maxW = Math.round(naturalW * 3.0);
+        const newWidth = Math.min(Math.max(currentWidth * factor, minW), maxW);
+        if (Math.abs(newWidth - currentWidth) < 1) return;
+
+        const ratio = newWidth / currentWidth;
+        panX = originX - (originX - panX) * ratio;
+        panY = originY - (originY - panY) * ratio;
+        currentWidth = newWidth;
+
+        applyTransform(smooth);
+      }
+
+      viewport.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const rect = viewport.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+        const factor = e.deltaY < 0 ? 1.18 : 0.84;
+        zoomAt(mouseX, mouseY, factor, false);
+      }, { passive: false });
+
+      viewport.addEventListener('mousedown', (e) => {
+        if (e.button !== 0) return;
+        isDragging = true;
+        viewport.classList.add('is-dragging');
+        startX = e.clientX - panX;
+        startY = e.clientY - panY;
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        panX = e.clientX - startX;
+        panY = e.clientY - startY;
+        wrapper.style.transition = 'none';
+        wrapper.style.transform = `translate3d(${Math.round(panX)}px, ${Math.round(panY)}px, 0)`;
+      });
+
+      window.addEventListener('mouseup', () => {
+        if (isDragging) {
+          isDragging = false;
+          viewport.classList.remove('is-dragging');
+        }
+      });
+
+      viewport.addEventListener('dblclick', () => {
+        if (Math.abs(currentWidth - naturalW) < 50) {
+          setFit(true);
+        } else {
+          set1to1(true);
+        }
+      });
+
+      if (btnIn) {
+        btnIn.addEventListener('click', (e) => {
+          e.preventDefault();
+          zoomAt(viewport.clientWidth / 2, viewport.clientHeight / 2, 1.25, true);
+        });
+      }
+
+      if (btnOut) {
+        btnOut.addEventListener('click', (e) => {
+          e.preventDefault();
+          zoomAt(viewport.clientWidth / 2, viewport.clientHeight / 2, 0.8, true);
+        });
+      }
+
+      if (btnFit) {
+        btnFit.addEventListener('click', (e) => {
+          e.preventDefault();
+          setFit(true);
+        });
+      }
+
+      if (btnActual) {
+        btnActual.addEventListener('click', (e) => {
+          e.preventDefault();
+          set1to1(true);
+        });
+      }
+
+      if (btnFs) {
+        btnFs.addEventListener('click', (e) => {
+          e.preventDefault();
+          if (!document.fullscreenElement) {
+            viewer.requestFullscreen().catch(() => { });
+          } else {
+            document.exitFullscreen().catch(() => { });
+          }
+        });
+      }
+    });
+  </script>
+</body>
+
+</html>

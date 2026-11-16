@@ -1,0 +1,47 @@
+{
+  "active_runtime_model": "final",
+  "research_notebook": "notebooks/CarTheftRisk_final.ipynb",
+  "temporal_validation_fix": "notebooks/CarTheftRisk_final.ipynb",
+  "canonical_research_notebook": "notebooks/CarTheftRisk_final.ipynb",
+  "risk_formula": "Option B (0.50 Model + 0.45 City with Corridors + 0.05 Macro)",
+  "versions": {
+    "v7": {
+      "status": "archived_historical_estimate",
+      "artifact": "models/xgb_theft_regressor.json",
+      "evaluation": "random split; not a production forecast",
+      "permitted_use": "historical lookup data only"
+    },
+    "v8": {
+      "status": "archived_unvalidated",
+      "artifact": "archive/notebooks/CarTheftRisk_v8.ipynb",
+      "permitted_use": "historical reference only"
+    },
+    "v9": {
+      "status": "historical_archived",
+      "artifact": "models/temporal_backtest_v9.json",
+      "protocol": "2023→2024→2025 one-step-ahead chronological backtest with Poisson objective",
+      "metrics": {
+        "mae": 0.6998,
+        "rmse": 2.0128,
+        "r2": 0.0026,
+        "temporal_split_r2": 0.326,
+        "temporal_split_mae": 0.88
+      },
+      "permitted_use": "historical reference only"
+    },
+    "final": {
+      "status": "validated_research_backtest",
+      "artifact": "models/temporal_backtest_final.json",
+      "pipeline": "CarTheftRisk_final",
+      "protocol": "2023→2024→2025 one-step-ahead chronological backtest with Poisson objective",
+      "metrics": {
+        "mae": 0.6998,
+        "rmse": 2.0128,
+        "r2": 0.0026,
+        "temporal_split_r2": 0.326,
+        "temporal_split_mae": 0.88
+      },
+      "permitted_use": "research and model-development only"
+    }
+  }
+}

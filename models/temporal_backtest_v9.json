@@ -1,0 +1,57 @@
+{
+  "protocol": {
+    "name": "one-step-ahead chronological backtest",
+    "train_target_year": 2024,
+    "train_lag_year": 2023,
+    "test_target_year": 2025,
+    "test_lag_year": 2024,
+    "features": [
+      "model_year",
+      "lag_thefts",
+      "city_detection_rate",
+      "city_unsolved_rate",
+      "city_cases_total"
+    ],
+    "excluded_features": [
+      "risk_score / model_risk_score",
+      "population_clean",
+      "proximity_to_corridors",
+      "growth_factor"
+    ],
+    "caveat": "This validates one-year-ahead count prediction, not an individual vehicle theft probability.",
+    "rolling_backtest": {
+      "status": "not_available",
+      "reason": "The processed source provides annual target columns only for 2023-2025; earlier annual counts are required for additional chronological folds."
+    }
+  },
+  "n_train": 25390,
+  "n_test": 25390,
+  "xgboost_poisson": {
+    "mae": 0.6998,
+    "rmse": 2.0128,
+    "r2": 0.0026,
+    "mae_95_ci_low": 0.6779,
+    "mae_95_ci_high": 0.7275
+  },
+  "persistence_baseline": {
+    "mae": 0.9399,
+    "rmse": 2.3207,
+    "r2": -0.3259
+  },
+  "median_baseline": {
+    "mae": 0.5703,
+    "rmse": 2.0945,
+    "r2": -0.0801
+  },
+  "holdout_diagnostics": {
+    "zero_theft_share": 0.6354,
+    "feature_standardized_mean_shift": {
+      "model_year": 0.0,
+      "lag_thefts": -0.0254,
+      "city_detection_rate": 0.0,
+      "city_unsolved_rate": 0.0,
+      "city_cases_total": 0.0
+    },
+    "interpretation": "Descriptive only. Feature drift cannot be monitored prospectively without a newer observed year."
+  }
+}

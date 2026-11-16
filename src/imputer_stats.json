@@ -1,0 +1,39 @@
+{
+  "_description": "Canonical imputation statistics and cold-start baselines extracted from CarTheftRisk_v8.ipynb",
+  "version": "v8",
+  "generated_at": "2026-10-30T13:00:00",
+  "city_risk_score": {
+    "median": 35.0,
+    "mean": 37.2,
+    "iqr_q1": 27.0,
+    "iqr_q3": 44.0,
+    "min": 0.0,
+    "max": 100.0,
+    "canonical_cities_count": 1245
+  },
+  "features_defaults": {
+    "detection_rate": 0.12,
+    "unsolved_unknown_rate": 0.85,
+    "growth_factor": 0.0,
+    "population_clean": 15000,
+    "proximity_to_corridors_default": 0.35,
+    "macro_adjustment": 50.0
+  },
+  "actuarial_formula_weights": {
+    "model_risk": 0.50,
+    "city_risk_and_corridors": 0.45,
+    "macro_adjustment": 0.05
+  },
+  "high_vulnerability_corridors": {
+    "טייבה": 0.98,
+    "קלנסווה": 0.98,
+    "ירושלים": 0.95,
+    "לוד": 0.95,
+    "רמלה": 0.95,
+    "פתח תקווה": 0.90,
+    "באר שבע": 0.85,
+    "ראשון לציון": 0.80,
+    "תל אביב - יפו": 0.70
+  }
+}
+

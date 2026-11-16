@@ -1,0 +1,253 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 1320" width="920" height="1320" style="background: transparent;">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap');
+  text {
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    fill: #ffffff;
+  }
+  .subgraph-box {
+    fill: transparent;
+    stroke: #ffffff;
+    stroke-width: 1.5;
+    rx: 8;
+  }
+  .subgraph-title {
+    fill: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+  .node-box {
+    fill: rgba(255, 255, 255, 0.02);
+    stroke: #ffffff;
+    stroke-width: 1.5;
+    rx: 6;
+  }
+  .node-title {
+    fill: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .node-subtitle {
+    fill: #ffffff;
+    font-size: 11.5px;
+    font-weight: 400;
+    opacity: 0.95;
+  }
+  .edge-line {
+    fill: none;
+    stroke: #ffffff;
+    stroke-width: 1.5;
+  }
+  .edge-line-thick {
+    fill: none;
+    stroke: #ffffff;
+    stroke-width: 2.2;
+  }
+  .edge-label-box {
+    fill: #0b0f19;
+    stroke: #ffffff;
+    stroke-width: 1;
+    rx: 4;
+  }
+  .edge-label-text {
+    fill: #ffffff;
+    font-size: 11px;
+    font-weight: 500;
+  }
+</style>
+<defs>
+  <marker id="arrowhead" markerWidth="9" markerHeight="6" refX="8" refY="3" orient="auto">
+    <polygon points="0 0, 9 3, 0 6" fill="#ffffff" stroke="#ffffff" stroke-width="0.5" stroke-linejoin="round" />
+  </marker>
+  <marker id="arrowhead-start" markerWidth="9" markerHeight="6" refX="1" refY="3" orient="auto-start-reverse">
+    <polygon points="9 0, 0 3, 9 6" fill="#ffffff" stroke="#ffffff" stroke-width="0.5" stroke-linejoin="round" />
+  </marker>
+</defs>
+
+<!-- Subgraph 1: UI Input & Data Pipeline -->
+<g class="subgraph" data-id="DataInput">
+  <rect x="40" y="36" width="840" height="164" class="subgraph-box" />
+  <text x="58" y="64" class="subgraph-title">🌐 1. קלט משתמש ומשפך הנתונים הרב-שנתי (Web UI &amp; Data Pipeline 2017–2025)</text>
+</g>
+
+<!-- Subgraph 2: Layer 1 Predictive AI (Left side) -->
+<g class="subgraph" data-id="Layer1">
+  <rect x="40" y="256" width="465" height="444" class="subgraph-box" />
+  <text x="58" y="284" class="subgraph-title">🧠 שכבה 1: Predictive AI Layer (חיזוי אמפירי נקי מזליגה)</text>
+</g>
+
+<!-- Subgraph 3: Spatial Clustering Engine (Right side) -->
+<g class="subgraph" data-id="Spatial">
+  <rect x="530" y="256" width="350" height="444" class="subgraph-box" stroke-dasharray="5 4" />
+  <text x="548" y="284" class="subgraph-title">🗺️ מנוע קלסטרינג מרחבי (Unsupervised Spatial)</text>
+</g>
+
+<!-- Subgraph 4: Layer 2 Actuarial Decision Layer -->
+<g class="subgraph" data-id="Layer2">
+  <rect x="110" y="766" width="700" height="314" class="subgraph-box" />
+  <text x="128" y="794" class="subgraph-title">⚖️ שכבה 2: Actuarial Decision Layer (תמחור שקוף והחלטה מוצרית ב-O(1))</text>
+</g>
+
+<!-- Subgraph 5: Production Outputs -->
+<g class="subgraph" data-id="Outputs">
+  <rect x="40" y="1136" width="840" height="146" class="subgraph-box" />
+  <text x="58" y="1164" class="subgraph-title">🎯 2. פלט הממשק, סוכן ה-AI והחלטות אופרטיביות (Production Consumers)</text>
+</g>
+
+<!-- Edges / Connectors -->
+<!-- Input Vehicle to Layer 1 Features -->
+<polyline points="260,174 260,308" class="edge-line-thick" marker-end="url(#arrowhead)" />
+
+<!-- Input City to Layer 1 Features AND Spatial Clustering -->
+<polyline points="680,174 680,224 295,224 295,308" class="edge-line" marker-end="url(#arrowhead)" />
+<polyline points="705,174 705,326" class="edge-line-thick" marker-end="url(#arrowhead)" />
+
+<!-- Layer 1 Features to Track 1 & Track 2 -->
+<polyline points="210,392 210,418 162,418 162,444" class="edge-line" marker-end="url(#arrowhead)" />
+<polyline points="335,392 335,418 382,418 382,444" class="edge-line" marker-end="url(#arrowhead)" />
+
+<!-- Track 1 & Track 2 to Empirical Output -->
+<polyline points="162,520 162,552 245,552 245,584" class="edge-line" marker-end="url(#arrowhead)" />
+<polyline points="382,520 382,552 300,552 300,584" class="edge-line" marker-end="url(#arrowhead)" />
+
+<!-- Spatial C1 to C2 -->
+<polyline points="705,436 705,576" class="edge-line" marker-end="url(#arrowhead)" />
+
+<!-- Empirical Output P1 to Formula (50% weight) -->
+<polyline points="272,668 272,732 390,732 390,818" class="edge-line-thick" marker-end="url(#arrowhead)" />
+
+<!-- Spatial C2 to Formula (45% weight) -->
+<polyline points="705,652 705,732 530,732 530,818" class="edge-line-thick" marker-end="url(#arrowhead)" />
+
+<!-- Formula to Fallback -->
+<polyline points="460,876 460,912" class="edge-line" marker-end="url(#arrowhead)" />
+
+<!-- Fallback to Final Score -->
+<polyline points="460,968 460,1004" class="edge-line" marker-end="url(#arrowhead)" />
+
+<!-- Final Score to 3 Outputs -->
+<polyline points="360,1060 360,1104 185,1104 185,1190" class="edge-line" marker-end="url(#arrowhead)" />
+<polyline points="460,1060 460,1190" class="edge-line-thick" marker-end="url(#arrowhead)" />
+<polyline points="560,1060 560,1104 735,1104 735,1190" class="edge-line" marker-end="url(#arrowhead)" />
+
+<!-- Edge Labels -->
+<g class="edge-label">
+  <rect x="170" y="210" width="180" height="26" class="edge-label-box" />
+  <text x="260" y="227" text-anchor="middle" class="edge-label-text">פאנל כרונולוגי (T → T+1)</text>
+</g>
+
+<g class="edge-label">
+  <rect x="615" y="210" width="180" height="26" class="edge-label-box" />
+  <text x="705" y="227" text-anchor="middle" class="edge-label-text">מאגר אכיפה עירוני 2018–2023</text>
+</g>
+
+<g class="edge-label">
+  <rect x="262" y="718" width="150" height="26" class="edge-label-box" />
+  <text x="337" y="735" text-anchor="middle" class="edge-label-text">50% משקל סיכון הדגם</text>
+</g>
+
+<g class="edge-label">
+  <rect x="546" y="718" width="150" height="26" class="edge-label-box" />
+  <text x="621" y="735" text-anchor="middle" class="edge-label-text">45% משקל סיכון העיר</text>
+</g>
+
+<!-- Nodes: Subgraph 1 -->
+<g class="node" data-id="IN1">
+  <rect x="70" y="88" width="380" height="86" class="node-box" />
+  <text x="260" y="114" text-anchor="middle" class="node-title">1️⃣ בחירת רכב ופאנל דגמים (Maker × Model × Year)</text>
+  <text x="260" y="136" text-anchor="middle" class="node-subtitle">קובץ היררכי 2023–2025 (54,007 גניבות | 24,519 רשומות פאנל)</text>
+  <text x="260" y="156" text-anchor="middle" class="node-subtitle">+ היסטוריית דגמים ארצית 2017–2023 (84,997 גניבות)</text>
+</g>
+
+<g class="node" data-id="IN2">
+  <rect x="490" y="88" width="360" height="86" class="node-box" />
+  <text x="670" y="114" text-anchor="middle" class="node-title">2️⃣ בחירת מיקום ומאגר רשויות (City &amp; Exposure)</text>
+  <text x="670" y="136" text-anchor="middle" class="node-subtitle">תיקי חקירה ואכיפה 2018–2023 (70,666 תיקים ב-1,206 יישובים)</text>
+  <text x="670" y="156" text-anchor="middle" class="node-subtitle">+ מצבת כלי רכב פעילים למ״ס 2025 (4.35M כלי רכב)</text>
+</g>
+
+<!-- Nodes: Subgraph 2 (Layer 1) -->
+<g class="node" data-id="F1">
+  <rect x="64" y="308" width="416" height="84" class="node-box" />
+  <text x="272" y="332" text-anchor="middle" class="node-title">5 מאפיינים היסטוריים נקיים מזליגת עתיד (Zero Leakage)</text>
+  <text x="272" y="354" text-anchor="middle" class="node-subtitle">lag_1_thefts (+0.54) | city_cases_total (+0.36) | model_year (+0.22)</text>
+  <text x="272" y="374" text-anchor="middle" class="node-subtitle">city_detection_rate (+0.04) | city_unsolved_rate (+0.04)</text>
+</g>
+
+<g class="node" data-id="M1">
+  <rect x="60" y="444" width="205" height="76" class="node-box" />
+  <text x="162" y="468" text-anchor="middle" class="node-title">Track 1: XGBoost Poisson</text>
+  <text x="162" y="488" text-anchor="middle" class="node-subtitle">חיזוי ספירה בדידה (count:poisson)</text>
+  <text x="162" y="506" text-anchor="middle" class="node-subtitle">Tail MAE: 11.50 (-33.9%)</text>
+</g>
+
+<g class="node" data-id="M2">
+  <rect x="280" y="444" width="205" height="76" class="node-box" />
+  <text x="382" y="468" text-anchor="middle" class="node-title">Track 2: Random Forest</text>
+  <text x="382" y="488" text-anchor="middle" class="node-subtitle">חיזוי ציון סיכון רציף (0–100)</text>
+  <text x="382" y="506" text-anchor="middle" class="node-subtitle">R² = +0.1144 | MAE = 6.24</text>
+</g>
+
+<g class="node" data-id="P1">
+  <rect x="64" y="584" width="416" height="84" class="node-box" />
+  <text x="272" y="608" text-anchor="middle" class="node-title">פלט אמפירי טהור (Out-of-Time Test 2024 → 2025)</text>
+  <text x="272" y="630" text-anchor="middle" class="node-subtitle">1. תוחלת גניבות שנתית חזויה (Expected Thefts Ŷ)</text>
+  <text x="272" y="650" text-anchor="middle" class="node-subtitle">2. עשירון סיכון אמפירי (Decile 10 = 33.94% | Lift 8.59x | ρ = 0.3186)</text>
+</g>
+
+<!-- Nodes: Subgraph 3 (Spatial) -->
+<g class="node" data-id="C1">
+  <rect x="550" y="326" width="310" height="110" class="node-box" />
+  <text x="705" y="352" text-anchor="middle" class="node-title">K-Means (K=4) &amp; DBSCAN Outliers</text>
+  <text x="705" y="374" text-anchor="middle" class="node-subtitle">Silhouette = 0.508 על 1,206 יישובים</text>
+  <text x="705" y="394" text-anchor="middle" class="node-subtitle">קרבה לצירי מילוט (כביש 6 / 443 / 1 / 60)</text>
+  <text x="705" y="414" text-anchor="middle" class="node-subtitle">פרדוקס האכיפה (מעל 94% על״ן במוקדים)</text>
+</g>
+
+<g class="node" data-id="C2">
+  <rect x="550" y="576" width="310" height="76" class="node-box" />
+  <text x="705" y="602" text-anchor="middle" class="node-title">ציון סיכון עירוני ומרחבי (City Risk Score)</text>
+  <text x="705" y="624" text-anchor="middle" class="node-subtitle">סקאלה לוגריתמית מנורמלת לטווח 15–100</text>
+</g>
+
+<!-- Nodes: Subgraph 4 (Layer 2) -->
+<g class="node" data-id="FORMULA">
+  <rect x="150" y="818" width="620" height="58" class="node-box" />
+  <text x="460" y="842" text-anchor="middle" class="node-title">נוסחת השקלול המוצרית (Option B Actuarial Scoring)</text>
+  <text x="460" y="862" text-anchor="middle" class="node-subtitle">Risk_Score = 0.50 × Model_Risk + 0.45 × City_Risk + 0.05 × Macro_Adjustment</text>
+</g>
+
+<g class="node" data-id="FB">
+  <rect x="150" y="912" width="620" height="56" class="node-box" />
+  <text x="460" y="936" text-anchor="middle" class="node-title">מנגנון נסיגה היררכי ב-4 רמות (Graceful Fallback) ושליפה ב-O(1)</text>
+  <text x="460" y="955" text-anchor="middle" class="node-subtitle">צמד דגם×עיר ← פרופיל שנתון מפורש (model_year_profile) ← ממוצע דגם ארצי ← בסיס עירוני</text>
+</g>
+
+<g class="node" data-id="FINAL">
+  <rect x="150" y="1004" width="620" height="56" class="node-box" />
+  <text x="460" y="1028" text-anchor="middle" class="node-title">ציון סיכון משוקלל סופי (0–100) + מנוע המלצות מיגון (Prescriptive Engine)</text>
+  <text x="460" y="1047" text-anchor="middle" class="node-subtitle">סיווג תעבורתי אוטומטי: Low (0–49) | Medium (50–64) | High (65–79) | Critical (80–100)</text>
+</g>
+
+<!-- Nodes: Subgraph 5 (Outputs) -->
+<g class="node" data-id="OUT_INS">
+  <rect x="60" y="1190" width="250" height="68" class="node-box" />
+  <text x="185" y="1216" text-anchor="middle" class="node-title">🏢 חברות ביטוח ואקטוארים</text>
+  <text x="185" y="1238" text-anchor="middle" class="node-subtitle">תמחור פרמיות ודרישות מיגון ואיתוראן</text>
+</g>
+
+<g class="node" data-id="OUT_POL">
+  <rect x="335" y="1190" width="250" height="68" class="node-box" />
+  <text x="460" y="1216" text-anchor="middle" class="node-title">🚓 משטרת ישראל ואכיפה</text>
+  <text x="460" y="1238" text-anchor="middle" class="node-subtitle">מחסומים וסיורים ממוקדים בצירי מילוט</text>
+</g>
+
+<g class="node" data-id="OUT_USR">
+  <rect x="610" y="1190" width="250" height="68" class="node-box" />
+  <text x="735" y="1216" text-anchor="middle" class="node-title">👤 אזרח פרטי וסוכן Bestie AI</text>
+  <text x="735" y="1238" text-anchor="middle" class="node-subtitle">דשבורד SPA, השוואת חלופות ומיגון</text>
+</g>
+
+</svg>
+
