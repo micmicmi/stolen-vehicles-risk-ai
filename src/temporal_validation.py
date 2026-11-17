@@ -9,6 +9,7 @@ calculated over the full period or may be simulated.
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 import numpy as np
@@ -177,14 +178,60 @@ def run_backtest() -> dict:
         encoding="utf-8",
     )
 
-    scale = float(np.quantile(np.maximum(0, prediction), 0.99)) or 1.0
+    # `data.json` remains the single web lookup dataset. Load it first so model/city
+    # lookups and official city_unified keys align with the web UI.
+    web_data = json.loads(DATA_PATH.read_text(encoding="utf-8"))
+
+    def _normalize_city_name(city_name: str) -> str:
+        return re.sub(r"\s+", " ", str(city_name or "").replace("-", " ")).strip()
+
+    model_risk_lookup: dict[str, float] = {}
+    for m_info in web_data.get("models", {}).values():
+        mc = m_info.get("model_clean")
+        rs = m_info.get("risk_score")
+        if mc and rs is not None:
+            model_risk_lookup[str(mc)] = max(model_risk_lookup.get(str(mc), 0.0), float(rs))
+
+    city_unified_lookup: dict[str, str] = {}
+    city_risk_lookup: dict[str, float] = {}
+    for loc_key, loc_info in web_data.get("locations", {}).items():
+        cu = str(loc_info.get("city_unified") or loc_key).strip()
+        cr = loc_info.get("city_risk_score")
+        if cr is None:
+            cr = loc_info.get("risk_score", 50.0)
+        city_risk_lookup[cu] = float(cr)
+        for variant in {loc_key, cu}:
+            city_unified_lookup[variant] = cu
+            city_unified_lookup[_normalize_city_name(variant)] = cu
+
+    def _resolve_city_unified(raw_city: str) -> str:
+        c_str = str(raw_city or "").strip()
+        return city_unified_lookup.get(
+            c_str, city_unified_lookup.get(_normalize_city_name(c_str), c_str)
+        )
+
+    agg_frame = pd.DataFrame(
+        {
+            "model_clean": test["model_clean"].astype(str),
+            "city_unified": test["city"].map(_resolve_city_unified),
+            "pred_2025": np.maximum(0.0, prediction),
+            "obs_2024": test["thefts_2024"].to_numpy(dtype=float),
+        }
+    )
+    combo_agg = agg_frame.groupby(["model_clean", "city_unified"], as_index=False).agg(
+        estimated_thefts_2025=("pred_2025", "sum"),
+        observed_thefts_2024=("obs_2024", "sum"),
+    )
+
     scores = {}
-    for row, pred in zip(test.itertuples(index=False), np.maximum(0, prediction)):
-        key = f"{row.model_clean}|{row.city}"
-        risk_val = round(float(min(100, pred / scale * 100)), 1)
+    for row in combo_agg.itertuples(index=False):
+        key = f"{row.model_clean}|{row.city_unified}"
+        m_risk = model_risk_lookup.get(row.model_clean, 50.0)
+        c_risk = city_risk_lookup.get(row.city_unified, 50.0)
+        risk_val = round(float(min(100.0, max(10.0, 0.50 * m_risk + 0.45 * c_risk + 2.5))), 1)
         scores[key] = {
-            "estimated_thefts_2025": round(float(pred), 3),
-            "observed_thefts_2024": round(float(row.thefts_2024), 3),
+            "estimated_thefts_2025": round(float(row.estimated_thefts_2025), 3),
+            "observed_thefts_2024": round(float(row.observed_thefts_2024), 3),
             "final_risk_score": risk_val,
             "v9_risk_score": risk_val,
             "coverage": "observed 2024 model/city count available",
@@ -197,9 +244,6 @@ def run_backtest() -> dict:
         json.dumps({"version": "v9", "status": "research_only", "scores": scores}, ensure_ascii=False),
         encoding="utf-8",
     )
-    # `data.json` remains the single web lookup dataset. Its metadata is rebuilt
-    # here, so standalone readers see the active final contract as well.
-    web_data = json.loads(DATA_PATH.read_text(encoding="utf-8"))
     original_metadata = web_data.get("metadata", {})
     web_data["metadata"] = {
         "pipeline_version": "CarTheftRisk_final",
@@ -215,7 +259,12 @@ def run_backtest() -> dict:
     # Embed the same final-overlaid lookup for `file://` usage. This is a delivery
     # fallback, not a second source of truth: it is regenerated from web_data on
     # every backtest run.
-    web_data["model_location"] = web_data.get("model_location", {})
+    existing_ml = web_data.get("model_location", {})
+    web_data["model_location"] = {
+        k: v
+        for k, v in existing_ml.items()
+        if v.get("model_version") not in {"final", "v9"} or k in scores
+    }
     for key, score in scores.items():
         web_data["model_location"][key] = {
             "count": score["estimated_thefts_2025"],

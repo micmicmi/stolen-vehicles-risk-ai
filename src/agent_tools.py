@@ -279,17 +279,27 @@ def get_vehicle_risk(model: str, city: str, model_year: int = 2022) -> dict[str,
     model_key, m_info = resolve_model_entry(model)
     city_key, c_info = resolve_city_entry(city)
 
-    combo_key = f"{m_info.get('model_clean', model_key)}|{c_info.get('city_unified', city_key)}"
-    combo = data.get("model_location", {}).get(combo_key) or load_v9_scores().get(combo_key)
-    if combo and ("avg_risk" in combo or "v9_risk_score" in combo):
-        score_val = combo.get("avg_risk") if combo.get("avg_risk") is not None else combo.get("v9_risk_score")
-        combined_score = int(round(float(score_val)))
-        score_source = "Option B composite risk (50% model, 45% city with corridors, 5% macro)"
-    else:
-        m_risk = float(m_info.get("risk_score", 50.0))
-        c_risk = float(c_info.get("city_risk_score", c_info.get("risk_score", 50.0)))
-        combined_score = int(round(min(100.0, max(10.0, m_risk * 0.50 + c_risk * 0.45 + 2.5))))
-        score_source = "Option B composite risk (cold-start calculated)"
+    m_clean = m_info.get("model_clean", model_key)
+    c_unified = c_info.get("city_unified", city_key)
+    model_location = data.get("model_location", {})
+    scores = load_v9_scores()
+    combo = (
+        model_location.get(f"{m_clean}|{c_unified}")
+        or model_location.get(f"{m_clean}|{city_key}")
+        or scores.get(f"{m_clean}|{c_unified}")
+        or scores.get(f"{m_clean}|{city_key}")
+    )
+    m_risk = float(m_info.get("risk_score", 50.0))
+    raw_city_risk = c_info.get("city_risk_score")
+    if raw_city_risk is None:
+        raw_city_risk = c_info.get("risk_score", 50.0)
+    c_risk = float(raw_city_risk)
+    combined_score = int(round(min(100.0, max(10.0, m_risk * 0.50 + c_risk * 0.45 + 2.5))))
+    score_source = (
+        "Option B composite risk (50% model, 45% city with corridors, 5% macro)"
+        if combo
+        else "Option B composite risk (cold-start calculated)"
+    )
 
     features = {
         "model_year": int(model_year),
