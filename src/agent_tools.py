@@ -426,7 +426,7 @@ def fetch_bestie_insurance_quotes(
         "required_protection": protection,
         "driver_profile": REFERENCE_DRIVER_PROFILE["label_he"],
         "bestie_source": "Research pricing simulation (not live Bestie quotes)",
-        "bestie_url": "https://www.bestie.co.il/car-insurance",
+        "bestie_url": "https://bestie.co.il/car_insurance/",
     }
 
 
