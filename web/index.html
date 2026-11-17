@@ -3231,9 +3231,12 @@
 
         function isTwoWheeler(info, key = '') {
             const cat = (info && info.category) ? info.category : '';
-            const name = `${key} ${(info && (info.display_name || info.model_name)) || ''}`.toUpperCase();
-            if (cat.includes('דו') || cat.includes('אופנוע') || cat.includes('קטנוע')) return true;
-            return ['TMAX', 'XMAX', 'JOYRIDE', 'DOWNTOWN', 'VESPA', 'קטנוע', 'אופנוע'].some(k => name.includes(k));
+            const raw = `${key} ${(info && (info.display_name || info.model_name || info.name_hebrew || info.maker)) || ''}`;
+            const upper = raw.toUpperCase();
+            if (cat.includes('דו') || cat.includes('תלת') || cat.includes('אופנוע') || cat.includes('קטנוע')) return true;
+            if (/סאן\s*יאנג|קואנג\s*יאנג|קימקו|פיאג'?יו|פיאג יו|וספה|ימהה|קוואסאקי|דוקאטי|אפריליה|הארלי|בנלי|אס ווי אמ|דו[- ]?גלגלי|תלת[- ]?גלגלי|קטנוע|אופנוע/i.test(raw)) return true;
+            if (/\b(SYM|KYMCO|YAMAHA|PIAGGIO|VESPA|KAWASAKI|DUCATI|APRILIA|HARLEY|BENELLI|TMAX|XMAX|NMAX|JOYRIDE|JOYMAX|CRUISYM|MAXSYM|DOWNTOWN|BEVERLY|JET\s*14|SCOOTER)\b/.test(upper)) return true;
+            return false;
         }
 
         function extractEnglishName(info, disp) {
@@ -3248,7 +3251,7 @@
             if (!DATA || !DATA.models) return [];
             const map = new Map();
             for (const [k, info] of Object.entries(DATA.models)) {
-                if (!info || isTwoWheeler(info, k)) continue;
+                if (!info || k.includes('|') || isTwoWheeler(info, k)) continue;
                 const disp = info.display_name || k;
                 if (!disp || disp.includes('- (-)') || disp.includes('כללי כללי')) continue;
                 const heb = (info.name_hebrew || getHebrewModelName(k)).trim();
