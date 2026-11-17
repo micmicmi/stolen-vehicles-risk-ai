@@ -2084,7 +2084,6 @@
 
         @media (max-width: 640px) {
             body {
-                padding-top: 52px;
                 padding-top: 54px;
             }
 
@@ -2108,15 +2107,12 @@
                 backdrop-filter: none;
                 -webkit-backdrop-filter: none;
                 border-bottom: none;
-                padding: 10px 14px 4px;
                 padding: 0;
                 height: 0;
                 overflow: visible;
             }
 
             .nav-inner {
-                flex-wrap: wrap;
-                gap: 8px;
                 gap: 0;
             }
 
@@ -2124,16 +2120,11 @@
                 position: fixed;
                 top: 0;
                 inset-inline: 0;
-                height: 52px;
                 height: 54px;
                 z-index: 1000;
-                background: var(--apple-glass);
                 background: rgba(13, 15, 21, 0.86);
                 backdrop-filter: var(--blur-standard);
                 -webkit-backdrop-filter: var(--blur-standard);
-                border-bottom: 1px solid var(--apple-border);
-                padding: 0 14px;
-                font-size: 0.92rem;
                 border-bottom: 1px solid rgba(255, 255, 255, 0.08);
                 padding: 0 16px;
                 font-size: 0.94rem;
@@ -2145,185 +2136,160 @@
                 display: none !important;
             }
 
-            .nav-links {
+            /* Hide sub-header links on mobile top; shown in footer instead */
+            #top-nav .nav-links {
+                display: none;
+            }
+
+            .footer-nav-links {
+                display: flex;
+            }
+
+            footer {
+                padding: 28px 16px max(88px, calc(74px + env(safe-area-inset-bottom)));
+            }
+
+            .container {
+                padding: 0 14px;
+            }
+
+            .hero {
+                padding: 18px 14px 18px;
+            }
+
+            .trust-badge-pill {
+                max-width: 100%;
+                white-space: normal;
+                text-align: center;
+                font-size: 0.72rem !important;
+                line-height: 1.35;
+                padding: 5px 12px !important;
+                margin-bottom: 10px !important;
+            }
+
+            .hero h1 {
+                font-size: 1.64rem;
+                line-height: 1.18;
+                letter-spacing: -0.025em;
+                margin-bottom: 8px;
+            }
+
+            .hero p {
+                font-size: 0.88rem;
+                line-height: 1.48;
+                margin-bottom: 16px;
+                color: #b4b8c2;
+            }
+
+            .search-panel {
+                padding: 16px;
+                border-radius: 20px;
+                background: linear-gradient(180deg, rgba(25, 29, 42, 0.96) 0%, rgba(16, 19, 28, 0.98) 100%);
+                border: 1px solid rgba(255, 255, 255, 0.12);
+                box-shadow: 0 20px 44px rgba(0, 0, 0, 0.62), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            }
+
+            .search-row {
+                gap: 12px;
+            }
+
+            .form-group {
+                scroll-margin-top: 64px;
+            }
+
+            .form-group label {
+                font-size: 0.8rem;
+                color: #b4b8c2;
+            }
+
+            .form-group input,
+            .form-group select,
+            .agent-chat-input {
+                font-size: 16px;
+                border-radius: 12px;
+                background: rgba(8, 10, 15, 0.78);
+                border: 1px solid rgba(255, 255, 255, 0.12);
+                padding: 12px 14px;
+            }
+
+            .input-with-clear input {
+                padding-left: 38px;
+            }
+
+            .autocomplete-dropdown {
+                border-radius: 14px;
+                overscroll-behavior: contain;
+                -webkit-overflow-scrolling: touch;
+                border-color: rgba(255, 255, 255, 0.16);
+                box-shadow: 0 18px 42px rgba(0, 0, 0, 0.78);
+            }
+
+            .autocomplete-item {
+                padding: 11px 14px;
+            }
+
+            .btn-search {
                 width: 100%;
+                height: 48px;
+                border-radius: 13px;
+                background: linear-gradient(135deg, #0a84ff 0%, #0066dc 100%);
+                box-shadow: 0 6px 20px rgba(0, 113, 227, 0.35);
+                font-size: 0.96rem;
+                margin-top: 2px;
+            }
 
-                /* Hide sub-header links on mobile top; shown in footer instead */
-                #top-nav .nav-links {
-                    display: none;
-                }
+            .tag-suggestions-row {
+                gap: 6px;
+                margin-top: 12px;
+                justify-content: center;
+            }
 
-                .footer-nav-links {
-                    display: flex;
-                    gap: 8px;
-                }
+            .tag {
+                font-size: 0.74rem;
+                padding: 6px 11px;
+                background: rgba(255, 255, 255, 0.06);
+                border-color: rgba(255, 255, 255, 0.1);
+            }
 
-                .nav-link {
-                    flex: 1;
-                    justify-content: center;
-                    white-space: nowrap;
-                    font-size: 0.78rem;
-                    padding: 6px 10px;
+            #results-section {
+                margin-top: 22px;
+                padding-bottom: 96px;
+            }
 
-                    footer {
-                        padding: 28px 16px max(88px, calc(74px + env(safe-area-inset-bottom)));
-                    }
+            .kpi-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 10px;
+                margin-bottom: 16px;
+            }
 
-                    .container {
-                        padding: 0 14px;
-                    }
+            .kpi-card {
+                padding: 15px 14px;
+                border-radius: 16px;
+                background: linear-gradient(180deg, rgba(24, 28, 40, 0.95) 0%, rgba(19, 22, 31, 0.98) 100%);
+                border-color: rgba(255, 255, 255, 0.1);
+            }
 
-                    .hero {
-                        padding: 28px 16px 24px;
-                        padding: 18px 14px 18px;
-                    }
+            .kpi-card.risk {
+                border-color: rgba(0, 113, 227, 0.32);
+            }
 
-                    .trust-badge-pill {
-                        max-width: 100%;
-                        white-space: normal;
-                        text-align: center;
-                        font-size: 0.76rem !important;
-                        line-height: 1.4;
-                        padding: 6px 12px !important;
-                        font-size: 0.72rem !important;
-                        line-height: 1.35;
-                        padding: 5px 12px !important;
-                        margin-bottom: 10px !important;
-                    }
+            .kpi-value {
+                font-size: 1.65rem;
+            }
 
-                    .hero h1 {
-                        font-size: 1.75rem;
-                        font-size: 1.64rem;
-                        line-height: 1.18;
-                        letter-spacing: -0.025em;
-                        margin-bottom: 8px;
-                    }
+            .kpi-label {
+                font-size: 0.74rem;
+            }
 
-                    .hero p {
-                        font-size: 0.95rem;
-                        margin-bottom: 24px;
-                        font-size: 0.88rem;
-                        line-height: 1.48;
-                        margin-bottom: 16px;
-                        color: #b4b8c2;
-                    }
+            .detail-stats-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                gap: 12px !important;
+            }
 
-                    .search-panel {
-                        padding: 16px;
-                        border-radius: var(--radius-lg);
-                        border-radius: 20px;
-                        background: linear-gradient(180deg, rgba(25, 29, 42, 0.96) 0%, rgba(16, 19, 28, 0.98) 100%);
-                        border: 1px solid rgba(255, 255, 255, 0.12);
-                        box-shadow: 0 20px 44px rgba(0, 0, 0, 0.62), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-                    }
-
-                    .search-row {
-                        gap: 12px;
-                    }
-
-                    .form-group {
-                        scroll-margin-top: 64px;
-                    }
-
-                    .form-group label {
-                        font-size: 0.8rem;
-                        color: #b4b8c2;
-                    }
-
-                    .form-group input,
-                    .form-group select,
-                    .agent-chat-input {
-                        font-size: 16px;
-                        border-radius: 12px;
-                        background: rgba(8, 10, 15, 0.78);
-                        border: 1px solid rgba(255, 255, 255, 0.12);
-                        padding: 12px 14px;
-                    }
-
-                    .input-with-clear input {
-                        padding-left: 38px;
-                    }
-
-                    .autocomplete-dropdown {
-                        border-radius: 14px;
-                        overscroll-behavior: contain;
-                        -webkit-overflow-scrolling: touch;
-                        border-color: rgba(255, 255, 255, 0.16);
-                        box-shadow: 0 18px 42px rgba(0, 0, 0, 0.78);
-                    }
-
-                    .autocomplete-item {
-                        padding: 11px 14px;
-                    }
-
-                    .btn-search {
-                        width: 100%;
-                        height: 48px;
-                        border-radius: 13px;
-                        background: linear-gradient(135deg, #0a84ff 0%, #0066dc 100%);
-                        box-shadow: 0 6px 20px rgba(0, 113, 227, 0.35);
-                        font-size: 0.96rem;
-                        margin-top: 2px;
-                    }
-
-                    .tag-suggestions-row {
-                        gap: 6px;
-                        margin-top: 14px;
-                        margin-top: 12px;
-                        justify-content: center;
-                    }
-
-                    .tag {
-                        font-size: 0.75rem;
-                        padding: 5px 10px;
-                        font-size: 0.74rem;
-                        padding: 6px 11px;
-                        background: rgba(255, 255, 255, 0.06);
-                        border-color: rgba(255, 255, 255, 0.1);
-                    }
-
-                    #results-section {
-                        margin-top: 28px;
-                        margin-top: 22px;
-                        padding-bottom: 96px;
-                    }
-
-                    .kpi-grid {
-                        grid-template-columns: repeat(2, minmax(0, 1fr));
-                        gap: 10px;
-                        margin-bottom: 18px;
-                        margin-bottom: 16px;
-                    }
-
-                    .kpi-card {
-                        padding: 14px;
-                        padding: 15px 14px;
-                        border-radius: 16px;
-                        background: linear-gradient(180deg, rgba(24, 28, 40, 0.95) 0%, rgba(19, 22, 31, 0.98) 100%);
-                        border-color: rgba(255, 255, 255, 0.1);
-                    }
-
-                    .kpi-card.risk {
-                        border-color: rgba(0, 113, 227, 0.32);
-                    }
-
-                    .kpi-value {
-                        font-size: 1.65rem;
-                    }
-
-                    .kpi-label {
-                        font-size: 0.74rem;
-                    }
-
-                    .detail-stats-grid {
-                        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-                        gap: 12px !important;
-                    }
-
-                    .chart-card {
-                        padding: 16px !important;
-                        border-radius: 18px;
-                    }
+            .chart-card {
+                padding: 16px !important;
+                border-radius: 18px;
+            }
 
                     .charts-grid {
                         grid-template-columns: minmax(0, 1fr);
@@ -2475,7 +2441,6 @@
                     /* Sticky dock & Chat FAB side-by-side with zero overlap */
                     .agent-side-launcher {
                         left: 12px;
-                        bottom: 14px;
                         bottom: max(14px, env(safe-area-inset-bottom));
                         width: 48px;
                         height: 48px;
@@ -2483,12 +2448,8 @@
                     }
 
                     .bestie-sticky-dock {
-                        left: 70px;
                         left: 72px;
                         right: 12px;
-                        bottom: 14px;
-                        width: auto;
-                        max-width: none;
                         bottom: max(14px, env(safe-area-inset-bottom));
                         width: calc(100vw - 84px);
                         max-width: calc(100vw - 84px);
@@ -2502,7 +2463,6 @@
 
                     .bestie-dock-inner {
                         justify-content: space-between;
-                        gap: 8px;
                         gap: 6px;
                         width: 100%;
                     }
@@ -2515,13 +2475,11 @@
                     }
 
                     .bestie-dock-logo {
-                        height: 18px;
                         height: 17px;
                         flex-shrink: 0;
                     }
 
                     .bestie-ai-pill {
-                        font-size: 0.66rem;
                         font-size: 0.64rem;
                         padding: 2px 6px;
                         flex-shrink: 0;
@@ -2532,8 +2490,6 @@
                     }
 
                     .bestie-dock-cta {
-                        padding: 6px 12px;
-                        font-size: 0.76rem;
                         padding: 6px 10px;
                         font-size: 0.73rem;
                         flex-shrink: 0;
@@ -2680,10 +2636,7 @@
     <section class="hero">
 
         <div class="trust-badge-pill"
-            style="display: inline-flex; align-items: center; gap: 8px; background: rgba(5, 150, 105, 0.1); border: 1px solid rgba(5, 150, 105, 0.28); color: #047857; border-radius: 999px; padding: 5px 16px; font-size: 0.84rem; font-weight: 700; margin-bottom: 14px;">
-            style="display: inline-flex; align-items: center; gap: 8px; background: rgba(48, 209, 88, 0.12); border: 1px
-            solid rgba(48, 209, 88, 0.3); color: #34d399; border-radius: 999px; padding: 5px 16px; font-size: 0.84rem;
-            font-weight: 700; margin-bottom: 14px;">
+            style="display: inline-flex; align-items: center; gap: 8px; background: rgba(48, 209, 88, 0.12); border: 1px solid rgba(48, 209, 88, 0.3); color: #34d399; border-radius: 999px; padding: 5px 16px; font-size: 0.84rem; font-weight: 700; margin-bottom: 14px;">
             מבוסס 100% נתוני אמת רשמיים של משטרת ישראל (2017–2025)
         </div>
         <h1>בדקו את סיכון הגניבה של הרכב שלכם</h1>
@@ -2741,9 +2694,7 @@
                 <span class="tag" onclick="quickPick('מאזדה 3 MAZDA 3', 'פתח תקווה')">מאזדה 3 · פתח תקווה</span>
                 <span class="tag" onclick="quickPick('יונדאי טוסון HYUNDAI tucson', 'ירושלים')">יונדאי טוסון ·
                     ירושלים</span>
-                <span class="tag" onclick="quickPick('יונדאי איוניק HYUNDAI ioniq', 'באר שבע')">יונדאי איוניק · באר-שבע
-                    <span class="tag" onclick="quickPick('יונדאי איוניק HYUNDAI ioniq', 'באר שבע')">יונדאי איוניק ·
-                        באר-שבע</span>
+                <span class="tag" onclick="quickPick('יונדאי איוניק HYUNDAI ioniq', 'באר שבע')">יונדאי איוניק · באר-שבע</span>
 
             </div>
         </div>
