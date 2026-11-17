@@ -131,7 +131,8 @@
         }
 
         @media (prefers-reduced-transparency: reduce) {
-            .glass-surface {
+            .glass-surface,
+            .top-bar-row {
                 backdrop-filter: none !important;
                 -webkit-backdrop-filter: none !important;
                 background: var(--bg-surface) !important;
@@ -146,7 +147,8 @@
                 --border-hairline: var(--border-control);
             }
 
-            .glass-surface {
+            .glass-surface,
+            .top-bar-row {
                 backdrop-filter: none !important;
                 -webkit-backdrop-filter: none !important;
                 background: var(--bg-surface) !important;
@@ -271,32 +273,29 @@
             top: 12px;
         }
 
-        /* ===== FUNCTIONAL LAYER: UNBOXED BRAND (RIGHT) + DUAL LIQUID GLASS PILLS (LEFT) ===== */
+        /* ===== FUNCTIONAL LAYER: FROSTED TRANSLUCENT WHITE HEADER BANNER + DUAL LIQUID GLASS PILLS ===== */
         .top-bar-row {
             position: sticky;
-            top: 12px;
+            top: 0;
             z-index: 60;
-            max-width: 1180px;
-            width: calc(100% - 28px);
-            margin: 12px auto 0;
+            width: 100%;
+            margin: 0;
+            padding: 12px max(20px, calc((100% - 1140px) / 2));
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 12px;
-            pointer-events: none;
+            background: rgba(255, 255, 255, 0.72);
+            backdrop-filter: blur(22px) saturate(1.65);
+            -webkit-backdrop-filter: blur(22px) saturate(1.65);
+            border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
         }
 
-        .top-bar-row::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 76px;
-            background: linear-gradient(to bottom, var(--bg-canvas) 0%, transparent 100%);
-            opacity: 0.58;
-            pointer-events: none;
-            z-index: -1;
+        [data-theme="dark"] .top-bar-row {
+            background: rgba(11, 16, 28, 0.74);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+            box-shadow: 0 4px 22px rgba(0, 0, 0, 0.35);
         }
 
         .brand-link {
@@ -419,7 +418,7 @@
             max-width: 1180px;
             width: 100%;
             margin: 0 auto;
-            padding: 34px 20px 64px;
+            padding: 52px 20px 64px;
         }
 
         /* ===== HERO & SPOTLIGHT WORKBENCH ===== */
@@ -2347,9 +2346,10 @@
             }
 
             .top-bar-row {
-                width: calc(100% - 20px);
-                top: 8px;
-                margin-top: 8px;
+                width: 100%;
+                top: 0;
+                margin-top: 0;
+                padding: max(10px, env(safe-area-inset-top)) 14px 10px;
             }
 
             .header-nav-links {
