@@ -18,7 +18,7 @@ All superseded drafts, historical notebook iterations, intermediate caches, audi
   - `CarTheftRisk_v10.ipynb`, `temporal_4models_official.json`
   - `legacy_cache/` (`data.json`, `production_assets.json`, `df_areas_tab1.csv`, `df_areas_tab2.csv`, `df_models_full.csv`, `df_models_hist.csv`)
 - **`archive/reports_and_guides/`**:
-  - Legacy engineering guides (`v2`, `v3`), layout drafts, and superseded migration plans (`2026-11-08-migrate-runtime-from-v9-to-final.md`)
+  - Legacy engineering guides (`v2`, `v3`), layout drafts, superseded plans (`2026-11-08-migrate-runtime-from-v9-to-final.md`, `AGENT_CHAT_GUARDRAILS_PLAN.md`), and outdated data dictionaries (`DATA_DICTIONARY.md`, `data_dictionary.csv`)
   - `v8_audits/` (`CarTheftRisk_v8_Notebook_Audit*.md/pdf/html/css` — remediated in `CarTheftRisk_final.ipynb`)
   - `legacy_root_docs/` (duplicate root `CAPSTONE_PROJECT_PLAN.md`, legacy `MODEL_STATUS.md`, unreferenced root diagram PNGs)
 - **`archive/src_legacy/`**: Deprecated v1/v5/v7 helper and pipeline scripts (`generate_notebook.py`, `sync_v7_to_web.py`, `build_data_assets.py`, `data_processing.py`, `etl_master.py`, `feature_engineering.py`, `model.py`, `utils.py`, `imputer_stats.json`)
