@@ -1905,7 +1905,7 @@
                         בחירת דגם ועיר מפעילה ברקע ניתוח כיסוי נתונים, סימולציית מחיר לפרופיל נהג ייחוס
                         וחיפוש של עד שלוש חלופות. הצ'אט המובנה תומך
                         בשאלות פתוחות בעברית (השוואת דגמים, מעבר ערים ומיגון ממוקד) תחת פייפליין Guardrails ב-4 שכבות,
-                        סכמות <span dir="ltr" style="white-space: nowrap;">Pydantic </span>
+                        סכמות <span dir="ltr" style="white-space: nowrap;">Pydantic v2</span>
                         (<bdi><code>QueryPlan</code></bdi>, <bdi><code>SavingsMetrics</code></bdi>,
                         <bdi><code>GroundedAgentResponse</code></bdi>)
                         ומאמת מספרים לאחר יצירה.
@@ -2051,7 +2051,13 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td><strong>1. ממשק המשתמש והפעלת הסוכן (UX &amp; Activation)</strong></td>
+                            <td><strong>1. תשתית תזמור הסוכן (Agent Orchestration Framework)</strong></td>
+                            <td>שימוש בפריימוורק LangChain / LangGraph עם שכבות הפשטה (Runnables / לולאות ReAct) ועשרות תלויות משנה.</td>
+                            <td><strong>קוד Python ישיר מעל <code>google-genai</code> + <span dir="ltr" style="white-space: nowrap;">Pydantic v2</span> (ללא LangChain)</strong> עם פייפליין דטרמיניסטי מפורש ב-4 שכבות.</td>
+                            <td><strong>שליטה מלאה, דטרמיניסטיות ורזון ב-Production:</strong> מונע "קסם" נסתר, לולאות ReAct בלתי צפויות ושבירות API בין גרסאות, ושומר על 7 תלויות בלבד ב-<code>requirements-prod.txt</code> (קריטי לזמן Build ולזיכרון 512MB ב-Render Free).</td>
+                        </tr>
+                        <tr>
+                            <td><strong>2. ממשק המשתמש והפעלת הסוכן (UX &amp; Activation)</strong></td>
                             <td>כפתור צ'אט צף בפינת המסך (Floating Widget) שממתין שהמשתמש יפתח אותו ויקליד שאלה.</td>
                             <td><strong>ריצה אוטומטית במקביל ברקע + קפסולת התראה וגלריית 4 כרטיסיות Bestie</strong> לצד
                                 צ'אט מובנה.</td>
@@ -2060,7 +2066,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td><strong>2. תמחור תרחישי ביטוח ושמות חברות (Pricing Simulation &amp; Insurers)</strong>
+                            <td><strong>3. תמחור תרחישי ביטוח ושמות חברות (Pricing Simulation &amp; Insurers)</strong>
                             </td>
                             <td>הרצת Headless Browser סינכרונית בלייב ב-Bestie, או הצגת חברות שאינן מופיעות ב-Bestie
                                 (כגון "ביטוח ישיר", ליברה ו-AIG).</td>
@@ -2068,11 +2074,10 @@
                                 עם Bestie בלבד (הראל, הפניקס, מגדל, כלל, מנורה, שומרה, איילון, הכשרה, שלמה ביטוח,
                                 weSure).</td>
                             <td><strong>יציבות חישוב ואמינות מוצרית:</strong> השוואת התרחישים אינה תלויה בטופס חיצוני או
-                                ב־CAPTCHA,
-                                וטבלאות הכיול.</td>
+                                ב־CAPTCHA, ומתבססת על רשימת החברות השותפות של Bestie בלבד בכל הממשק וטבלאות הכיול.</td>
                         </tr>
                         <tr>
-                            <td><strong>3. ניהול מקביליות ומניעת עומס (Concurrency)</strong></td>
+                            <td><strong>4. ניהול מקביליות ומניעת עומס (Concurrency)</strong></td>
                             <td>קריאת API חוסמת (Blocking) שמעכבת את טעינת הדשבורד או יוצרת כפילויות בהחלפת ערים מהירה.
                             </td>
                             <td><strong>הפרדת <code>O(1)</code> משכבת ה-Agent + <code>AbortController</code></strong>
@@ -2081,7 +2086,7 @@
                                 באסינכרוניות מלאה ברקע תוך ביטול בקשות מיותרות אם המשתמש משנה בחירה.</td>
                         </tr>
                         <tr>
-                            <td><strong>4. אמינות חישובית (LLM Grounding)</strong></td>
+                            <td><strong>5. אמינות חישובית (LLM Grounding)</strong></td>
                             <td>מתן חופש למודל השפה (LLM) להעריך בעצמו מחירי ביטוח וציוני סיכון מתוך הידע הכללי שלו.
                             </td>
                             <td><strong>Tool-First Deterministic Grounding:</strong> הסוכן מחויב ל-5 פונקציות
@@ -2091,7 +2096,7 @@
                                 ב־<code>pytest</code>, ללא המצאת מחירים אקראית על ידי מודל השפה.</td>
                         </tr>
                         <tr>
-                            <td><strong>5. שאלות פתוחות ואימות פלט (Open-Ended Q&amp;A &amp; Guardrails)</strong></td>
+                            <td><strong>6. שאלות פתוחות ואימות פלט (Open-Ended Q&amp;A &amp; Guardrails)</strong></td>
                             <td>ניתוב מילות מפתח צר (2–3 תבניות קבועות) או תשובת LLM חופשית עם fallback שקט לדגם/עיר
                                 ברירת מחדל.</td>
                             <td><strong>פייפליין Guardrails ב-4 שכבות</strong> (<bdi><code>plan_query</code></bdi> ←
@@ -2143,7 +2148,7 @@
                     <div>
                         <h3><code>fetch_bestie_insurance_quotes</code> סימולציית תמחור לפרופיל נהג ייחוס</h3>
                         <p>
-                            מחשב מחיר שנתי וחודשי מדומה (ביטוח מקיף + חובה) ודרישות מיגון לפרופיל נהג ייחוס קבוע,
+                            מחשב מחיר שנתי וחודשי מדומה (ביטוח מקיף + חובה) ודרישות מיגון לפרופיל נהג ייחוס קבוע.
                             המחירים מחושבים באופן דטרמיניסטי כחלק
                             מהסימולציה ואינם תוצאת סריקה חיה.
                         </p>
@@ -2193,13 +2198,13 @@
                         <span>דיאגרמת ארכיטקטורת הסוכן (Interactive Pan &amp; Zoom)</span>
                     </div>
                     <div class="diagram-toolbar-actions">
-                        <button class="diagram-tool-btn" id="agent-diagram-zoom-in" title="ZOOMIN (Zoom In) [+]"
+                        <button class="diagram-tool-btn" id="agent-diagram-zoom-in" title="הגדל (Zoom In) [+]"
                             type="button">
-                            <span>+</span> ZOOMIN
+                            <span>+</span> הגדל
                         </button>
-                        <button class="diagram-tool-btn" id="agent-diagram-zoom-out" title="ZOOMOUT (Zoom Out) [-]"
+                        <button class="diagram-tool-btn" id="agent-diagram-zoom-out" title="הקטן (Zoom Out) [-]"
                             type="button">
-                            <span>−</span> ZOOMOUT
+                            <span>−</span> הקטן
                         </button>
                         <span class="diagram-zoom-badge" id="agent-diagram-zoom-level">100%</span>
                         <button class="diagram-tool-btn" id="agent-diagram-zoom-fit" title="התאם לגודל חלון [0]"
@@ -2240,8 +2245,7 @@
                 <p style="max-width: 100%;">
                     מחירי ביטוח רכב משתנים לפי גיל הנהג והיסטוריית התביעות שלו. כדי להשוות תפוחים לתפוחים בין הרכב
                     שנבחר לבין 3 החלופות בלי לאלץ את המשתמש למלא טופס של 15 שדות, הגדרנו פרופיל ייחוס אחיד ושקוף המוצג
-                    בראש אזור הסוכן: <strong>נהג בן 35 · 12 שנות ותק · היעדר תביעות ב-3 השנים האחרונות · שנתון
-                        2022</strong>. כך הפער השקלי בין הכרטיסיות משקף באופן טהור את פערי הסיכון האקטוארי של הדגם
+                    בראש אזור הסוכן: <strong>נהג בן 35 · 12 שנות ותק · היעדר תביעות ב-3 השנים האחרונות · שנתון 2025</strong>. כך הפער השקלי בין הכרטיסיות משקף באופן טהור את פערי הסיכון האקטוארי של הדגם
                     והעיר.
                 </p>
             </div>
@@ -2341,8 +2345,7 @@
                     אמצעי מיגון, שולח את היסטוריית 4 ההודעות האחרונות (<code>history</code>), ומציג מעל תשובת הטקסט
                     כרטיס
                     מדדים מובנה (<code>SavingsMetrics</code>) עם עלות בסיס מול יעד, חיסכון/תוספת עלות שנתית וחודשית,
-                    ופער
-                    סיכון .
+                    ופער סיכון.
                 </figcaption>
             </figure>
 
@@ -2350,7 +2353,7 @@
                 <h3 class="note-head" style="margin-top: 0;">למה הפרדנו את אזור השאלות לווידג'ט צדדי תמיד פעיל
                     (Always-Active Side Widget)?
                 </h3>
-                <p style="max-width:100%; !important">
+                <p style="max-width: 100%;">
                     משתמש שסוקר את הגרפים בחלק העליון או משווה בין 4 כרטיסיות הפוליסה בגלריה לא צריך לחפש צ'אט שקבור
                     בתחתית הדף. הפרדת הצ'אט ל<strong>ווידג'ט צדדי קבוע</strong> מאפשרת ללחוץ על <code>התייעץ עם סוכן AI על
                         החיסכון</code> בכל כרטיסייה, על כפתורי השאלות המהירות, או להקליד כל שאלה פתוחה (כגון <em>"כמה
@@ -2522,7 +2525,7 @@ POST /agent/chat           # מחזיר GroundedAgentResponse (status, engine, i
 
     <!-- Footer Colophon -->
     <footer class="colophon container" style="justify-content: center; ">
-        <span>דו"ח הנדסת סוכן AI , נובמבר 2026. מבוסס על נתוני משטרת ישראל 2017–2025
+        <span>דו"ח הנדסת סוכן AI, נובמבר 2026. מבוסס על נתוני משטרת ישראל 2017–2025
             וסימולציית תרחישי ביטוח מחקרית.</span>
 
     </footer>

@@ -131,7 +131,7 @@ def test_api_agent_endpoints():
 
 def test_agent_report_and_links_exist():
     agent_report_path = os.path.join(BASE, "web", "agent_report.html")
-    process_report_path = os.path.join(BASE, "web", "process_report.html")
+    final_report_path = os.path.join(BASE, "web", "final.html")
     index_path = os.path.join(BASE, "web", "index.html")
 
     assert os.path.exists(agent_report_path)
@@ -140,9 +140,9 @@ def test_agent_report_and_links_exist():
     assert "agent_screenshot_gallery.png" in agent_html
     assert "agent_screenshot_chat.png" in agent_html
 
-    with open(process_report_path, encoding="utf-8") as f:
-        proc_html = f.read()
-    assert "agent_report.html" in proc_html
+    with open(final_report_path, encoding="utf-8") as f:
+        final_html = f.read()
+    assert "agent_report.html" in final_html
 
     with open(index_path, encoding="utf-8") as f:
         idx_html = f.read()
