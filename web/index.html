@@ -831,7 +831,7 @@
 
         .bento-top {
             display: grid;
-            grid-template-columns: 1.42fr 1fr;
+            grid-template-columns: minmax(0, 1.42fr) minmax(0, 1fr);
             gap: 18px;
             align-items: stretch;
             margin-bottom: 18px;
@@ -845,6 +845,8 @@
             box-shadow: var(--shadow-card);
             display: flex;
             flex-direction: column;
+            min-width: 0;
+            max-width: 100%;
         }
 
         .verdict-header {
@@ -1249,13 +1251,14 @@
         /* ===== CHARTS PAIR ===== */
         .charts-pair {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 18px;
             margin-bottom: 18px;
         }
 
         .chart-head {
             display: flex;
+            flex-wrap: wrap;
             justify-content: space-between;
             align-items: flex-start;
             gap: 10px;
@@ -1290,6 +1293,14 @@
             position: relative;
             height: 245px;
             width: 100%;
+            min-width: 0;
+            max-width: 100%;
+            overflow: hidden;
+        }
+
+        .chart-box canvas {
+            display: block;
+            max-width: 100% !important;
         }
 
         /* ===== INTERACTIVE PEER TABLE WITH RTL SCROLL SHELL ===== */
@@ -2418,7 +2429,7 @@
 
             .bento-top,
             .charts-pair {
-                grid-template-columns: 1fr;
+                grid-template-columns: minmax(0, 1fr);
             }
         }
 
@@ -2491,6 +2502,10 @@
             .panel {
                 padding: 18px 16px;
                 border-radius: 20px;
+            }
+
+            .chart-box {
+                height: 220px;
             }
 
             .table-header-row {
