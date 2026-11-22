@@ -6,8 +6,8 @@
 ## Active Documentation & Web Reports
 - **Single Source of Truth**: `SINGLE_SOURCE_OF_TRUTH.md` and `README.md`
 - **Canonical Research Process Report**: `web/final.html` (with 13 rendered charts in `web/assets/charts/final_*.png`)
-- **Engineering & Interview Guide (v4)**: `stolen_vehicles_web_engineering_guide_v4.html` (mirrored in `web/stolen_vehicles_web_engineering_guide_v4.html`)
-- **Live Web Application & Runtime Reports**: `web/index.html`, `web/agent_report.html`, `web/process_report.html`, `docs/CAPSTONE_PROJECT_PLAN.md`, `docs/RESEARCH_LIMITATIONS.md`
+- **Engineering & Interview Guide (v5)**: `web/stolen_vehicles_web_engineering_guide_v5.html`
+- **Live Web Application & Runtime Reports**: `web/index.html`, `web/agent_report.html`, `docs/CAPSTONE_PROJECT_PLAN.md`, `docs/RESEARCH_LIMITATIONS.md`
 
 ## Archived Assets (`archive/`)
 All superseded drafts, historical notebook iterations, intermediate caches, audit working files, and unreferenced assets are organized under `archive/`:

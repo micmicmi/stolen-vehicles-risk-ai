@@ -3,7 +3,7 @@
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![XGBoost Poisson](https://img.shields.io/badge/Model-XGBoost%20Poisson%20(Offset%200.75)-16a34a)](notebooks/CarTheftRisk_final.ipynb)
 [![FastAPI](https://img.shields.io/badge/API-FastAPI-009688?logo=fastapi&logoColor=white)](src/api.py)
-[![Tests](https://img.shields.io/badge/Pytest-21%20Passed-brightgreen)](tests/)
+[![Tests](https://img.shields.io/badge/Pytest-32%20Passed-brightgreen)](tests/)
 
 מערכת הנדסית ומחקרית לדירוג סיכון כמותי יחסי של גניבות רכב בישראל ברזולוציית **יצרן × דגם × שנתון × רשות מקומית**, המבוססת על מאגרי משטרת ישראל ומצבת כלי הרכב הרשמית של הלמ"ס (2017–2025). הפרויקט מפריד באופן חד בין **שכבת חיזוי אמפירית נקייה מזליגה (ML)** לבין **שכבת תמיכה בהחלטות וסימולציית סוכן AI (Bestie Copilot)** להדגמה מוצרית.
 
@@ -37,7 +37,7 @@ flowchart TD
     C --> E["Track 2: Random Forest (0–100)\nR²=+0.316 | MAE=5.60"]
     B --> F["שכבת החלטות לפרוטוטייפ (UI)\nאינדקס היוריסטי 50% דגם + 45% עיר + 5% מאקרו"]
     D --> G["ייצוא מחקרי מבודד\nnotebooks/data_final.json"]
-    F --> H["אפליקציית Web + FastAPI + סוכן ReAct\nweb/index.html | src/api.py | src/agent_tools.py"]
+    F --> H["אפליקציית Web + FastAPI + סוכן Tool-First (google-genai + Pydantic v2)\nweb/index.html | src/api.py | src/agent_schemas.py | src/agent_tools.py"]
 ```
 
 ---
@@ -49,13 +49,15 @@ stolen-vehicles-project/
 ├── SINGLE_SOURCE_OF_TRUTH.md                    # מקור האמת הרשמי של כל מדדי המחקר והריצה
 ├── README.md                                    # סקירת הפרויקט והוראות הרצה
 ├── ARCHIVE_STATUS.md                            # תיעוד הקבצים הפעילים מול תיקיית הארכיון
-├── stolen_vehicles_web_engineering_guide_v4.html # מדריך הנדסי ומחקרי מקיף (מהדורה 4)
+├── GEMINI.md                                    # הנחיות וכללי קרקע לסביבת הפיתוח וה-AI
+├── design.md                                    # מערכת העיצוב והטוקנים של הממשק והדוחות
+├── render.yaml                                  # הגדרות פריסה ל-Render
 ├── pytest.ini                                   # הגדרות הרצת בדיקות אוטומטיות
-├── requirements.txt                             # תלויות Python
+├── requirements.txt                             # תלויות Python מלאות (מחקר + פיתוח)
+├── requirements-prod.txt                        # תלויות ריצה קלות לפרודקשן
 │
 ├── data/
-│   ├── raw/                                     # קובצי משטרת ישראל והלמ״ס (כולל מצבת 2025)
-│   └── processed/                               # טבלאות עזר מעובדות לחוזה הריצה v9
+│   └── raw/                                     # קובצי משטרת ישראל והלמ״ס (כולל מצבת 2025)
 │
 ├── notebooks/
 │   ├── CarTheftRisk_final.ipynb                 # מחברת המחקר והריצה הקנונית (58 תאים, 0 שגיאות)
@@ -70,19 +72,20 @@ stolen-vehicles-project/
 │
 ├── src/                                         # קוד צד-שרת, ולידציה וסוכן AI
 │   ├── api.py                                   # שרת FastAPI (/health, /predict, /agent/*)
-│   ├── agent.py                                 # תזמור סוכן ReAct היברידי
-│   ├── agent_tools.py                           # 4 כלי Python דטרמיניסטיים לסימולציית Bestie
+│   ├── agent.py                                 # תזמור סוכן Tool-First היברידי מעל google-genai + 4 שכבות Guardrails
+│   ├── agent_schemas.py                         # סכמות Pydantic v2 קשיחות (QueryPlan, Guardrails)
+│   ├── agent_tools.py                           # 5 כלי Python דטרמיניסטיים לסימולציית Bestie
 │   └── temporal_validation.py                   # בקרת אי-זליגה וולידציה טמפורלית לחוזה הריצה
 │
 ├── web/                                         # ממשק המשתמש והדוחות ההנדסיים
 │   ├── index.html                               # סימולטור הסיכון וסוכן ה-AI האינטראקטיבי
 │   ├── final.html                               # דוח הפרויקט המסכם (מסונכרן ל-CarTheftRisk_final)
 │   ├── agent_report.html                        # דוח ארכיטקטורת סוכן ה-AI (Bestie Copilot)
-│   ├── process_report.html                      # דוח תהליך היסטורי (שמור לתאימות בדיקות)
+│   ├── stolen_vehicles_web_engineering_guide_v5.html # מדריך הנדסי ומחקרי מקיף (מהדורה 5)
 │   └── assets/                                  # קובצי data.json, final_scores.json וגרפים
 │
-├── docs/                                        # מילון נתונים, תוכנית פרויקט ומגבלות המחקר
-├── tests/                                       # 21 בדיקות אינטגרציה, חוזה ריצה וסוכן (pytest)
+├── docs/                                        # תוכנית פרויקט (CAPSTONE_PROJECT_PLAN) ומגבלות המחקר (RESEARCH_LIMITATIONS)
+├── tests/                                       # 32 בדיקות אינטגרציה, חוזה ריצה וסוכן (pytest)
 └── archive/                                     # ארכיון מסודר של גרסאות קודמות וקובצי טיוטה
 ```
 
@@ -96,7 +99,7 @@ cd stolen-vehicles-project
 pip install -r requirements.txt
 ```
 
-### 2. הרצת חבילת הבדיקות האוטומטית (21 בדיקות)
+### 2. הרצת חבילת הבדיקות האוטומטית (32 בדיקות)
 בסביבת Windows מומלץ להריץ עם דגל UTF-8:
 ```powershell
 python -X utf8 -m pytest -v

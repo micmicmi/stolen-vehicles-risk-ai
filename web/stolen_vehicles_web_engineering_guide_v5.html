@@ -687,7 +687,7 @@
 <p>
       המערכת בנויה בחמש שכבות הנדסיות (L0–L5) ומקפידה על הפרדה נקייה בין תוצרי המחקר הקנוניים
       (<code>CarTheftRisk_final.ipynb</code> → <code>notebooks/data_final.json</code>) לבין חוזה הריצה הנעול של
-      האפליקציה והסוכן (<code>web/assets/data.json</code> תחת חוזה <code>v9</code> המוגן ב-21 בדיקות אוטומטיות).
+      האפליקציה והסוכן (<code>web/assets/data.json</code> תחת חוזה <code>final</code> המוגן ב-32 בדיקות אוטומטיות).
     </p>
 <h3 style="margin-top: 12px; font-size: 10.2pt; color: #0284c7;">6.1 חמש השכבות ההנדסיות (L0 → L5)</h3>
 <table class="modern-table" style="margin-bottom: 12px;">
@@ -734,7 +734,7 @@
 <td style="background: #faf5ff; border-right: 4px solid #9333ea; padding: 7px 12px;">
 <span style="font-weight: 800; color: #7e22ce;">L4: אפליקציית SPA, שרת FastAPI והסוכן Bestie</span>
            |  ממשק חיפוש וכרטיסיות סיכון (<code>web/index.html</code>) • שירותי <code>/health</code>,
-          <code>/predict</code>, <code>/agent</code> • סוכן ReAct עם 4 כלי Python דטרמיניסטיים ו-Guardrails.
+          <code>/predict</code>, <code>/agent</code> • סוכן Tool-First ישיר (<code>google-genai</code> + <code>Pydantic v2</code>) עם 5 כלי Python דטרמיניסטיים ו-4 שכבות Guardrails.
         </td>
 </tr>
 <tr>
@@ -743,7 +743,7 @@
 <tr>
 <td style="background: #f8fafc; border-right: 4px solid #0f172a; padding: 7px 12px;">
 <span style="font-weight: 800; color: #0f172a;">L5: ממשל מודלים, תיעוד ובדיקות</span>  |  מקור האמת
-          <code>SINGLE_SOURCE_OF_TRUTH.md</code> • דוח המחקר המלא <code>web/final.html</code> • מדריך זה • 21 בדיקות
+          <code>SINGLE_SOURCE_OF_TRUTH.md</code> • דוח המחקר המלא <code>web/final.html</code> • מדריך זה • 32 בדיקות
           <code>pytest</code> אוטומטיות ירוקות.
         </td>
 </tr>
@@ -782,9 +782,9 @@
 </tr>
 <tr>
 <td><strong>ADR-4</strong></td>
-<td><b>סוכן ReAct עם Tool-First Grounding</b></td>
+<td><b>סוכן Tool-First (google-genai + Pydantic v2)</b></td>
 <td>חישוב פרמיות וציונים ישירות ע"י ה-LLM</td>
-<td>אפס הזיות מספריות: 4 כלי Python דטרמיניסטיים מחשבים את כל המספרים, וה-LLM מנסח בלבד תחת מעקות בטיחות.</td>
+<td>אפס הזיות מספריות: 5 כלי Python דטרמיניסטיים מחשבים את כל המספרים, וה-LLM מנסח בלבד תחת 4 שכבות Guardrails.</td>
 </tr>
 </tbody>
 </table>
@@ -927,7 +927,7 @@
 <p style="margin: 0; font-size: 8.6pt; color: #334155; line-height: 1.55;">
         המודל מוכיח יכולת תעדוף שימושית: עשירון הסיכון העליון מרכז <b>58.18% מכלל הגניבות בישראל</b> (Lift של <b>פי
           109.39</b> מעשירון 1, <code>ρ = 0.4089</code>), והממצאים מונגשים למשתמש הקצה תוך פחות מ-5ms באמצעות
-        ארכיטקטורת <code>O(1)</code> וסוכן AI דטרמיניסטי המגובה ב-21 בדיקות תוכנה.
+        ארכיטקטורת <code>O(1)</code> וסוכן AI דטרמיניסטי המגובה ב-32 בדיקות תוכנה.
       </p>
 </div>
 <!-- ================= CHAPTER 9 ================= -->
@@ -1056,8 +1056,8 @@
 <td style="padding: 4.5px 7px; text-align: center; font-weight: bold;">16</td>
 <td style="padding: 4.5px 9px; font-weight: bold; color: #0369a1;">איך מנעת הזיות מספריות בסוכן ה-AI
               (Bestie)?</td>
-<td style="padding: 4.5px 9px;">ארכיטקטורת Tool-First ReAct: 4 פונקציות Python דטרמיניסטיות מחשבות ציונים,
-              פערי עלות וחלופות מתוך חוזה הנתונים המאושר; ה-LLM מנסח בלבד וכפוף למעקות בטיחות קשיחים.</td>
+<td style="padding: 4.5px 9px;">ארכיטקטורת Tool-First (<code>google-genai</code> + <code>Pydantic v2</code>): 5 פונקציות Python דטרמיניסטיות מחשבות ציונים,
+              פערי עלות וחלופות מתוך חוזה הנתונים המאושר; ה-LLM מנסח בלבד וכפוף ל-4 שכבות מעקות בטיחות קשיחים.</td>
 </tr>
 <tr style="background: #f8fafc;">
 <td style="padding: 4.5px 7px; text-align: center; font-weight: bold;">17</td>
@@ -1069,7 +1069,7 @@
 <tr>
 <td style="padding: 4.5px 7px; text-align: center; font-weight: bold;">18</td>
 <td style="padding: 4.5px 9px; font-weight: bold; color: #0369a1;">אילו בדיקות תוכנה מגינות על המערכת?</td>
-<td style="padding: 4.5px 9px;">21 בדיקות <code>pytest</code> אוטומטיות הבודקות תקינות סכמה, אי-שליליות,
+<td style="padding: 4.5px 9px;">32 בדיקות <code>pytest</code> אוטומטיות הבודקות תקינות סכמה, אי-שליליות,
               ולידציה כרונולוגית, התאמת ארטיפקטים בין ה-Backend ל-Frontend ותגובות דטרמיניסטיות של כלי הסוכן.</td>
 </tr>
 <tr style="background: #f8fafc;">
@@ -1176,17 +1176,16 @@
 <div class="qa-box">
 <div class="qa-question">10. איך בנוי סוכן ה-AI (Bestie Copilot) וכיצד הוא מוגן מפני הזיות ו-Prompt Injection?
       </div>
-<div class="qa-answer"><b>תשובה:</b> הסוכן ממומש בארכיטקטורת ReAct ב-<code>src/agent.py</code>
-        ו-<code>src/agent_tools.py</code> עם 4 כלים דטרמיניסטיים: <code>get_risk_score</code>,
-        <code>estimate_insurance_cost</code>, <code>suggest_safe_alternatives</code>
-        ו-<code>explain_risk_factors</code>. כל שליפה וחישוב כספי מבוצעים בקוד Python טהור מול הארטיפקטים המאומתים
-        ב-97–176ms, בעוד מודל השפה אחראי על ניסוח התשובה בלבד תחת ולידציית קלט ומעקות בטיחות.</div>
+<div class="qa-answer"><b>תשובה:</b> הסוכן ממומש בארכיטקטורת Tool-First ישירה מעל <code>google-genai</code> ו-<code>Pydantic v2</code> ב-<code>src/agent.py</code>, <code>src/agent_schemas.py</code>
+        ו-<code>src/agent_tools.py</code> עם 5 כלים דטרמיניסטיים: <code>get_vehicle_risk</code>,
+        <code>fetch_bestie_insurance_quotes</code>, <code>compare_alternatives</code>,
+        <code>simulate_mitigation_discount</code> ו-<code>calculate_custom_savings</code>. כל שליפה וחישוב כספי מבוצעים בקוד Python טהור מול הארטיפקטים המאומתים, בעוד מודל השפה אחראי על ניסוח התשובה בלבד תחת ולידציית קלט ו-4 שכבות מעקות בטיחות (Guardrails).</div>
 </div>
 <div class="qa-box">
 <div class="qa-question">11. מדוע שמרנו במקביל גם את <code>CarTheftRisk_final.ipynb</code> וגם את חוזה הריצה
         <code>v9</code>?</div>
 <div class="qa-answer"><b>תשובה:</b> זוהי פרקטיקה הנדסית של <b>Contract Pinning</b> בסביבות פרודקשן: האפליקציה
-        החיה (<code>web/index.html</code>), שרת ה-API והסוכן נבדקים אוטומטית ב-21 בדיקות <code>pytest</code> מול חוזה
+        החיה (<code>web/index.html</code>), שרת ה-API והסוכן נבדקים אוטומטית ב-32 בדיקות <code>pytest</code> מול חוזה
         הסכמה של <code>v9</code> (<code>web/assets/data.json</code>). ייצוא תוצרי המחקר המעודכנים של
         <code>CarTheftRisk_final.ipynb</code> לקובץ ייעודי (<code>notebooks/data_final.json</code>) מאפשר שקיפות מחקרית
         מלאה בדוח הסופי (<code>web/final.html</code>) מבלי לשבור אף בדיקת רגרסיה חיה.</div>
@@ -1294,7 +1293,7 @@
 </tr>
 <tr style="background: #f8fafc;">
 <td style="padding: 4.5px 9px; font-weight: bold;">חוזה ריצה ובדיקות אוטומטיות</td>
-<td style="padding: 4.5px 9px; text-align: center; font-weight: bold; color: #0284c7;">3.3MB O(1) | 21
+<td style="padding: 4.5px 9px; text-align: center; font-weight: bold; color: #0284c7;">3.3MB O(1) | 32
               Pytest Passed</td>
 <td style="padding: 4.5px 9px;">שליפת דפדפן &lt;5ms, עוגן Cold-Start = 32.4, שרשרת כלי סוכן 97–176ms</td>
 </tr>
@@ -1413,7 +1412,7 @@
         🌟 <b>משפט סיכום לראיון עבודה:</b><br/>
 <i>״הערך המרכזי שלמדתי בפרויקט הזה הוא לא להתאהב במדד גבוה שמסתיר זליגת מידע, אלא לבדוק את הדאטה והמודל בעיניים
           ביקורתיות. זיהיתי ותיקנתי בעצמי כשלי קוהורטה, חשיפה חלקית ושברי סדרה, בניתי מודל ספירה אקטוארי שלוכד 58.2%
-          מהגניבות בעשירון העליון במבחן עיוור, והפכתי אותו למוצר עובד ומהיר עם 21 בדיקות אוטומטיות. זו הרמה ההנדסית שאני
+          מהגניבות בעשירון העליון במבחן עיוור, והפכתי אותו למוצר עובד ומהיר עם 32 בדיקות אוטומטיות. זו הרמה ההנדסית שאני
           מביאה איתי לצוות.״</i>
 </p>
 </div>

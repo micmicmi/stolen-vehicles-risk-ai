@@ -9,8 +9,8 @@
 | שכבה | קובצי מקור ותוצרים פעילים | תפקיד ומעמד מתודולוגי |
 | :--- | :--- | :--- |
 | **מחברת המחקר והריצה הקנונית (Final)** | `notebooks/CarTheftRisk_final.ipynb`<br>`notebooks/data_final.json` (3.54 MB)<br>`web/assets/final_scores.json`, `web/assets/data.json` | פייפליין המחקר והריצה המלא (58 תאים: 33 קוד + 25 Markdown): חילוץ מכונת מצבים, בקרת איכות והסגר, פאנל כרונולוגי ללא בחירת אוכלוסייה מהעתיד, ניתוח GIS מרחבי של קרבה לצירי מילוט בפרק 4, ולידציה מרחבית `GroupKFold`, התאמת חשיפה `Exposure Offset = 0.75`, השוואת מודלים דו-מסלולית, `PyTorch CountMLP` עם `Early Stopping`, `SHAP`, תא סיכום ומסקנות דינמי בפרק 18, אשכולות ונספח למ"ס 2025. המחברת והנכסים שלה מזינים באופן מאוחד הן את דוח המחקר והן את כל יישומי הריצה. |
-| **חוזה הריצה והבדיקות המאומת (Final Runtime Contract)** | `src/temporal_validation.py`<br>`web/assets/final_scores.json`, `web/assets/embedded_data.js`<br>`models/temporal_backtest_final.json`, `models/model_registry.json` | שכבת הוולידציה והריצה המאוחדת של אפליקציית ה-Web (`web/index.html`), שרת ה-FastAPI (`src/api.py`) וסוכן ה-AI (`src/agent_tools.py`), הנעולה באמצעות 21 בדיקות `pytest` אוטומטיות. גרסה 9 הישנה הועברה לארכיון (`archive/notebooks/CarTheftRisk_v9.ipynb`). |
-| **דוחות ומדריכי המערכת** | `web/final.html` (דוח הפרויקט המסכם)<br>`stolen_vehicles_web_engineering_guide_v4.html` (שורש + `web/`)<br>`web/agent_report.html` (דוח סוכן ה-AI)<br>`web/process_report.html` (דוח תהליך היסטורי נעול לבדיקות) | תיעוד הנדסי ומחקרי מלא. דוח הפרויקט הראשי (`web/final.html`) והמדריך ההנדסי (`v4`) מסונכרנים במלואם עם מסמך זה ועם `CarTheftRisk_final.ipynb`. |
+| **חוזה הריצה והבדיקות המאומת (Final Runtime Contract)** | `src/temporal_validation.py`<br>`web/assets/final_scores.json`, `web/assets/embedded_data.js`<br>`models/temporal_backtest_final.json`, `models/model_registry.json` | שכבת הוולידציה והריצה המאוחדת של אפליקציית ה-Web (`web/index.html`), שרת ה-FastAPI (`src/api.py`) וסוכן ה-AI (`src/agent.py`, `src/agent_schemas.py`, `src/agent_tools.py`), הנעולה באמצעות 32 בדיקות `pytest` אוטומטיות. גרסה 9 הישנה הועברה לארכיון (`archive/notebooks/CarTheftRisk_v9.ipynb`). |
+| **דוחות ומדריכי המערכת** | `web/final.html` (דוח הפרויקט המסכם)<br>`web/stolen_vehicles_web_engineering_guide_v5.html`<br>`web/agent_report.html` (דוח סוכן ה-AI) | תיעוד הנדסי ומחקרי מלא. דוח הפרויקט הראשי (`web/final.html`) והמדריך ההנדסי (`v5`) מסונכרנים במלואם עם מסמך זה ועם `CarTheftRisk_final.ipynb`. |
 
 ---
 
@@ -142,5 +142,5 @@ $$\text{composite\_theft\_score} = 0.50 \times \text{Model\_Risk}_{\le 2024} + 0
 
 ## 7. בדיקות תוכנה וניהול ארכיון (`Governance & Archive`)
 
-- **בדיקות אוטומטיות (`pytest`):** 21 בדיקות בתיקיית `tests/` (`test_pipeline.py`, `test_v9_runtime_contract.py`, `test_temporal_validation.py`, `test_model_registry.py`) מאמתות את חוזה הנתונים של ה-Web, אי-זליגת מאפיינים, כלי סוכן ה-AI ונקודות הקצה ב-FastAPI.
+- **בדיקות אוטומטיות (`pytest`):** 32 בדיקות בתיקיית `tests/` (`test_pipeline.py`, `test_v9_runtime_contract.py`, `test_temporal_validation.py`, `test_model_registry.py`, `test_agent_guardrails.py`, `test_api_live.py`) מאמתות את חוזה הנתונים של ה-Web, אי-זליגת מאפיינים, כלי סוכן ה-AI ומעקות הבטיחות (Guardrails), ונקודות הקצה ב-FastAPI.
 - **מדיניות ארכיון (`archive/`):** כל מחברות הטיוטה והריצה הקודמות (`CarTheftRisk_v1` עד `CarTheftRisk_v9`, `v10`), ייצואי ביניים ישנים (`production_assets.json`), קובצי ביקורת זמניים וסקריפטי עזר חד-פעמיים מרוכזים בתיקיית `archive/` ומתועדים ב-`ARCHIVE_STATUS.md`. המחברת הפעילה היחידה בתיקיית `notebooks/` היא `CarTheftRisk_final.ipynb`.

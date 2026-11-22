@@ -28,7 +28,7 @@ REFERENCE_DRIVER_PROFILE = {
     "age": 35,
     "license_years": 12,
     "claims_last_3_years": 0,
-    "model_year": 2022,
+    "model_year": 2025,
     "usage": "פרטי (עד 15,000 ק״מ בשנה)",
     "label_he": "נהג בן 35 · 12 שנות ותק · היעדר תביעות 3 שנים · שנתון 2025",
 }

@@ -9,7 +9,7 @@ The locked system. Every Hallmark run reads this first and pages share it. Chang
 - Axes: light/grotesk/green · posture: Committed (the warm paper and the plastic tints carry the surface; the green stays a signal)
 
 ## Tokens
-`tokens.css` is the source of truth (extract at `web/tokens.css`; pages inline it because the reports ship as self-contained files). The roles:
+`tokens.css` is the archived token reference (now at `archive/web_legacy/tokens.css`; active pages inline these CSS variables directly because the reports ship as self-contained files). The roles:
 ```css
 :root {
   --color-paper: oklch(97.6% 0.011 88);  --color-paper-2: oklch(96.5% 0.02 160);  --color-paper-3: oklch(93% 0.036 160);
@@ -44,4 +44,4 @@ Hebrew note: the display and body faces carry no Hebrew glyphs; Heebo stands in 
 - Character: still. State only (hover, press). Nothing on scroll; under reduced motion everything ends at once.
 
 ## Exports
-`web/tokens.css` in this project (the block above, for other pages to inline or link). Tailwind, DTCG or shadcn blocks are added here on request, per `export-formats.md`.
+`archive/web_legacy/tokens.css` (the archived copy of the block above; active pages inline the tokens directly). Tailwind, DTCG or shadcn blocks are added here on request, per `export-formats.md`.

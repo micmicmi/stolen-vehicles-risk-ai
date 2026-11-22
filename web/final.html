@@ -2827,7 +2827,7 @@
                   <td>איך מייצאים תחזיות ב-$O(1)$ מבלי לדרוס נכסי ריצה של אפליקציית ה-Web והסוכן?</td>
                   <td>ייצוא מבודד ל-<code>notebooks/data_final.json</code> (8,099 צירופים חזויים) לצד שמירת חוזה הריצה
                     ב-<code>web/assets/data.json</code>.</td>
-                  <td>12 אסרטציות הנדסיות במחברת + 21 בדיקות <code>pytest</code> עוברות ב-100% ללא התנגשות.</td>
+                  <td>12 אסרטציות הנדסיות במחברת + 32 בדיקות <code>pytest</code> עוברות ב-100% ללא התנגשות.</td>
                 </tr>
               </tbody>
             </table>
@@ -4429,10 +4429,10 @@
       <!-- שכבת סוכן ה-AI האוטונומי -->
       <h3 class="block-head" style="margin-top: var(--space-xl);">
         <span>שכבת סוכן ה-AI ההיברידי (Bestie Copilot Simulation)</span>
-        <span class="chip chip-ink">Agentic AI Extension · ReAct Architecture</span>
+        <span class="chip chip-ink">Agentic AI Extension · Tool-First Architecture</span>
       </h3>
       <p class="block-sub">
-        מעל שכבת הנתונים פותח סוכן מבוסס <strong>ReAct</strong> המפעיל 4 כלי Python דטרמיניסטיים לחישוב סיכון, סימולציית
+        מעל שכבת הנתונים פותח סוכן <strong>Tool-First</strong> ישיר מעל <code>google-genai</code> + <code>Pydantic v2</code> המפעיל 5 כלי Python דטרמיניסטיים לחישוב סיכון, סימולציית
         הצעות מחיר מחקריות, השוואת חלופות והערכת הנחת מיגון — כך שכל חישוב כספי מתבצע בקוד מבוקר ללא הזיות LLM:
       </p>
 
@@ -4442,7 +4442,7 @@
             <span>🤖</span> תיעוד הנדסי מלא: סוכן ה-AI לביטוח (Bestie Copilot)
           </div>
           <p class="agent-cta-desc">
-            ארכיטקטורת 4 כלי ה-Python הדטרמיניסטיים, מנגנון ה Gurdrails, ReAct וחבילת 21 בדיקות ה-Pytest מרוכזים
+            ארכיטקטורת 5 כלי ה-Python הדטרמיניסטיים, מנגנון ה-Guardrails (4 שכבות) וחבילת 32 בדיקות ה-Pytest מרוכזים
             בדוח הסוכן הייעודי.
           </p>
         </div>
