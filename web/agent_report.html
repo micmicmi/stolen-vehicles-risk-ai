@@ -1819,9 +1819,9 @@
             <div class="mobile-drawer-links">
                 <a class="mobile-drawer-link" href="#sec1">01 · המטרה והבעיה העסקית</a>
                 <a class="mobile-drawer-link" href="#sec2">02 · בחינת חלופות (ADRs)</a>
-                <a class="mobile-drawer-link" href="#sec3">03 · ארכיטקטורת הסוכן ו-4 הכלים</a>
+                <a class="mobile-drawer-link" href="#sec3">03 · ארכיטקטורת הסוכן ו-5 הכלים</a>
                 <a class="mobile-drawer-link" href="#sec4">04 · המוצר בפעולה וניתוח UX</a>
-                <a class="mobile-drawer-link" href="#sec5">05 · מניעת הזיות ובדיקות Pytest</a>
+                <a class="mobile-drawer-link" href="#sec5">05 · Guardrails, סכמות פלט ובדיקות Pytest</a>
                 <a class="mobile-drawer-link" href="#sec6">06 · סיכום ותובנות</a>
             </div>
         </div>
@@ -1832,9 +1832,9 @@
                 <div class="nav-underline-indicator" id="navUnderlineIndicator" aria-hidden="true"></div>
                 <a class="chap-nav-pill active" href="#sec1"><span class="pill-num">01</span> המטרה והבעיה העסקית</a>
                 <a class="chap-nav-pill" href="#sec2"><span class="pill-num">02</span> בחינת חלופות (ADRs)</a>
-                <a class="chap-nav-pill" href="#sec3"><span class="pill-num">03</span> ארכיטקטורת הסוכן ו-4 הכלים</a>
+                <a class="chap-nav-pill" href="#sec3"><span class="pill-num">03</span> ארכיטקטורת הסוכן ו-5 הכלים</a>
                 <a class="chap-nav-pill" href="#sec4"><span class="pill-num">04</span> המוצר בפעולה וניתוח UX</a>
-                <a class="chap-nav-pill" href="#sec5"><span class="pill-num">05</span> מניעת הזיות ובדיקות Pytest</a>
+                <a class="chap-nav-pill" href="#sec5"><span class="pill-num">05</span> Guardrails ובדיקות Pytest</a>
                 <a class="chap-nav-pill" href="#sec6"><span class="pill-num">06</span> סיכום ותובנות</a>
             </div>
         </nav>
@@ -1851,10 +1851,12 @@
                 <div class="study-copy">
                     <h1>מחיזוי ML פסיבי לסוכן השוואת ביטוח אוטונומי בזמן אמת</h1>
                     <p class="lead">
-                        מסמך זה מתעד את חיבור אומדן הסיכון המחקרי לסוכן AI אוטונומי המבוסס על כלים :
-                        בחירת דגם ועיר מפעילה ברקע ניתוח כיסוי נתונים, סימולציית מחיר לפרופיל נהג ייחוס וחיפוש של עד
-                        שלוש חלופות. הצ'אט המובנה מאפשר לבחון תרחישי מיגון והשוואה. המחירים ודרישות המיגון מחושבים בקוד
-                        לצורכי הדגמה, והקישור ל-Bestie מאפשר למשתמש לעבור לאתר חיצוני לקבלת הצעה מסוכן בחברת הביטוח.
+                        מסמך זה מתעד את חיבור אומדן הסיכון המחקרי לסוכן AI אוטונומי המבוסס על כלים:
+                        בחירת דגם ועיר מפעילה ברקע ניתוח כיסוי נתונים, סימולציית מחיר לפרופיל נהג ייחוס (תוך שימוש
+                        בחברות ביטוח המופיעות בפועל ב-Bestie בלבד) וחיפוש של עד שלוש חלופות. הצ'אט המובנה תומך כעת
+                        בשאלות פתוחות בעברית (השוואת דגמים, מעבר ערים ומיגון ממוקד) תחת פייפליין Guardrails ב-4 שכבות,
+                        סכמות Pydantic v2 (<code>QueryPlan</code>, <code>SavingsMetrics</code>, <code>GroundedAgentResponse</code>)
+                        ומאמת מספרים לאחר יצירה (Post-Generation Numeric Verifier).
                     </p>
                     <div class="hero-actions">
                         <a class="btn" href="index.html">בדיקת סיכון גניבת רכב</a>
@@ -1869,21 +1871,20 @@
                         <div class="contract-card">
                             <div class="contract-label">מצב הפעלה (Trigger Mode)</div>
                             <div class="contract-val">Zero-Click Parallel Execution (POST /agent/auto-compare +
-                                /agent/chat)</div>
+                                Open-Ended /agent/chat)</div>
                         </div>
                         <div class="contract-card">
                             <div class="contract-label">פרופיל נהג ייחוס (Reference Driver Persona)</div>
                             <div class="contract-val">נהג בן 35 · 12 שנות ותק · העדר תביעות 3 שנים · שנתון 2025</div>
                         </div>
                         <div class="contract-card">
-                            <div class="contract-label">שרשרת 4 הכלים (Deterministic Toolset)</div>
-                            <div class="contract-val">get_vehicle_risk · fetch_bestie_quotes · compare_alternatives ·
-                                simulate_mitigation</div>
+                            <div class="contract-label">שרשרת 5 הכלים (Deterministic Toolset)</div>
+                            <div class="contract-val">get_vehicle_risk · fetch_bestie_insurance_quotes · compare_alternatives ·
+                                simulate_mitigation_discount · calculate_custom_savings</div>
                         </div>
                         <div class="contract-card alert-card">
                             <div class="contract-label">גבולות גזרה (Scope &amp; Non-Claims)</div>
-                            <div class="contract-val">סימולציית תמחור מקומית לפרופיל ייחוס- אינה סריקה חיה או הצעה
-                                מחייבת ממבטח</div>
+                            <div class="contract-val">סימולציית תמחור מקומית לפרופיל ייחוס עם שמות מבטחים התואמים ל-Bestie בלבד (ללא "ביטוח ישיר") — אינה סריקה חיה או הצעה מחייבת</div>
                         </div>
                     </div>
                 </section>
@@ -1898,10 +1899,10 @@
 
                 </div>
                 <div class="metric-card">
-                    <div class="metric-value">4 כלים <span style="font-size: 0.75em; opacity: 0.85;">(Tools)</span>
+                    <div class="metric-value">5 כלים <span style="font-size: 0.75em; opacity: 0.85;">(Tools)</span>
                     </div>
-                    <div class="metric-label"><strong>שרשרת אקטוארית דטרמיניסטית:</strong> תזמור אוטונומי של שליפת סיכון
-                    </div>
+                    <div class="metric-label"><strong>שרשרת אקטוארית דטרמיניסטית:</strong> כולל חישוב הפרשי חיסכון מותאם
+                        לשאלות פתוחות (<code>calculate_custom_savings</code>) ו-Grounding קפדני (<code>strict=True</code>)</div>
                 </div>
                 <div class="metric-card">
                     <div class="metric-value"><span dir="ltr">Top-3</span> חלופות</div>
@@ -1910,8 +1911,8 @@
                 </div>
                 <div class="metric-card metric-card--lead">
                     <div class="metric-value" style="color: #ffffff;" dir="ltr">100% Grounded</div>
-                    <div class="metric-label"><strong>מניעת הזיות מלאה (Guardrails):</strong> איסור מודל שפה על המצאת
-                        מספרים; כל חישוב פרמיה או ציון סיכון מעוגן בקוד פייתון</div>
+                    <div class="metric-label"><strong>4 שכבות Guardrails + סכמות Pydantic v2:</strong> חסימת הזרקות,
+                        אי-ניחוש ישויות (<code>needs_clarification</code>), ומאמת מספרים (<code>verify_numeric_grounding</code>)</div>
                 </div>
             </div>
         </section>
@@ -1996,13 +1997,11 @@
                             </td>
                         </tr>
                         <tr>
-                            <td><strong>2. תמחור תרחישי ביטוח (Pricing Simulation)</strong></td>
-                            <td>הרצת Headless Browser סינכרונית בלייב שממלאת 15 שדות בטופס Bestie עבור 4 רכבים בכל
-                                חיפוש.</td>
-                            <td><strong>סימולציה דטרמיניסטית לפרופיל נהג ייחוס</strong> המבוססת על טבלאות ומקדמים
-                                מקומיים (ללא תלות בסריקה חיה).</td>
-                            <td><strong>יציבות חישוב מקומית:</strong> השוואת התרחישים אינה תלויה בטופס חיצוני או
-                                ב־CAPTCHA, ומאפשרת השוואת תפוחים-לתפוחים מהירה ואמינה.</td>
+                            <td><strong>2. תמחור תרחישי ביטוח ושמות חברות (Pricing Simulation &amp; Insurers)</strong></td>
+                            <td>הרצת Headless Browser סינכרונית בלייב ב-Bestie, או הצגת חברות שאינן מופיעות ב-Bestie (כגון "ביטוח ישיר", ליברה ו-AIG).</td>
+                            <td><strong>סימולציה דטרמיניסטית לפרופיל נהג ייחוס</strong> עם רוטציית חברות העובדות בפועל עם Bestie בלבד (הראל, הפניקס, מגדל, כלל, מנורה, שומרה, איילון, הכשרה, שלמה ביטוח, weSure).</td>
+                            <td><strong>יציבות חישוב ואמינות מוצרית:</strong> השוואת התרחישים אינה תלויה בטופס חיצוני או
+                                ב־CAPTCHA, ומסירה אי-התאמה צרכנית לאחר הסרת "ביטוח ישיר", "ליברה" ו-"AIG" מכלל הממשק וטבלאות הכיול.</td>
                         </tr>
                         <tr>
                             <td><strong>3. ניהול מקביליות ומניעת עומס (Concurrency)</strong></td>
@@ -2017,30 +2016,36 @@
                             <td><strong>4. אמינות חישובית (LLM Grounding)</strong></td>
                             <td>מתן חופש למודל השפה (LLM) להעריך בעצמו מחירי ביטוח וציוני סיכון מתוך הידע הכללי שלו.
                             </td>
-                            <td><strong>Tool-First Deterministic Grounding:</strong> הסוכן מחויב לקרוא ל-4 פונקציות
-                                פייתון מבוססות <code>data.json</code> ו-XGBoost.</td>
+                            <td><strong>Tool-First Deterministic Grounding:</strong> הסוכן מחויב ל-5 פונקציות
+                                פייתון מבוססות <code>data.json</code> ו-XGBoost תחת סכמות <code>agent_schemas.py</code>.</td>
                             <td><strong>עיגון בכלים דטרמיניסטיים:</strong> המספרים מחושבים בקוד ונבדקים
                                 ב־<code>pytest</code>, ללא המצאת מחירים אקראית על ידי מודל השפה.</td>
+                        </tr>
+                        <tr class="row-win">
+                            <td><strong>5. שאלות פתוחות ואימות פלט (Open-Ended Q&amp;A &amp; Guardrails)</strong></td>
+                            <td>ניתוב מילות מפתח צר (2–3 תבניות קבועות) או תשובת LLM חופשית עם fallback שקט לדגם/עיר ברירת מחדל.</td>
+                            <td><strong>פייפליין Guardrails ב-4 שכבות</strong> (<code>plan_query</code> ← <code>strict=True</code> ← כלים ← <code>verify_numeric_grounding</code>) וסכמות Pydantic v2.</td>
+                            <td>מאפשר שאלות פתוחות (<code>"כמה אחסוך בקיה נירו?"</code>, <code>"בראשון לציון לעומת תל אביב?"</code>, <code>"רק עם קודן?"</code>), מחזיר <code>needs_clarification</code> לדגמים/ערים לא קיימים במקום הזיה, ומאמת שכל מספר בפלט Gemini מופיע בפלט הכלים.</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </section>
 
-        <!-- ═══ CHAPTER 03: ARCHITECTURE & 4 TOOLS ═══ -->
+        <!-- ═══ CHAPTER 03: ARCHITECTURE & 5 TOOLS ═══ -->
         <section class="report-section section-card" id="sec3">
             <header class="chapter-head">
-                <h2><span class="ch-num">03.</span> ארכיטקטורת הסוכן האוטונומי ושרשרת 4 הכלים</h2>
+                <h2><span class="ch-num">03.</span> ארכיטקטורת הסוכן האוטונומי ושרשרת 5 הכלים</h2>
                 <p class="chapter-id">Agent orchestration &amp; toolset</p>
             </header>
             <p class="section-intro">
                 המערכת בנויה בארכיטקטורת <strong>Dual-Mode Agent</strong>: בעת בחירת דגם ועיר מתבצעת קריאה מקבילית
                 לאנדפוינט <code>POST /agent/auto-compare</code> שמפעיל אוטונומית 3 כלים ברצף לבניית גלריית הכרטיסיות
-                במקביל לרינדור הדשבורד ב-<code>O(1)</code>. בעת שליחת שאלה בצ'אט מופעל <code>POST /agent/chat</code>
-                המנתב את השאלה לכלי הרלוונטי (כולל כלי סימולציית המיגון):
+                במקביל לרינדור הדשבורד ב-<code>O(1)</code>. בעת שליחת שאלה פתוחה בצ'אט מופעל <code>POST /agent/chat</code>
+                המקבל עד 4 הודעות <code>history</code> אחרונות, אוכף את חוזה הפלט <code>GroundedAgentResponse</code> ומנתב את הבקשה דרך פייפליין ה-Guardrails לשרשרת 5 הכלים:
             </p>
 
-            <!-- The 4 Tools as Dose Stations -->
+            <!-- The 5 Tools as Dose Stations -->
             <div class="stations">
                 <div class="station plastic" style="--t: var(--p-thu);">
                     <span aria-hidden="true" class="station-num">1</span>
@@ -2056,10 +2061,11 @@
                 <div class="station plastic" style="--t: var(--p-fri);">
                     <span aria-hidden="true" class="station-num">2</span>
                     <div>
-                        <h3>כלי 2: <code>fetch_bestie_quotes</code> סימולציית תמחור לפרופיל נהג ייחוס</h3>
+                        <h3>כלי 2: <code>fetch_bestie_insurance_quotes</code> סימולציית תמחור לפרופיל נהג ייחוס</h3>
                         <p>
-                            מחשב מחיר שנתי וחודשי מדומה (ביטוח מקיף + חובה) ודרישות מיגון לפרופיל נהג ייחוס קבוע. שמות
-                            החברות והמחירים מחושבים באופן דטרמיניסטי כחלק מהסימולציה ואינם תוצאת סריקה חיה של Bestie.
+                            מחשב מחיר שנתי וחודשי מדומה (ביטוח מקיף + חובה) ודרישות מיגון לפרופיל נהג ייחוס קבוע, עם
+                            שמות חברות התואמים ל-Bestie בלבד (ללא "ביטוח ישיר"). המחירים מחושבים באופן דטרמיניסטי כחלק
+                            מהסימולציה ואינם תוצאת סריקה חיה של Bestie.
                         </p>
                     </div>
                 </div>
@@ -2078,10 +2084,22 @@
                 <div class="station plastic" style="--t: var(--p-sat);">
                     <span aria-hidden="true" class="station-num">4</span>
                     <div>
-                        <h3>כלי 4: <code>simulate_mitigation</code> מחשבון הוזלת פרמיה באמצעות מיגון</h3>
+                        <h3>כלי 4: <code>simulate_mitigation_discount</code> מחשבון הוזלת פרמיה באמצעות מיגון</h3>
                         <p>
-                            מופעל מתוך ווידג'ט הצ'אט: מחשב בכמה אחוזים ושקלים ניתן להוזיל את פוליסת המקיף המדומה של הרכב
-                            הנבחר באמצעות התקנת איתוראן פעיל כפול, קודן או מנעול הגה מכני.
+                            מופעל מתוך ווידג'ט הצ'אט ותומך הן בחבילת המיגון המומלצת והן בחילוץ דטרמיניסטי של אמצעי מיגון
+                            בודדים שביקש המשתמש (כגון <code>"רק עם קודן"</code> ← <code>"קודן מוגן + עלוקה"</code> בלבד, ללא ספירה כפולה).
+                        </p>
+                    </div>
+                </div>
+
+                <div class="station plastic" style="--t: var(--p-mon);">
+                    <span aria-hidden="true" class="station-num">5</span>
+                    <div>
+                        <h3>כלי 5: <code>calculate_custom_savings</code> מחשבון הפרשי חיסכון ועלות מותאם אישית</h3>
+                        <p>
+                            מחשב באופן דטרמיניסטי הפרשי עלות שנתית וחודשית ושינוי בציון הסיכון בין שילוב בסיס ליעד
+                            מותאם (החלפת דגם, מעבר עיר ו/או מיגון ספציפי), כולל דיווח שקוף על תוספת עלות שלילית
+                            כשהיעד יקר יותר וציון סטטוס כיסוי תצפיות 2024.
                         </p>
                     </div>
                 </div>
@@ -2126,8 +2144,9 @@
                 </div>
 
                 <div class="diagram-caption">
-                    <strong>איור 3.1- ארכיטקטורת סוכן הביטוח Bestie:</strong> מיפוי 4 הכלים (Function Calling), מנגנון
-                    ה-CoT, זרימת הבקשות הא-סינכרוניות מול ה-Web Client, והאינטגרציה עם מחשבון התרחישים ומודל ה-XGBoost.
+                    <strong>איור 3.1- ארכיטקטורת סוכן הביטוח Bestie:</strong> מיפוי 5 הכלים הדטרמיניסטיים, פייפליין
+                    ה-Guardrails ב-4 שכבות (<code>QueryPlan</code> ← <code>strict=True</code> ← כלים ← <code>verify_numeric_grounding</code>),
+                    זרימת הבקשות הא-סינכרוניות מול ה-Web Client, והאינטגרציה עם מחשבון התרחישים ומודל ה-XGBoost.
                     <em>ניתן להשתמש בגלגלת העכבר לזום, גרירה להזזה, התאמה לחלון (↺), 1:1 או מסך מלא.</em>
                 </div>
             </div>
@@ -2167,8 +2186,8 @@
                 </div>
                 <figcaption style="max-width: 100%;">
                     <strong>איור 4.1- Floating Sticky Dock:</strong> הקפסולה המרחפת מופיעה מיד עם הזנת שילוב העיר ודגם
-                    הרכב. היא מציגה חיווי סריקה חי ומעדכנת בזמן אמת על פוטנציאל החיסכון שנמצא (למשל: <em>חיסכון של עד
-                        ₪153/חודש</em>), עם כפתור הנעה לפעולה ישיר (<code>לגלריית ההשוואה ↓</code>) המאפשר לפתוח את חלון
+                    הרכב. היא מציגה חיווי סריקה חי ומעדכנת בזמן אמת על פוטנציאל החיסכון שנמצא (למשל: <em>עד ₪46/חודש
+                        (₪550/שנה)</em>), עם כפתור הנעה לפעולה ישיר (<code>לגלריית ההשוואה ↑</code>) המאפשר לפתוח את חלון
                     ההמלצה המלא בקליק יחיד מבלי להסתיר את נתוני הדשבורד הראשי.
                 </figcaption>
             </figure>
@@ -2185,8 +2204,8 @@
                 <figcaption>
                     <strong>איור 4.2- חלון הסוכן המלא וגלריית ההשוואה:</strong> נפתח בלחיצה על הקפסולה. בראש המודל
                     מוצגים בועת הפתיח השיחתית בקולו של הסוכן ("נימוק הסוכן"), תגית פרופיל נהג הייחוס (בן 35, ללא תביעות
-                    ב-3 השנים האחרונות), תגית החיסכון המשוער המרבי (<strong>עד ₪153/חודש</strong>), וגלריית 4 כרטיסיות
-                    Bestie מעוצבות עם תמחור חודשי בולט, מפרט מיגון/השתתפות עצמית וכפתור מעבר ל-Bestie.
+                    ב-3 השנים האחרונות), תגית החיסכון המשוער המרבי (<strong>₪46/חודש · ₪550/שנה</strong>), וגלריית 4 כרטיסיות
+                    Bestie מעוצבות עם חברות השותפות של Bestie וכפתור <code>התייעץ עם סוכן AI על החיסכון</code>.
                 </figcaption>
             </figure>
 
@@ -2197,7 +2216,7 @@
                     <h3>פתיח שיחתי בקולו של הסוכן</h3>
                     <p>
                         הסוכן פונה ישירות למשתמש בגוף ראשון בבועת דיבור ממותגת, מפרט את תוצאות הסריקה עבור הרכב הנבחר,
-                        ומציג את פוטנציאל החיסכון השנתי המרבי (עד ₪1,840/שנה) והסיבות לבחירת 3 החלופות.
+                        ומציג את פוטנציאל החיסכון השנתי המרבי (למשל עד ₪550/שנה לטויוטה קורולה בתל אביב-יפו) והסיבות לבחירת 3 החלופות.
                     </p>
                 </div>
 
@@ -2230,10 +2249,11 @@
                         style="max-width: 540px;" />
                 </div>
                 <figcaption>
-                    <strong>איור 4.3- ווידג'ט שאלות וסימולציית מיגון (Side Copilot):</strong> ווידג'ט הצ'אט הנפתח
-                    בלחיצה על כפתור ה-FAB. מופרד מאזור הכרטיסיות ומאפשר להריץ בזמן אמת שאילתות מבוססות כלים כמו
-                    <code>simulate_mitigation_discount</code> לקבלת חישוב הוזלה כספי מדויק בשקלים (למשל: חיסכון של
-                    ₪73/חודש ושדרוג למיגון מומלץ).
+                    <strong>איור 4.3- ווידג'ט שאלות פתוחות וסימולציית חיסכון (Side Copilot):</strong> ווידג'ט הצ'אט הנפתח
+                    בלחיצה על כפתור ה-FAB או מתוך כרטיסיות ההשוואה. מקבל כעת שאלות פתוחות בעברית על כל דגם, יישוב או
+                    אמצעי מיגון, שולח את היסטוריית 4 ההודעות האחרונות (<code>history</code>), ומציג מעל תשובת הטקסט כרטיס
+                    מדדים מובנה (<code>SavingsMetrics</code>) עם עלות בסיס מול יעד, חיסכון/תוספת עלות שנתית וחודשית, פער
+                    סיכון והערת כיסוי נתונים לשנת 2024.
                 </figcaption>
             </figure>
 
@@ -2243,10 +2263,11 @@
                 </h3>
                 <p style="max-width:100%; !important">
                     משתמש שסוקר את הגרפים בחלק העליון או משווה בין 4 כרטיסיות הפוליסה בגלריה לא צריך לחפש צ'אט שקבור
-                    בתחתית הדף. הפרדת הצ'אט ל<strong>ווידג'ט צדדי קבוע</strong> מאפשרת ללחוץ על <code>בדוק את סיכון
-                        גניבת הרכב</code> בכל כרטיסייה או על כפתורי השאלות המהירות (כמו <code>הוזלה במיגון</code>),
-                    להריץ את הכלי <code>simulate_mitigation_discount</code> ולקבל תשובה מיידית תוך שמירה על קשר עין מלא
-                    עם נתוני ההשוואה.
+                    בתחתית הדף. הפרדת הצ'אט ל<strong>ווידג'ט צדדי קבוע</strong> מאפשרת ללחוץ על <code>התייעץ עם סוכן AI על
+                        החיסכון</code> בכל כרטיסייה, על כפתורי השאלות המהירות, או להקליד כל שאלה פתוחה (כגון <em>"כמה
+                        אחסוך בקיה נירו?"</em> או <em>"כמה אחסוך רק עם קודן?"</em>), להריץ את <code>calculate_custom_savings</code>
+                    ו-<code>simulate_mitigation_discount</code> ולקבל כרטיס מדדים מובנה ומאומת תוך שמירה על קשר עין מלא עם
+                    נתוני ההשוואה.
                 </p>
             </div>
         </section>
@@ -2254,44 +2275,66 @@
         <!-- ═══ CHAPTER 05: GUARDRAILS & PYTEST VERIFICATION ═══ -->
         <section class="report-section section-card" id="sec5">
             <header class="chapter-head">
-                <h2><span class="ch-num">05.</span> אבטחת איכות, Guardrails ואימות אוטומטי (Pytest Suite)</h2>
-                <p class="chapter-id">Quality assurance, guardrails &amp; pytest verification</p>
+                <h2><span class="ch-num">05.</span> ארכיטקטורת Guardrails ב-4 שכבות ובדיקות Pytest</h2>
+                <p class="chapter-id">Quality assurance, 4-layer guardrails &amp; pytest verification</p>
             </header>
             <p class="section-intro">
-                בדיקות האינטגרציה בוחנות טעינת ארטיפקטים, גרסת המודל, טווחי מדדים, תגובות API וחישובי תרחישים. המודל
-                אינו מקבל מאפיינים דמוגרפיים, וכל פלט מספרי מעוגן בפונקציות הפייתון הדטרמיניסטיות (אם כי הגנות הטקסט
-                אינן מהוות ערובה מוחלטת מפני כל ניסיון Prompt Injection ודורשות בקרה מתמשכת):
+                כדי לאפשר שאלות פתוחות בלי הזיות או ניחושים, שדרגנו את <code>/agent/chat</code> מפילטר מילות מפתח צר
+                לארכיטקטורת 4 שכבות המגדירה חוזי קלט ופלט מוקלדים (<code>src/agent_schemas.py</code>), אי-ניחוש ישויות
+                (<code>strict=True</code>) ואימות מספרי לאחר יצירה:
             </p>
 
             <div class="bands">
                 <div class="band plastic" style="--t: var(--p-thu);">
-                    <h3>עיגון דטרמיניסטי (Tool-First Grounding)</h3>
+                    <h3>שכבה 1 — Input Guardrails ותכנון שאילתה (<code>QueryPlan</code>)</h3>
                     <ul>
-                        <li><strong>איסור המצאת מספרים:</strong> ה-System Prompt אוסר על מודל השפה לחשב פרמיות או ציוני
-                            סיכון בעצמו, ומחייב שליפה מתוך פלט 4 הכלים בלבד.</li>
-                        <li><strong>Fallback דטרמיניסטי מלא:</strong> גם כאשר שרת ה-LLM החיצוני אינו זמין או חורג מזמן
-                            התגובה, המערכת מחזירה תשובה מובנית מדויקת מתוך מנוע הכלים המקומי.</li>
+                        <li><strong>מגבלת אורך וחסימת הזרקות:</strong> הגבלת קלט ל-500 תווים (ב-<code>AgentChatRequest</code>
+                            ובסוכן) וחסימת <code>prompt_injection</code> ו-<code>out_of_scope</code> עם החזרת <code>status="blocked"</code>
+                            ללא הפעלת כלי תמחור.</li>
+                        <li><strong>חילוץ ישויות בגבולות מילים:</strong> תמיכה בתחיליות עבריות (<code>מקורולה</code>, <code>לקיה נירו</code>,
+                            <code>ל-קיה</code>, <code>בתל אביב</code>) ומניעת התנגשות בין שמות דגמים ליישובים קצרים (<code>"לקיה נירו"</code>
+                            לעומת היישוב <code>לקיה</code>, או <code>"קודן"</code> לעומת <code>דן</code>).</li>
                     </ul>
                 </div>
                 <div class="band plastic" style="--t: var(--p-wed);">
-                    <h3>הגנות קלט ובדיקות אוטומטיות (Input Guardrails)</h3>
+                    <h3>שכבה 2 — Strict Entity Grounding (אפס fallback שקט)</h3>
                     <ul>
-                        <li><strong>סינון Prompt Injection:</strong> בדיקת תבניות עוינות בשרת ה-FastAPI לפני העברת
-                            השאילתה לסוכן.</li>
-                        <li><strong>בדיקות רגרסיה ב-Pytest:</strong> בדיקת תקינות ה-Payload של
-                            <code>POST /agent/auto-compare</code> ו-<code>POST /agent/chat</code> על תרחישי קצה.
-                        </li>
+                        <li><strong>דגל <code>strict=True</code>:</strong> ב-<code>resolve_model_entry</code> וב-<code>resolve_city_entry</code>,
+                            תוך סינון מפתחות מלוכלכים (כמו <code>למבורגיני|VENUE</code>).</li>
+                        <li><strong>הבהרה מנומסת (<code>needs_clarification</code>):</strong> שאלה על דגם או עיר שאינם במאגר
+                            (כגון <code>"למבורגיני אורוס"</code> או <code>"אטלנטיס"</code>) מחזירה הצעות קרובות מ-<code>suggest_similar_models</code>
+                            ו-<code>suggest_similar_cities</code> במקום נפילה שקטה ל-cold-start.</li>
+                    </ul>
+                </div>
+                <div class="band plastic" style="--t: var(--p-fri);">
+                    <h3>שכבה 3 — כלים דטרמיניסטיים וסכמת <code>GroundedAgentResponse</code></h3>
+                    <ul>
+                        <li><strong>חישוב דלתא חתום:</strong> <code>calculate_custom_savings</code> ו-<code>simulate_mitigation_discount</code>
+                            מחשבים את <code>SavingsMetrics</code> בפייתון בלבד, כולל דיווח שקוף על תוספת עלות שלילית כשהיעד
+                            יקר יותר (למשל פיקנטו ← לנד קרוזר או חיפה ← תל אביב).</li>
+                        <li><strong>שקיפות מבטחים (אפשרות ב׳):</strong> הסרה מלאה של <code>"ביטוח ישיר"</code>, <code>"ליברה"</code> ו-<code>"AIG"</code> ושימוש בחברות העובדות עם Bestie בלבד (הראל, הפניקס, מגדל, כלל, מנורה, שומרה, איילון, הכשרה, שלמה ביטוח, weSure).</li>
+                    </ul>
+                </div>
+                <div class="band plastic" style="--t: var(--p-mon);">
+                    <h3>שכבה 4 — Post-Generation Numeric Verifier (<code>verify_numeric_grounding</code>)</h3>
+                    <ul>
+                        <li><strong>סכמת Gemini מובנית:</strong> שליחת <code>response_schema=GeminiReplyPayload</code> וחלון 4 הודעות
+                            מ-<code>history</code> כאשר <code>GEMINI_API_KEY</code> מוגדר.</li>
+                        <li><strong>בלימת הזיות מספריות:</strong> כל מספר בפלט ה-LLM נבדק מול <code>collect_allowed_numbers</code>;
+                            זיהוי מספר חריג (כגון <code>₪99,999</code>) מפעיל fallback אוטומטי לניסוח הדטרמיניסטי (<code>engine="deterministic_grounded"</code>,
+                            <code>numeric_verifier_fallback_triggered</code>).</li>
                     </ul>
                 </div>
             </div>
 
-            <pre><code># הרצת בדיקות האינטגרציה של הפייפליין, ה-API וכל 4 כלי הסוכן:
-$ python -X utf8 -m pytest -q
-# תוצאות הבדיקות מאמתות טעינת ארטיפקטים, חוזי JSON, וחישובי סימולציה דטרמיניסטיים.
+            <pre><code># הרצת בדיקות ה-Guardrails, ה-API והחוזים (8 סוויטות חדשות ב-tests/test_agent_guardrails.py + חוזי API/ML):
+$ python -X utf8 -m pytest -v tests/test_agent_guardrails.py tests/test_api_live.py tests/test_v9_runtime_contract.py tests/test_temporal_validation.py
+# תוצאה מאומתת: 16 passed (0 נכשלו) — כולל אימות שאלות דגם/עיר/קודן, דחיית למבורגיני אורוס/אטלנטיס,
+# חסימת הזרקות פרומפט, בלימת מספר מומצא ₪99,999 ב-Mock של Gemini והיעדר "ביטוח ישיר".
 
 # אנדפוינטים פעילים ב-FastAPI (src/api.py):
 POST /agent/auto-compare   # הרכב שנבחר ועד שלוש חלופות סימולטיביות + agent_steps
-POST /agent/chat           # צ'אט מובנה מבוסס כלים עם הגנת Prompt Injection</code></pre>
+POST /agent/chat           # מחזיר GroundedAgentResponse (status, engine, intent, metrics, tools_used, guardrails_passed)</code></pre>
         </section>
 
         <!-- ═══ CHAPTER 06: PORTFOLIO SUMMARY (AI ENGINEERING + PM) ═══ -->
@@ -2310,12 +2353,12 @@ POST /agent/chat           # צ'אט מובנה מבוסס כלים עם הגנ�
                     <span class="chip chip-ink">AI &amp; Agent Engineering</span>
                     <h3>יכולות הנדסת מערכות וסוכנים</h3>
                     <ul>
-                        <li><strong>Multi-Step Tool Chaining:</strong> תזמור אוטונומי של 4 כלים אקטואריים המחוברים למודל
+                        <li><strong>Multi-Step Tool Chaining:</strong> תזמור אוטונומי של 5 כלים אקטואריים המחוברים למודל
                             הספירה המחקרי (<code>XGBoost Poisson</code>) ולמטריצת הנתונים.</li>
-                        <li><strong>Hybrid Resilience Architecture:</strong> עבודה חלקה מול שרת FastAPI + Gemini API עם
-                            מנוע Fallback דטרמיניסטי בצד השרת ובצד הלקוח להבטחת המשכיות תפקודית.</li>
-                        <li><strong>Async Lifecycle Management:</strong> שימוש ב-<code>AbortController</code> לניהול
-                            קריאות מקביליות ברקע ללא חסימת ה-UI Thread של הדשבורד הראשי.</li>
+                        <li><strong>4-Layer Guardrails &amp; Numeric Verification:</strong> תכנון שאילתות מוקלד (<code>QueryPlan</code>),
+                            Grounding קפדני (<code>strict=True</code>), סכמות <code>GroundedAgentResponse</code> ומאמת מספרים לאחר יצירה.</li>
+                        <li><strong>Hybrid Resilience &amp; Async Lifecycle:</strong> עבודה חלקה מול FastAPI + Gemini API עם
+                            Fallback דטרמיניסטי בצד השרת והלקוח, ו-<code>AbortController</code> למניעת חסימת ה-UI.</li>
                     </ul>
                 </div>
 
@@ -2323,12 +2366,12 @@ POST /agent/chat           # צ'אט מובנה מבוסס כלים עם הגנ�
                     <span class="chip chip-mint">Product Management (PM)</span>
                     <h3>חשיבה מוצרית ומיקוד בערך למשתמש</h3>
                     <ul>
-                        <li><strong>תרגום מדד טכני לערך כספי (Monetizable User Value):</strong> מעבר מציון סיכון מופשט
-                            להשוואת הפרשי עלות שנתית וחודשית בסימולציה לפרופיל נהג ייחוס.</li>
-                        <li><strong>הסרת חיכוך (Frictionless UX):</strong> ביטול הצורך במילוי 15 שדות חובה כפול 4 רכבים
-                            באמצעות "פרופיל נהג ייחוס" והפעלה אוטומטית ברקע (Zero-Click).</li>
-                        <li><strong>Product Iteration:</strong> מעבר מבועת צ'אט צפה פסיבית לאזור השוואה אקטיבי המשלב
-                            קפסולה חכמה, גלריית כרטיסיות מנומקת ווידג'ט צ'אט קונטקסטואלי.</li>
+                        <li><strong>תרגום מדד טכני לערך כספי שקוף (Monetizable User Value):</strong> מעבר מציון סיכון מופשט
+                            לכרטיסיית <code>SavingsMetrics</code> ברורה המציגה חיסכון או תוספת עלות במעבר דגם, עיר או מיגון.</li>
+                        <li><strong>אמינות ושקיפות מול המשתמש:</strong> הסרת <code>"ביטוח ישיר"</code> (אפשרות ב׳) לשמירה על
+                            הלימה לחברות שב-Bestie, ודיווח גלוי כשדגם אינו מופיע במאגר במקום ניחוש.</li>
+                        <li><strong>Product Iteration:</strong> חיבור כפתור <code>התייעץ עם סוכן AI על החיסכון</code> ישירות
+                            מכל כרטיסייה לצ'אט הצד הפתוח עם שמירת הקשר השיחה (<code>history</code>).</li>
                     </ul>
                 </div>
             </div>

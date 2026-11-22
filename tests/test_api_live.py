@@ -57,7 +57,7 @@ def test_agent_endpoints_without_and_with_gemini(monkeypatch):
     )
     assert chat.status_code == 200
     chat_data = chat.json()
-    assert chat_data["status"] == "ok"
+    assert chat_data["status"] == "answered"
     assert chat_data["engine"] == "deterministic_grounded"
     assert chat_data["reply"]
 
@@ -79,5 +79,5 @@ def test_agent_endpoints_without_and_with_gemini(monkeypatch):
     )
     assert gemini_chat.status_code == 200
     gemini_data = gemini_chat.json()
-    assert gemini_data["engine"] == "gemini_grounded"
+    assert gemini_data["engine"] == "gemini_verified"
     assert gemini_data["reply"] == "תשובה מבוססת ג'מיני"

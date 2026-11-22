@@ -1,9 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 816 1300" width="816" height="1300" style="background: transparent;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 1460" width="880" height="1460" direction="ltr" style="background: transparent; direction: ltr;">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap');
   text {
     font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     fill: #ffffff;
+    unicode-bidi: plaintext;
   }
   .subgraph-box {
     fill: transparent;
@@ -11,26 +12,49 @@
     stroke-width: 1.5;
     rx: 8;
   }
+  .subgraph-guard {
+    fill: rgba(110, 231, 183, 0.03);
+    stroke: #6ee7b7;
+    stroke-width: 1.5;
+    rx: 8;
+  }
   .subgraph-title {
     fill: #ffffff;
     font-size: 13px;
     font-weight: 700;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.2px;
+  }
+  .subgraph-title-guard {
+    fill: #6ee7b7;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
   }
   .node-box {
-    fill: rgba(255, 255, 255, 0.02);
+    fill: rgba(255, 255, 255, 0.03);
     stroke: #ffffff;
     stroke-width: 1.5;
+    rx: 6;
+  }
+  .node-guard {
+    fill: rgba(110, 231, 183, 0.08);
+    stroke: #6ee7b7;
+    stroke-width: 1.6;
     rx: 6;
   }
   .node-title {
     fill: #ffffff;
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 700;
+  }
+  .node-title-guard {
+    fill: #6ee7b7;
+    font-size: 13px;
+    font-weight: 700;
   }
   .node-subtitle {
-    fill: #ffffff;
-    font-size: 11.5px;
+    fill: #e2e8f0;
+    font-size: 11px;
     font-weight: 400;
     opacity: 0.95;
   }
@@ -44,16 +68,32 @@
     stroke: #ffffff;
     stroke-width: 2.2;
   }
+  .edge-guard {
+    fill: none;
+    stroke: #6ee7b7;
+    stroke-width: 1.8;
+  }
   .edge-label-box {
-    fill: #0b0f19;
+    fill: #0b1f1a;
     stroke: #ffffff;
+    stroke-width: 1;
+    rx: 4;
+  }
+  .edge-label-box-guard {
+    fill: #0b1f1a;
+    stroke: #6ee7b7;
     stroke-width: 1;
     rx: 4;
   }
   .edge-label-text {
     fill: #ffffff;
     font-size: 11px;
-    font-weight: 500;
+    font-weight: 600;
+  }
+  .edge-label-text-guard {
+    fill: #6ee7b7;
+    font-size: 11px;
+    font-weight: 600;
   }
 </style>
 <defs>
@@ -63,168 +103,183 @@
   <marker id="arrowhead-start" markerWidth="9" markerHeight="6" refX="1" refY="3" orient="auto-start-reverse">
     <polygon points="9 0, 0 3, 9 6" fill="#ffffff" stroke="#ffffff" stroke-width="0.5" stroke-linejoin="round" />
   </marker>
+  <marker id="arrowhead-guard" markerWidth="9" markerHeight="6" refX="8" refY="3" orient="auto">
+    <polygon points="0 0, 9 3, 0 6" fill="#6ee7b7" stroke="#6ee7b7" stroke-width="0.5" stroke-linejoin="round" />
+  </marker>
 </defs>
 
 <!-- Subgraph 1: Web Client -->
 <g class="subgraph" data-id="WebClient">
-  <rect x="40" y="40" width="735" height="510" class="subgraph-box" />
-  <text x="56" y="68" class="subgraph-title">🌐 Web Client (index.html)</text>
+  <rect x="36" y="30" width="808" height="450" class="subgraph-box" />
+  <text x="54" y="56" class="subgraph-title">Web Client (web/index.html)</text>
 
-  <!-- Subgraph 1.1: Inline AI Section -->
+  <!-- Nested Subgraph 1.1: Bestie AI Zone -->
   <g class="subgraph" data-id="AgentSection">
-    <rect x="313" y="243" width="446" height="284" class="subgraph-box" stroke-dasharray="5 4" />
-    <text x="328" y="268" class="subgraph-title">🤖 אזור סוכן AI בתחתית הדף (Inline Section)</text>
+    <rect x="312" y="176" width="512" height="284" class="subgraph-box" stroke-dasharray="5 4" />
+    <text x="328" y="200" class="subgraph-title">Bestie AI UI (Modal + Floating Side Copilot)</text>
   </g>
 </g>
 
-<!-- Subgraph 2: Backend AI Engine -->
+<!-- Subgraph 2: Backend AI Engine + 4-Layer Guardrails -->
 <g class="subgraph" data-id="Backend">
-  <rect x="243" y="677" width="468" height="199" class="subgraph-box" />
-  <text x="258" y="703" class="subgraph-title">🧠 AI Agent Engine (Python / FastAPI)</text>
+  <rect x="36" y="544" width="808" height="446" class="subgraph-guard" />
+  <text x="54" y="569" class="subgraph-title-guard">4-Layer Guardrails &amp; AI Engine (src/api.py · src/agent.py · src/agent_schemas.py)</text>
 </g>
 
-<!-- Subgraph 3: Agent Toolset -->
+<!-- Subgraph 3: 5 Deterministic Tools -->
 <g class="subgraph" data-id="Toolset">
-  <rect x="130" y="936" width="610" height="318" class="subgraph-box" />
-  <text x="146" y="962" class="subgraph-title">🛠️ Agent Toolset (src/agent_tools.py)</text>
+  <rect x="36" y="1032" width="808" height="398" class="subgraph-box" />
+  <text x="54" y="1057" class="subgraph-title">5 Deterministic Tools &amp; Partner Insurers (src/agent_tools.py)</text>
 </g>
 
-<!-- Edges / Connectors -->
+<!-- Edges -->
 <!-- User to Dashboard -->
-<polyline points="295,122 295,133 171,133 171,243" class="edge-line" marker-end="url(#arrowhead)" />
-
-<!-- User to LiveStatus (Parallel background trigger) -->
-<polyline points="350,122 350,135 484,135 484,287" class="edge-line-thick" marker-end="url(#arrowhead)" />
-
-<!-- LiveStatus to AutoEndpoint -->
-<polyline points="427,325 427,336 360,336 360,591 360,721" class="edge-line" marker-end="url(#arrowhead)" marker-start="url(#arrowhead-start)" />
-
-<!-- LiveStatus to CardsGallery -->
-<polyline points="577,325 577,372" class="edge-line" marker-end="url(#arrowhead)" />
-
+<polyline points="380,112 380,140 172,140 172,190" class="edge-line" marker-end="url(#arrowhead)" />
+<!-- User to AgentSection -->
+<polyline points="500,112 500,140 568,140 568,216" class="edge-line-thick" marker-end="url(#arrowhead)" />
+<!-- HeroCapsule to CardsGallery -->
+<polyline points="568,260 568,286" class="edge-line" marker-end="url(#arrowhead)" />
 <!-- CardsGallery to InlineChat -->
-<polyline points="577,428 577,474" class="edge-line" marker-end="url(#arrowhead)" />
-
+<polyline points="568,348 568,376" class="edge-line" marker-end="url(#arrowhead)" />
+<!-- AgentSection to AutoEndpoint (clear left corridor below Dashboard) -->
+<polyline points="312,317 200,317 200,582" class="edge-line" marker-end="url(#arrowhead)" marker-start="url(#arrowhead-start)" />
 <!-- InlineChat to ChatEndpoint -->
-<polyline points="568,512 568,659 592,659 592,721" class="edge-line" marker-end="url(#arrowhead)" marker-start="url(#arrowhead-start)" />
-
-<!-- AutoEndpoint to Orchestrator -->
-<polyline points="360,775 360,799 476,799 476,823" class="edge-line" marker-end="url(#arrowhead)" />
-
-<!-- ChatEndpoint to Orchestrator -->
-<polyline points="592,775 592,799 476,799 476,823" class="edge-line" marker-end="url(#arrowhead)" />
-
-<!-- Orchestrator to Tool 1 (get_vehicle_risk) -->
-<polyline points="476,861 476,920 310,920 310,980" class="edge-line" marker-end="url(#arrowhead)" />
-
-<!-- Tool 1 to Tool 2 (fetch_bestie_insurance_quotes) -->
-<polyline points="310,1034 310,1082" class="edge-line" marker-end="url(#arrowhead)" />
-
-<!-- Tool 2 to Tool 3 (compare_alternatives) -->
-<polyline points="310,1136 310,1183" class="edge-line" marker-end="url(#arrowhead)" />
-
-<!-- Orchestrator to Tool 4 (simulate_mitigation_discount) -->
-<polyline points="476,861 476,920 584,920 584,980" class="edge-line" marker-end="url(#arrowhead)" />
+<polyline points="590,438 590,582" class="edge-line-thick" marker-end="url(#arrowhead)" marker-start="url(#arrowhead-start)" />
+<!-- ChatEndpoint -> Layer1 -> Layer2 -> Layer34 -->
+<polyline points="590,640 590,668" class="edge-guard" marker-end="url(#arrowhead-guard)" />
+<polyline points="590,730 590,756" class="edge-guard" marker-end="url(#arrowhead-guard)" />
+<polyline points="590,818 590,852" class="edge-guard" marker-end="url(#arrowhead-guard)" />
+<!-- AutoEndpoint -> Layer34 -->
+<polyline points="200,640 200,852" class="edge-line" marker-end="url(#arrowhead)" />
+<!-- Layer34 -> Tool columns -->
+<polyline points="360,966 360,1004 240,1004 240,1078" class="edge-line" marker-end="url(#arrowhead)" />
+<polyline points="520,966 520,1004 640,1004 640,1078" class="edge-guard" marker-end="url(#arrowhead-guard)" />
+<!-- Left column tool chain -->
+<polyline points="240,1138 240,1170" class="edge-line" marker-end="url(#arrowhead)" />
+<polyline points="240,1236 240,1268" class="edge-line" marker-end="url(#arrowhead)" />
+<!-- Right column tool chain -->
+<polyline points="640,1144 640,1180" class="edge-guard" marker-end="url(#arrowhead-guard)" />
 
 <!-- Edge Labels -->
 <g class="edge-label">
-  <rect x="110" y="164" width="122" height="28" class="edge-label-box" />
-  <text x="171" y="182" text-anchor="middle" class="edge-label-text">1. בחירת רכב ועיר</text>
+  <rect x="96" y="127" width="152" height="26" class="edge-label-box" />
+  <text x="172" y="144" text-anchor="middle" class="edge-label-text">1. בחירת דגם ועיר</text>
 </g>
-
 <g class="edge-label">
-  <rect x="395" y="123" width="178" height="28" class="edge-label-box" />
-  <text x="484" y="141" text-anchor="middle" class="edge-label-text">2. ריצה אוטונומית חרישית ברקע</text>
+  <rect x="478" y="127" width="180" height="26" class="edge-label-box" />
+  <text x="568" y="144" text-anchor="middle" class="edge-label-text">2. טריגר מקבילי ברקע</text>
 </g>
-
 <g class="edge-label">
-  <rect x="275" y="598" width="170" height="28" class="edge-label-box" />
-  <text x="360" y="616" text-anchor="middle" class="edge-label-text">Async Fetch + AbortController</text>
+  <rect x="104" y="498" width="192" height="26" class="edge-label-box" />
+  <text x="200" y="515" text-anchor="middle" class="edge-label-text">Async Fetch + AbortController</text>
 </g>
-
 <g class="edge-label">
-  <rect x="527" y="598" width="130" height="28" class="edge-label-box" />
-  <text x="592" y="616" text-anchor="middle" class="edge-label-text">Context-Aware Chat</text>
+  <rect x="480" y="498" width="220" height="26" class="edge-label-box-guard" />
+  <text x="590" y="515" text-anchor="middle" class="edge-label-text-guard">Open-Ended Chat + history[4]</text>
 </g>
 
-<!-- Nodes -->
-<!-- User -->
+<!-- Nodes: Web Client -->
 <g class="node" data-id="User">
-  <rect x="238" y="84" width="170" height="38" class="node-box" />
-  <text x="323" y="108" text-anchor="middle" class="node-title">משתמש מזין דגם + עיר</text>
+  <rect x="320" y="72" width="240" height="40" class="node-box" />
+  <text x="440" y="97" text-anchor="middle" class="node-title">משתמש בוחר דגם + יישוב</text>
 </g>
 
-<!-- Dashboard -->
 <g class="node" data-id="Dashboard">
-  <rect x="56" y="243" width="230" height="38" class="node-box" />
-  <text x="171" y="267" text-anchor="middle" class="node-title">דשבורד תוצאות ML (מיידי - O(1))</text>
+  <rect x="54" y="190" width="236" height="54" class="node-box" />
+  <text x="172" y="213" text-anchor="middle" class="node-title">דשבורד תוצאות ML</text>
+  <text x="172" y="232" text-anchor="middle" class="node-subtitle">רינדור מיידי O(1) מ-data.json</text>
 </g>
 
-<!-- LiveStatus / Hero Bubble -->
-<g class="node" data-id="LiveStatus">
-  <rect x="315" y="287" width="340" height="38" class="node-box" />
-  <text x="485" y="311" text-anchor="middle" class="node-title">1️⃣ בועת פתיח שיחתית (Hero Bubble) + חיסכון מרבי</text>
+<g class="node" data-id="HeroCapsule">
+  <rect x="332" y="216" width="472" height="44" class="node-box" />
+  <text x="568" y="242" text-anchor="middle" class="node-title">1. קפסולה מרחפת + בועת פתיח שיחתית (Hero Bubble)</text>
 </g>
 
-<!-- CardsGallery -->
 <g class="node" data-id="CardsGallery">
-  <rect x="427" y="372" width="300" height="56" class="node-box" />
-  <text x="577" y="396" text-anchor="middle" class="node-title">2️⃣ גלריית 4 כרטיסיות Bestie</text>
-  <text x="577" y="415" text-anchor="middle" class="node-subtitle">(רכב נבחר + 3 חלופות עם ביטוח זול יותר)</text>
+  <rect x="332" y="286" width="472" height="62" class="node-box" />
+  <text x="568" y="311" text-anchor="middle" class="node-title">2. גלריית 4 כרטיסיות Bestie (רכב נבחר + 3 חלופות)</text>
+  <text x="568" y="331" text-anchor="middle" class="node-subtitle">מבטחי Bestie בלבד · כפתור: התייעץ עם סוכן AI על החיסכון</text>
 </g>
 
-<!-- InlineChat -->
 <g class="node" data-id="InlineChat">
-  <rect x="394" y="474" width="350" height="38" class="node-box" />
-  <text x="569" y="498" text-anchor="middle" class="node-title">3️⃣ אזור צ'אט מובנה לשאלות המשך וסימולציית מיגון</text>
+  <rect x="332" y="376" width="472" height="62" class="node-box" />
+  <text x="568" y="401" text-anchor="middle" class="node-title">3. צ'אט צד לשאלות פתוחות + history (4 הודעות)</text>
+  <text x="568" y="421" text-anchor="middle" class="node-subtitle">כרטיס SavingsMetrics מובנה · דגם / עיר / מיגון ספציפי</text>
 </g>
 
-<!-- AutoEndpoint -->
+<!-- Nodes: Backend & 4-Layer Guardrails -->
 <g class="node" data-id="AutoEndpoint">
-  <rect x="259" y="721" width="202" height="54" class="node-box" />
-  <text x="360" y="744" text-anchor="middle" class="node-title">POST /agent/auto-compare</text>
-  <text x="360" y="763" text-anchor="middle" class="node-subtitle">(ריצה אוטומטית ברקע)</text>
+  <rect x="60" y="582" width="280" height="58" class="node-box" />
+  <text x="200" y="606" text-anchor="middle" class="node-title">POST /agent/auto-compare</text>
+  <text x="200" y="625" text-anchor="middle" class="node-subtitle">סריקת סיכון + 3 חלופות אוטונומיות</text>
 </g>
 
-<!-- ChatEndpoint -->
 <g class="node" data-id="ChatEndpoint">
-  <rect x="488" y="721" width="208" height="54" class="node-box" />
-  <text x="592" y="744" text-anchor="middle" class="node-title">POST /agent/chat</text>
-  <text x="592" y="763" text-anchor="middle" class="node-subtitle">(מענה לשאלות בצ'אט התחתון)</text>
+  <rect x="410" y="582" width="360" height="58" class="node-guard" />
+  <text x="590" y="606" text-anchor="middle" class="node-title-guard">POST /agent/chat (GroundedAgentResponse)</text>
+  <text x="590" y="625" text-anchor="middle" class="node-subtitle">ולידציית אורך (max 500) + history + כוונות פתוחות</text>
 </g>
 
-<!-- Orchestrator -->
-<g class="node" data-id="Orchestrator">
-  <rect x="328" y="823" width="296" height="38" class="node-box" />
-  <text x="476" y="847" text-anchor="middle" class="node-title">Agent Orchestrator (Gemini / Hybrid Engine)</text>
+<g class="node" data-id="Layer1">
+  <rect x="410" y="668" width="360" height="62" class="node-guard" />
+  <text x="590" y="693" text-anchor="middle" class="node-title-guard">Layer 1: Input Guardrails &amp; QueryPlan</text>
+  <text x="590" y="713" text-anchor="middle" class="node-subtitle">חסימת Prompt Injection / Out-of-Scope + חילוץ ישויות</text>
 </g>
 
-<!-- Tool 1 -->
+<g class="node" data-id="Layer2">
+  <rect x="410" y="756" width="360" height="62" class="node-guard" />
+  <text x="590" y="781" text-anchor="middle" class="node-title-guard">Layer 2: Strict Entity Grounding (strict=True)</text>
+  <text x="590" y="801" text-anchor="middle" class="node-subtitle">דגם/עיר לא קיימים ← needs_clarification (אפס ניחוש)</text>
+</g>
+
+<g class="node" data-id="Layer34">
+  <rect x="130" y="852" width="620" height="114" class="node-guard" />
+  <text x="440" y="877" text-anchor="middle" class="node-title-guard">Layer 3 &amp; 4: Deterministic Orchestrator + Post-Generation Numeric Verifier</text>
+  <text x="440" y="899" text-anchor="middle" class="node-subtitle">הרצת כלים דטרמיניסטית בלבד ← אופציונלי: ניסוח Gemini (response_schema=GeminiReplyPayload)</text>
+  <text x="440" y="919" text-anchor="middle" class="node-subtitle">verify_numeric_grounding(): כל מספר בטקסט חייב להתאים ל-collect_allowed_numbers()</text>
+  <text x="440" y="941" text-anchor="middle" style="fill: #6ee7b7; font-size: 11px; font-weight: 600;">בגילוי מספר מומצא ← Fallback אוטומטי לתבנית הדטרמיניסטית (deterministic_grounded)</text>
+</g>
+
+<!-- Nodes: 5 Deterministic Tools -->
 <g class="node" data-id="T1">
-  <rect x="180" y="980" width="260" height="54" class="node-box" />
-  <text x="310" y="1003" text-anchor="middle" class="node-title">get_vehicle_risk(model, city)</text>
-  <text x="310" y="1022" text-anchor="middle" class="node-subtitle">חיזוי XGBoost + ציון סיכון משולב</text>
+  <rect x="65" y="1078" width="350" height="60" class="node-box" />
+  <text x="240" y="1102" text-anchor="middle" class="node-title">1. get_vehicle_risk(model, city)</text>
+  <text x="240" y="1122" text-anchor="middle" class="node-subtitle">חיזוי XGBoost Poisson Final + כיסוי תצפיות 2024</text>
 </g>
 
-<!-- Tool 2 -->
 <g class="node" data-id="T2">
-  <rect x="145" y="1082" width="330" height="54" class="node-box" />
-  <text x="310" y="1104" text-anchor="middle" class="node-title">fetch_bestie_insurance_quotes(model, city)</text>
-  <text x="310" y="1123" text-anchor="middle" class="node-subtitle">שליפת הצעות Bestie (מקיף + חובה + חברה מובילה)</text>
+  <rect x="65" y="1170" width="350" height="66" class="node-box" />
+  <text x="240" y="1195" text-anchor="middle" class="node-title">2. fetch_bestie_insurance_quotes(...)</text>
+  <text x="240" y="1215" text-anchor="middle" class="node-subtitle">סימולציית Bestie · מבטחים שותפים בלבד + cat_base_map</text>
 </g>
 
-<!-- Tool 3 -->
 <g class="node" data-id="T3">
-  <rect x="145" y="1183" width="330" height="54" class="node-box" />
-  <text x="310" y="1206" text-anchor="middle" class="node-title">compare_alternatives(model, city, top_k=3)</text>
-  <text x="310" y="1225" text-anchor="middle" class="node-subtitle">איתור 3 חלופות בטוחות יותר באותה קטגוריה וחיסכון</text>
+  <rect x="65" y="1268" width="350" height="66" class="node-box" />
+  <text x="240" y="1293" text-anchor="middle" class="node-title">3. compare_alternatives(model, city, top_k=3)</text>
+  <text x="240" y="1313" text-anchor="middle" class="node-subtitle">איתור עד 3 חלופות בטוחות יותר באותה קטגוריה</text>
 </g>
 
-<!-- Tool 4 -->
 <g class="node" data-id="T4">
-  <rect x="444" y="980" width="280" height="54" class="node-box" />
-  <text x="584" y="1003" text-anchor="middle" class="node-title">simulate_mitigation_discount(measures)</text>
-  <text x="584" y="1022" text-anchor="middle" class="node-subtitle">חישוב הנחת מיגון דינמית לשאלות בצ'אט</text>
+  <rect x="465" y="1078" width="350" height="66" class="node-box" />
+  <text x="640" y="1103" text-anchor="middle" class="node-title">4. simulate_mitigation_discount(measures)</text>
+  <text x="640" y="1123" text-anchor="middle" class="node-subtitle">מיגון ממוקד (למשל קודן בלבד) או חבילה מלאה</text>
+</g>
+
+<g class="node" data-id="T5">
+  <rect x="465" y="1180" width="350" height="82" class="node-guard" />
+  <text x="640" y="1205" text-anchor="middle" class="node-title-guard">5. calculate_custom_savings(...)</text>
+  <text x="640" y="1225" text-anchor="middle" class="node-subtitle">חישוב דלתא חתום (SavingsMetrics): דגם / עיר / מיגון</text>
+  <text x="640" y="1243" text-anchor="middle" class="node-subtitle">דיווח שקוף על חיסכון חיובי או תוספת עלות שלילית</text>
+</g>
+
+<!-- Schema & Insurer Footer Card -->
+<g class="node" data-id="ContractsNote">
+  <rect x="455" y="1292" width="370" height="114" class="node-box" stroke-dasharray="4 3" />
+  <text x="640" y="1316" text-anchor="middle" class="node-title">Schemas &amp; Bestie Partner Insurers</text>
+  <text x="640" y="1337" text-anchor="middle" style="fill: #e2e8f0; font-size: 10.5px;">QueryPlan · SavingsMetrics · GroundedAgentResponse</text>
+  <text x="640" y="1358" text-anchor="middle" class="node-subtitle">חברות Bestie: איילון · הכשרה · שלמה ביטוח · weSure</text>
+  <text x="640" y="1377" text-anchor="middle" class="node-subtitle">הראל · הפניקס · מגדל · כלל · מנורה מבטחים · שומרה</text>
+  <text x="640" y="1395" text-anchor="middle" style="fill: #94a3b8; font-size: 10px;">ללא "ביטוח ישיר", "ליברה" או "AIG" · תמיכה ב-3,229 דגמי 4 גלגלים</text>
 </g>
 
 </svg>

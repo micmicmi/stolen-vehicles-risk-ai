@@ -28,6 +28,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from src.agent import run_auto_compare_agent, run_chat_agent
+from src.agent_schemas import GroundedAgentResponse
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WEB_DIR = os.path.join(BASE_DIR, "web")
@@ -68,10 +69,10 @@ class AutoCompareRequest(BaseModel):
 
 
 class AgentChatRequest(BaseModel):
-    message: str = Field(..., min_length=1, description="User question in Hebrew")
-    model: str = Field("טויוטה קורולה", description="Currently selected vehicle model")
-    city: str = Field("תל אביב יפו", description="Currently selected city")
-    history: list[dict[str, Any]] | None = Field(default=None, description="Optional chat history")
+    message: str = Field(..., min_length=1, max_length=500, description="User question in Hebrew")
+    model: str = Field("טויוטה קורולה", max_length=120, description="Currently selected vehicle model")
+    city: str = Field("תל אביב יפו", max_length=120, description="Currently selected city")
+    history: list[dict[str, Any]] | None = Field(default=None, max_length=20, description="Optional chat history")
 
 
 @lru_cache(maxsize=1)
@@ -189,7 +190,7 @@ def agent_auto_compare_get(
     return run_auto_compare_agent(model, city)
 
 
-@app.post("/agent/chat")
+@app.post("/agent/chat", response_model=GroundedAgentResponse)
 def agent_chat(req: AgentChatRequest):
     return run_chat_agent(req.message, req.model, req.city, req.history)
 

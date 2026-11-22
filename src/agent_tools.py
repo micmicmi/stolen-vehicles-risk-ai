@@ -7,6 +7,7 @@ Insurance prices are a reference-driver simulation, not live insurer quotes.
 """
 from __future__ import annotations
 
+import difflib
 import json
 import os
 import re
@@ -77,31 +78,44 @@ MODEL_ALIASES = {
 # Pre-fetched & calibrated Bestie reference base rates by model keyword (annual comprehensive + mandatory in NIS)
 BESTIE_CALIBRATED_MODELS = {
     "LAND CRUISER": {"base_comp": 9800, "base_mand": 1580, "insurer": "הראל ביטוח", "alt_insurer": "הפניקס"},
-    "RAV 4": {"base_comp": 6450, "base_mand": 1490, "insurer": "הפניקס Direct", "alt_insurer": "ביטוח ישיר"},
-    "COROLLA": {"base_comp": 5650, "base_mand": 1460, "insurer": "ביטוח ישיר", "alt_insurer": "ליברה"},
-    "TUCSON": {"base_comp": 5400, "base_mand": 1480, "insurer": "הפניקס Direct", "alt_insurer": "כלל ביטוח"},
-    "SPORTAGE": {"base_comp": 5250, "base_mand": 1480, "insurer": "ביטוח ישיר", "alt_insurer": "מגדל"},
-    "IONIQ": {"base_comp": 5100, "base_mand": 1450, "insurer": "ליברה", "alt_insurer": "ביטוח ישיר"},
-    "NIRO": {"base_comp": 4950, "base_mand": 1450, "insurer": "ליברה", "alt_insurer": "הפניקס Direct"},
-    "PICANTO": {"base_comp": 3850, "base_mand": 1420, "insurer": "ליברה", "alt_insurer": "שומרה"},
+    "RAV 4": {"base_comp": 6450, "base_mand": 1490, "insurer": "הפניקס", "alt_insurer": "כלל ביטוח"},
+    "COROLLA": {"base_comp": 5650, "base_mand": 1460, "insurer": "הפניקס", "alt_insurer": "weSure"},
+    "TUCSON": {"base_comp": 5400, "base_mand": 1480, "insurer": "איילון ביטוח", "alt_insurer": "כלל ביטוח"},
+    "SPORTAGE": {"base_comp": 5250, "base_mand": 1480, "insurer": "מגדל", "alt_insurer": "הכשרה ביטוח"},
+    "IONIQ": {"base_comp": 5100, "base_mand": 1450, "insurer": "weSure", "alt_insurer": "מנורה מבטחים"},
+    "NIRO": {"base_comp": 4950, "base_mand": 1450, "insurer": "weSure", "alt_insurer": "שלמה ביטוח"},
+    "PICANTO": {"base_comp": 3850, "base_mand": 1420, "insurer": "שלמה ביטוח", "alt_insurer": "שומרה"},
     "OCTAVIA": {"base_comp": 5150, "base_mand": 1470, "insurer": "שומרה", "alt_insurer": "מנורה מבטחים"},
-    "OUTLANDER": {"base_comp": 5550, "base_mand": 1510, "insurer": "הראל ביטוח", "alt_insurer": "כלל ביטוח"},
-    "YARIS": {"base_comp": 4250, "base_mand": 1430, "insurer": "ליברה", "alt_insurer": "ביטוח ישיר"},
-    "SWIFT": {"base_comp": 3650, "base_mand": 1410, "insurer": "ליברה", "alt_insurer": "AIG"},
-    "QASHQAI": {"base_comp": 4150, "base_mand": 1460, "insurer": "AIG", "alt_insurer": "ליברה"},
-    "KONA": {"base_comp": 4300, "base_mand": 1450, "insurer": "ליברה", "alt_insurer": "הפניקס Direct"},
-    "STONIC": {"base_comp": 3950, "base_mand": 1430, "insurer": "ליברה", "alt_insurer": "שומרה"},
-    "ELANTRA": {"base_comp": 4450, "base_mand": 1450, "insurer": "שומרה", "alt_insurer": "ביטוח ישיר"},
-    "CIVIC": {"base_comp": 4550, "base_mand": 1460, "insurer": "AIG", "alt_insurer": "מנורה מבטחים"},
+    "OUTLANDER": {"base_comp": 5550, "base_mand": 1510, "insurer": "הראל ביטוח", "alt_insurer": "איילון ביטוח"},
+    "YARIS": {"base_comp": 4250, "base_mand": 1430, "insurer": "הכשרה ביטוח", "alt_insurer": "שומרה"},
+    "SWIFT": {"base_comp": 3650, "base_mand": 1410, "insurer": "weSure", "alt_insurer": "איילון ביטוח"},
+    "QASHQAI": {"base_comp": 4150, "base_mand": 1460, "insurer": "שלמה ביטוח", "alt_insurer": "הכשרה ביטוח"},
+    "KONA": {"base_comp": 4300, "base_mand": 1450, "insurer": "weSure", "alt_insurer": "איילון ביטוח"},
+    "STONIC": {"base_comp": 3950, "base_mand": 1430, "insurer": "הכשרה ביטוח", "alt_insurer": "שומרה"},
+    "ELANTRA": {"base_comp": 4450, "base_mand": 1450, "insurer": "שומרה", "alt_insurer": "שלמה ביטוח"},
+    "CIVIC": {"base_comp": 4550, "base_mand": 1460, "insurer": "איילון ביטוח", "alt_insurer": "מנורה מבטחים"},
 }
 
 INSURERS_BY_TIER = [
-    ("ליברה", "AIG ישראל"),
-    ("ליברה", "שומרה"),
-    ("ביטוח ישיר", "ליברה"),
-    ("הפניקס Direct", "ביטוח ישיר"),
-    ("הראל ביטוח", "הפניקס"),
+    ("weSure", "שלמה ביטוח"),
+    ("איילון ביטוח", "שומרה"),
+    ("הכשרה ביטוח", "מגדל"),
+    ("הפניקס", "כלל ביטוח"),
+    ("הראל ביטוח", "מנורה מבטחים"),
 ]
+
+CITY_ALIASES = {
+    "תל אביב": "תל אביב-יפו",
+    "תל אביב יפו": "תל אביב-יפו",
+    'ת"א': "תל אביב-יפו",
+    "תא": "תל אביב-יפו",
+    'ראשל"צ': "ראשון לציון",
+    "ראשלצ": "ראשון לציון",
+    'פ"ת': "פתח תקווה",
+    "פתח תקוה": "פתח תקווה",
+    'ב"ש': "באר שבע",
+    'כפ"ס': "כפר סבא",
+}
 
 MITIGATION_CATALOG = {
     "איתוראן פעיל כפול": {"risk_reduction_pct": 18, "comp_discount_pct": 12, "cost_nis": 650},
@@ -109,6 +123,43 @@ MITIGATION_CATALOG = {
     "מנעול הגה מכני": {"risk_reduction_pct": 8, "comp_discount_pct": 4, "cost_nis": 220},
     "חניה פרטית סגורה / מצלמות": {"risk_reduction_pct": 12, "comp_discount_pct": 8, "cost_nis": 0},
 }
+
+MITIGATION_SYNONYMS: dict[str, tuple[str, ...]] = {
+    "איתוראן פעיל כפול": ("איתוראן", "איתורן", "מערכת איתור", "פוינטר", "ituran", "pointer", "gps"),
+    "קודן מוגן + עלוקה": ("קודן", "עלוקה", "משבת", "אימובילייזר", "kodan"),
+    "מנעול הגה מכני": ("מנעול הגה", "מנעול", "סנדל"),
+    "חניה פרטית סגורה / מצלמות": ("חניה", "חנייה", "מצלמ", "חניון סגור", "שער חשמלי"),
+}
+
+_HEB_PREFIX_WHITELIST_PROTECTED = {
+    "מזדה",
+    "מאזדה",
+    "מיצובישי",
+    "מרצדס",
+    "הונדה",
+    "וולוו",
+    "לנד",
+    "לקסוס",
+    "בוגאטי",
+    "בנטלי",
+    "למבורגיני",
+    "לינקולן",
+}
+_FILLER_MODEL_WORDS = {"רכב", "הרכב", "דגם", "מכונית", "אוטו"}
+
+
+def extract_mitigation_measures(text: str) -> list[str]:
+    """Deterministically extracts canonical MITIGATION_CATALOG measure keys mentioned in free text."""
+    if not text:
+        return []
+    low = re.sub(r"\s+", " ", text.lower()).strip()
+    found: list[str] = []
+    for canonical_name in MITIGATION_CATALOG:
+        synonyms = MITIGATION_SYNONYMS.get(canonical_name, ())
+        if canonical_name.lower() in low or any(syn in low for syn in synonyms):
+            if canonical_name not in found:
+                found.append(canonical_name)
+    return found
 
 
 @lru_cache(maxsize=1)
@@ -165,15 +216,123 @@ def get_hebrew_display_name(model_key: str, info: dict[str, Any] | None = None) 
     return re.sub(r"\s+", " ", cleaned) or raw
 
 
-def resolve_model_entry(query: str) -> tuple[str, dict[str, Any]]:
+def _prefer_canonical_model(key: str, models: dict[str, Any]) -> tuple[str, dict[str, Any]]:
+    entry = models[key]
+    disp = entry.get("display_name")
+    if disp and disp in models and not _is_two_wheeler(models[disp], disp):
+        if int(models[disp].get("total_thefts", 0)) > int(entry.get("total_thefts", 0)):
+            return disp, models[disp]
+    return key, entry
+
+
+def _model_query_variants(norm_q: str) -> list[str]:
+    if not norm_q:
+        return []
+    variants = [norm_q]
+    tokens = norm_q.split()
+    first = tokens[0]
+    if len(first) >= 4 and first[0] in "בלמהו" and first not in _HEB_PREFIX_WHITELIST_PROTECTED:
+        stripped = " ".join([first[1:], *tokens[1:]]).strip()
+        if stripped and stripped not in variants:
+            variants.append(stripped)
+    return variants
+
+
+def resolve_model_entry(query: str, strict: bool = False) -> tuple[str, dict[str, Any]] | None:
+    """
+    Resolves a vehicle model name to a `(model_key, info)` entry from `data.json`.
+    When `strict=True`, returns `None` instead of silently falling back to a default/cold-start model.
+    """
     _, _, data = load_artifacts()
     models = data.get("models", {})
     raw = (query or "").strip()
 
-    if raw in models and not _is_two_wheeler(models[raw], raw):
-        return raw, models[raw]
+    if strict and not raw:
+        return None
+
+    if raw in models and not _is_two_wheeler(models[raw], raw) and (not strict or "|" not in raw):
+        return _prefer_canonical_model(raw, models)
 
     norm_q = _norm_heb(raw)
+    if strict:
+        if not norm_q:
+            return None
+
+        sorted_aliases = sorted(MODEL_ALIASES.items(), key=lambda kv: len(_norm_heb(kv[0])), reverse=True)
+        for q_cand in _model_query_variants(norm_q):
+            q_tokens_all = q_cand.split()
+            # 1. Exact normalized match across canonical non-pipe 4-wheel entries
+            exact_hits: list[tuple[str, dict[str, Any]]] = []
+            for k, info in models.items():
+                if not info or "|" in k or _is_two_wheeler(info, k):
+                    continue
+                disp = info.get("display_name") or k
+                if not disp or "- (-)" in disp or "כללי" in disp:
+                    continue
+                heb_name = info.get("name_hebrew") or ""
+                model_clean = info.get("model_name") or info.get("model_clean") or ""
+                if (
+                    _norm_heb(disp) == q_cand
+                    or _norm_heb(heb_name) == q_cand
+                    or _norm_heb(k) == q_cand
+                    or (len(q_cand) >= 2 and _norm_heb(model_clean) == q_cand)
+                ):
+                    exact_hits.append((k, info))
+            if exact_hits:
+                exact_hits.sort(key=lambda item: int(item[1].get("total_thefts", 0)), reverse=True)
+                return _prefer_canonical_model(exact_hits[0][0], models)
+
+            # 2. Alias token-boundary match (all remaining non-filler tokens must also match candidate)
+            for alias_heb, alias_eng in sorted_aliases:
+                norm_alias = _norm_heb(alias_heb)
+                if not norm_alias:
+                    continue
+                if re.search(rf"(?:^|\s){re.escape(norm_alias)}(?:$|\s)", q_cand):
+                    alias_tok_set = set(norm_alias.split())
+                    remaining = [t for t in q_tokens_all if t not in alias_tok_set and t not in _FILLER_MODEL_WORDS]
+                    alias_hits: list[tuple[str, dict[str, Any]]] = []
+                    for k, info in models.items():
+                        if not info or "|" in k or _is_two_wheeler(info, k):
+                            continue
+                        disp = info.get("display_name") or k
+                        if not disp or "- (-)" in disp or "כללי" in disp:
+                            continue
+                        heb_name = info.get("name_hebrew") or ""
+                        maker = info.get("maker") or ""
+                        model_clean = info.get("model_name") or info.get("model_clean") or ""
+                        if not (alias_eng.upper() in disp.upper() or alias_eng.upper() == model_clean.upper()):
+                            continue
+                        cand_tokens = set(_norm_heb(f"{disp} {heb_name} {maker} {model_clean}").split())
+                        if all(t in cand_tokens for t in remaining):
+                            alias_hits.append((k, info))
+                    if alias_hits:
+                        alias_hits.sort(key=lambda item: int(item[1].get("total_thefts", 0)), reverse=True)
+                        return _prefer_canonical_model(alias_hits[0][0], models)
+
+            # 3. Full-token coverage match (must cover all significant tokens + at least one non-maker token)
+            sig_tokens = [t for t in q_tokens_all if (len(t) >= 2 or t.isdigit()) and t not in _FILLER_MODEL_WORDS]
+            if sig_tokens:
+                token_hits: list[tuple[str, dict[str, Any]]] = []
+                for k, info in models.items():
+                    if not info or "|" in k or _is_two_wheeler(info, k):
+                        continue
+                    disp = info.get("display_name") or k
+                    if not disp or "- (-)" in disp or "כללי" in disp:
+                        continue
+                    heb_name = info.get("name_hebrew") or ""
+                    maker = info.get("maker") or ""
+                    model_clean = info.get("model_name") or info.get("model_clean") or ""
+                    cand_tokens = set(_norm_heb(f"{disp} {heb_name} {maker} {model_clean}").split())
+                    maker_tokens = set(_norm_heb(maker).split())
+                    model_only_tokens = (cand_tokens - maker_tokens) | set(_norm_heb(model_clean).split())
+                    if all(t in cand_tokens for t in sig_tokens) and any(t in model_only_tokens for t in sig_tokens):
+                        token_hits.append((k, info))
+                if token_hits:
+                    token_hits.sort(key=lambda item: int(item[1].get("total_thefts", 0)), reverse=True)
+                    return _prefer_canonical_model(token_hits[0][0], models)
+
+        return None
+
     alias_eng = ""
     for heb, eng in MODEL_ALIASES.items():
         if _norm_heb(heb) in norm_q or norm_q in _norm_heb(heb):
@@ -194,7 +353,7 @@ def resolve_model_entry(query: str) -> tuple[str, dict[str, Any]]:
             or _norm_heb(heb_name) == norm_q
             or _norm_heb(k) == norm_q
         ):
-            return k, info
+            return _prefer_canonical_model(k, models)
 
         matched = False
         if norm_q and (
@@ -212,9 +371,9 @@ def resolve_model_entry(query: str) -> tuple[str, dict[str, Any]]:
 
     if candidates:
         candidates.sort(key=lambda item: item[1].get("total_thefts", 0), reverse=True)
-        return candidates[0]
+        return _prefer_canonical_model(candidates[0][0], models)
 
-    # Cold-start fallback based on global/maker average
+    # Cold-start fallback based on global/maker average (non-strict mode only)
     fallback_key = next(
         (k for k, v in models.items() if not _is_two_wheeler(v, k)),
         next(iter(models.keys())),
@@ -234,26 +393,74 @@ def resolve_model_entry(query: str) -> tuple[str, dict[str, Any]]:
     }
 
 
-def resolve_city_entry(query: str) -> tuple[str, dict[str, Any]]:
+def _norm_city_name(text: str) -> str:
+    s = re.sub(r"[-–]+", " ", text or "")
+    return re.sub(r"\s+", " ", s).strip()
+
+
+def _city_query_variants(raw: str) -> list[str]:
+    clean = re.sub(r"\s+", " ", (raw or "").strip())
+    if not clean:
+        return []
+    variants = [clean]
+    tokens = clean.split()
+    first = tokens[0]
+    if len(first) >= 4 and first[0] in "בלמהו":
+        stripped = " ".join([first[1:], *tokens[1:]]).strip()
+        if stripped and stripped not in variants:
+            variants.append(stripped)
+    return variants
+
+
+def resolve_city_entry(query: str, strict: bool = False) -> tuple[str, dict[str, Any]] | None:
+    """
+    Resolves a municipality/city name to a `(city_key, info)` entry from `data.json`.
+    When `strict=True`, returns `None` instead of falling back to Tel Aviv-Yafo.
+    """
     _, _, data = load_artifacts()
     locations = data.get("locations", {})
     raw = (query or "").strip()
+
+    if strict and not raw:
+        return None
+
     if raw in locations:
         return raw, locations[raw]
 
-    norm_q = raw.replace("-", " ").strip()
-    exact_matches = []
+    for cand in _city_query_variants(raw):
+        norm_c = _norm_city_name(cand)
+        alias_target = CITY_ALIASES.get(cand) or CITY_ALIASES.get(norm_c)
+        if alias_target and alias_target in locations:
+            return alias_target, locations[alias_target]
+
+        exact_matches = [
+            (k, info)
+            for k, info in locations.items()
+            if _norm_city_name(k) == norm_c
+        ]
+        if exact_matches:
+            exact_matches.sort(key=lambda item: int(item[1].get("total_thefts", 0)), reverse=True)
+            return exact_matches[0]
+
+        if strict and len(norm_c) >= 4:
+            prefix_matches = [
+                (k, info)
+                for k, info in locations.items()
+                if _norm_city_name(k).startswith(norm_c + " ")
+            ]
+            if prefix_matches:
+                prefix_matches.sort(key=lambda item: int(item[1].get("total_thefts", 0)), reverse=True)
+                return prefix_matches[0]
+
+    if strict:
+        return None
+
+    norm_q = _norm_city_name(raw)
     partial_matches = []
     for k, info in locations.items():
-        norm_k = k.replace("-", " ").strip()
-        if norm_k == norm_q:
-            exact_matches.append((k, info))
-        elif norm_q in norm_k or (len(norm_k) >= 3 and norm_k in norm_q):
+        norm_k = _norm_city_name(k)
+        if norm_q and (norm_q in norm_k or (len(norm_k) >= 3 and norm_k in norm_q)):
             partial_matches.append((k, info))
-
-    if exact_matches:
-        exact_matches.sort(key=lambda item: item[1].get("total_thefts", 0), reverse=True)
-        return exact_matches[0]
 
     if partial_matches:
         partial_matches.sort(
@@ -268,6 +475,82 @@ def resolve_city_entry(query: str) -> tuple[str, dict[str, Any]]:
 
     default_city = "תל אביב-יפו" if "תל אביב-יפו" in locations else next(iter(locations.keys()))
     return default_city, locations[default_city]
+
+
+def suggest_similar_models(query: str, limit: int = 5) -> list[str]:
+    """Returns canonical Hebrew vehicle model names closest to `query` or top mainstream models."""
+    _, _, data = load_artifacts()
+    models = data.get("models", {})
+    by_heb: dict[str, int] = {}
+    for k, info in models.items():
+        if not info or "|" in k or _is_two_wheeler(info, k):
+            continue
+        disp = info.get("display_name") or k
+        if not disp or "- (-)" in disp or "כללי" in disp:
+            continue
+        heb = get_hebrew_display_name(k, info)
+        if not heb:
+            continue
+        thefts = int(info.get("total_thefts", 0))
+        if thefts > by_heb.get(heb, -1):
+            by_heb[heb] = thefts
+
+    ranked_names = [heb for heb, _ in sorted(by_heb.items(), key=lambda item: item[1], reverse=True)]
+    norm_q = _norm_heb(query)
+    suggestions: list[str] = []
+
+    if norm_q:
+        norm_to_heb = {_norm_heb(name): name for name in ranked_names}
+        for tok in norm_q.split():
+            if len(tok) < 2 or tok in _FILLER_MODEL_WORDS:
+                continue
+            for name in ranked_names:
+                if tok in _norm_heb(name) and name not in suggestions:
+                    suggestions.append(name)
+                    if len(suggestions) >= limit:
+                        return suggestions
+        for close_norm in difflib.get_close_matches(norm_q, list(norm_to_heb.keys()), n=limit, cutoff=0.45):
+            name = norm_to_heb[close_norm]
+            if name not in suggestions:
+                suggestions.append(name)
+                if len(suggestions) >= limit:
+                    return suggestions
+
+    for name in ranked_names:
+        if name not in suggestions:
+            suggestions.append(name)
+            if len(suggestions) >= limit:
+                break
+    return suggestions
+
+
+def suggest_similar_cities(query: str, limit: int = 5) -> list[str]:
+    """Returns verified Israeli municipality names closest to `query` or top cities by theft count."""
+    _, _, data = load_artifacts()
+    locations = data.get("locations", {})
+    ranked_cities = [
+        city
+        for city, _ in sorted(
+            locations.items(),
+            key=lambda item: int(item[1].get("total_thefts", 0)),
+            reverse=True,
+        )
+    ]
+    suggestions: list[str] = []
+    clean_q = _norm_city_name(query)
+    if clean_q:
+        for close in difflib.get_close_matches(clean_q, ranked_cities, n=limit, cutoff=0.45):
+            if close not in suggestions:
+                suggestions.append(close)
+                if len(suggestions) >= limit:
+                    return suggestions
+
+    for city in ranked_cities:
+        if city not in suggestions:
+            suggestions.append(city)
+            if len(suggestions) >= limit:
+                break
+    return suggestions
 
 
 def get_vehicle_risk(model: str, city: str, model_year: int = 2022) -> dict[str, Any]:
@@ -372,10 +655,15 @@ def fetch_bestie_insurance_quotes(
 
     cat_base_map = {
         "ג'יפונים (SUV)": 4400,
+        "SUV / פנאי": 4400,
         "פנאי / שטח": 4600,
+        "SUV / שטח": 4700,
+        "היברידי / פנאי": 4300,
         "משפחתיות": 3900,
+        "משפחתי": 3900,
         "חשמליות": 4500,
         "מיני / סופר-מיני": 3350,
+        "סופרמיני / עירוני": 3350,
         "מנהלים / יוקרה": 5600,
         "מסחרי": 4900,
         "פרטי": 3850,
@@ -588,20 +876,23 @@ def simulate_mitigation_discount(
     total_risk_red_pct = 0
     total_comp_disc_pct = 0
     applied_details = []
+    seen_measures: set[str] = set()
 
     for m in chosen:
-        spec = MITIGATION_CATALOG.get(m)
+        canonical = m
+        spec = MITIGATION_CATALOG.get(canonical)
         if not spec:
             # Fuzzy match
             for k, v in MITIGATION_CATALOG.items():
                 if m in k or k in m:
                     spec = v
-                    m = k
+                    canonical = k
                     break
-        if spec:
+        if spec and canonical not in seen_measures:
+            seen_measures.add(canonical)
             total_risk_red_pct += spec["risk_reduction_pct"]
             total_comp_disc_pct += spec["comp_discount_pct"]
-            applied_details.append({"measure": m, **spec})
+            applied_details.append({"measure": canonical, **spec})
 
     total_risk_red_pct = min(40, total_risk_red_pct)
     total_comp_disc_pct = min(25, total_comp_disc_pct)
@@ -620,4 +911,112 @@ def simulate_mitigation_discount(
         "annual_discount_nis": annual_discount_nis,
         "discount_pct": total_comp_disc_pct,
         "applied_measures": applied_details,
+    }
+
+
+def calculate_custom_savings(
+    base_model: str,
+    base_city: str,
+    target_model: str | None = None,
+    target_city: str | None = None,
+    measures: list[str] | None = None,
+) -> dict[str, Any]:
+    """
+    Tool 5: Deterministically calculates exact risk and annual/monthly Bestie simulation deltas
+    between a base (model, city) and a custom target (model, city, and/or mitigation measures).
+    Never clamps negative savings to zero so cost increases are reported transparently.
+    """
+    resolved_base_model = resolve_model_entry(base_model, strict=True)
+    if resolved_base_model is None:
+        raise ValueError(f"Unknown base model: {base_model}")
+    resolved_base_city = resolve_city_entry(base_city, strict=True)
+    if resolved_base_city is None:
+        raise ValueError(f"Unknown base city: {base_city}")
+
+    base_model_key, _ = resolved_base_model
+    base_city_key, _ = resolved_base_city
+
+    if target_model is not None:
+        resolved_target_model = resolve_model_entry(target_model, strict=True)
+        if resolved_target_model is None:
+            raise ValueError(f"Unknown target model: {target_model}")
+        target_model_key = resolved_target_model[0]
+    else:
+        target_model_key = base_model_key
+
+    if target_city is not None:
+        resolved_target_city = resolve_city_entry(target_city, strict=True)
+        if resolved_target_city is None:
+            raise ValueError(f"Unknown target city: {target_city}")
+        target_city_key = resolved_target_city[0]
+    else:
+        target_city_key = base_city_key
+
+    base_risk = get_vehicle_risk(base_model_key, base_city_key)
+    base_quote = fetch_bestie_insurance_quotes(
+        base_model_key,
+        base_city_key,
+        risk_score=base_risk["combined_risk_score"],
+        category=base_risk["category"],
+    )
+
+    target_risk = get_vehicle_risk(target_model_key, target_city_key)
+    target_quote = fetch_bestie_insurance_quotes(
+        target_model_key,
+        target_city_key,
+        risk_score=target_risk["combined_risk_score"],
+        category=target_risk["category"],
+    )
+
+    mitigation_data: dict[str, Any] | None = None
+    if measures:
+        mitigation_data = simulate_mitigation_discount(target_model_key, target_city_key, measures=measures)
+        final_target_annual = int(mitigation_data["mitigated_total_nis"])
+        final_target_risk = int(mitigation_data["mitigated_risk_score"])
+    else:
+        final_target_annual = int(target_quote["total_annual_nis"])
+        final_target_risk = int(target_risk["combined_risk_score"])
+
+    annual_savings = int(base_quote["total_annual_nis"]) - final_target_annual
+    monthly_savings = int(round(annual_savings / 12.0))
+    risk_delta_pts = int(base_risk["combined_risk_score"]) - final_target_risk
+
+    base_obs = "observed" in str(base_risk.get("coverage_status", "")).lower()
+    target_obs = "observed" in str(target_risk.get("coverage_status", "")).lower()
+    if base_obs and target_obs:
+        coverage_note = (
+            f"קיימת תצפית 2024 מאומתת לשני השילובים ({base_risk['model_hebrew']} ב-{base_risk['city']}, "
+            f"{target_risk['model_hebrew']} ב-{target_risk['city']})."
+        )
+    elif not base_obs and not target_obs:
+        coverage_note = "אין תצפית 2024 ישירה לדגם–עיר לשני השילובים; האומדן מבוסס על שקלול cold-start ומודל XGBoost."
+    else:
+        coverage_note = (
+            f"תצפית 2024 זמינה עבור {'הבסיס' if base_obs else 'היעד'} בלבד; "
+            f"השילוב השני מבוסס על אומדן cold-start ומודל XGBoost."
+        )
+
+    metrics = {
+        "base_model_he": base_risk["model_hebrew"],
+        "base_city": base_risk["city"],
+        "target_model_he": target_risk["model_hebrew"] if target_model is not None else None,
+        "target_city": target_risk["city"] if target_city is not None else None,
+        "base_annual_nis": int(base_quote["total_annual_nis"]),
+        "target_annual_nis": final_target_annual,
+        "annual_savings_nis": annual_savings,
+        "monthly_savings_nis": monthly_savings,
+        "base_risk_score": int(base_risk["combined_risk_score"]),
+        "target_risk_score": final_target_risk,
+        "risk_delta_pts": risk_delta_pts,
+    }
+
+    return {
+        "metrics": metrics,
+        "base_risk": base_risk,
+        "base_quote": base_quote,
+        "target_risk": target_risk,
+        "target_quote": target_quote,
+        "mitigation": mitigation_data,
+        "data_coverage_note": coverage_note,
+        "assumptions": dict(REFERENCE_DRIVER_PROFILE),
     }

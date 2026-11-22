@@ -124,7 +124,7 @@ def test_api_agent_endpoints():
     )
     assert r_chat.status_code == 200
     chat_data = r_chat.json()
-    assert chat_data["status"] == "ok"
+    assert chat_data["status"] == "answered"
     assert "simulate_mitigation_discount" in chat_data["tools_used"]
     assert "₪" in chat_data["reply"]
 
