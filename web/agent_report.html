@@ -100,7 +100,7 @@
             --header-top-h: 64px;
             --header-nav-h: 48px;
             --header-h: 112px;
-            --measure: 52ch;
+            --measure: 70ch;
         }
 
         /* ── base ───────────────────────────────────────────────── */
@@ -275,7 +275,7 @@
         .contract-label,
         .metric-label {
             font-family: var(--font-body);
-            font-weight: 500;
+            font-weight: 700;
         }
 
         .container,
@@ -601,7 +601,7 @@
         }
 
         .study-copy h1 {
-            font-size: 70px;
+            font-size: 65px;
         }
 
         .study-copy .lead {
@@ -720,16 +720,15 @@
 
         .contract-label {
             font-family: var(--font-body);
-            font-size: var(--text-sm);
-            font-weight: 500;
+            font-size: 12px;
+            font-weight: 700;
             color: var(--color-ink-2);
         }
 
         .contract-val {
             margin-top: var(--space-2xs);
-            font-family: var(--font-outlier);
-            font-size: var(--text-sm);
-            color: var(--color-ink);
+            /* font-family: var(--font-outlier); */
+            font-size: 12px;
             line-height: 1.55;
         }
 
@@ -754,6 +753,7 @@
             display: flex;
             flex-direction: column;
             gap: 5px;
+            align-items: flex-end;
         }
 
         .contract-tools-bullets li {
@@ -1073,6 +1073,16 @@
 
         .row-win td {
             background: var(--color-accent-soft);
+        }
+
+        .tbl-col-win th:nth-child(3),
+        .tbl-col-win td:nth-child(3) {
+            background: var(--color-accent-soft);
+        }
+
+        .tbl-col-win th:nth-child(3) {
+            color: var(--color-accent-deep);
+            font-weight: 700;
         }
 
         /* ── Chips ──────────────────────────────────────────────── */
@@ -1891,14 +1901,14 @@
                 <div class="study-copy">
                     <h1>מחיזוי ML פסיבי לסוכן השוואת ביטוח אוטונומי בזמן אמת</h1>
                     <p class="lead">
-                        מסמך זה מתעד את חיבור אומדן הסיכון המחקרי לסוכן AI אוטונומי המבוסס על כלים:
-                        בחירת דגם ועיר מפעילה ברקע ניתוח כיסוי נתונים, סימולציית מחיר לפרופיל נהג ייחוס (תוך שימוש
-                        בחברות ביטוח המופיעות בפועל ב-Bestie בלבד) וחיפוש של עד שלוש חלופות. הצ'אט המובנה תומך כעת
+                        מסמך זה מתעד את חיבור אומדן הסיכון המחקרי לסוכן AI אוטונומי המבוסס על כלים.
+                        בחירת דגם ועיר מפעילה ברקע ניתוח כיסוי נתונים, סימולציית מחיר לפרופיל נהג ייחוס
+                        וחיפוש של עד שלוש חלופות. הצ'אט המובנה תומך
                         בשאלות פתוחות בעברית (השוואת דגמים, מעבר ערים ומיגון ממוקד) תחת פייפליין Guardrails ב-4 שכבות,
-                        סכמות <span dir="ltr" style="white-space: nowrap;">Pydantic v2</span>
+                        סכמות <span dir="ltr" style="white-space: nowrap;">Pydantic </span>
                         (<bdi><code>QueryPlan</code></bdi>, <bdi><code>SavingsMetrics</code></bdi>,
                         <bdi><code>GroundedAgentResponse</code></bdi>)
-                        ומאמת מספרים לאחר יצירה (Post-Generation Numeric Verifier).
+                        ומאמת מספרים לאחר יצירה.
                     </p>
                     <div class="hero-actions">
                         <a class="btn" href="index.html">בדיקת סיכון גניבת רכב</a>
@@ -1907,18 +1917,14 @@
                 </div>
 
                 <!-- Left column: The signature agent contract (pharmacy tray in Dose green plastic) -->
-                <section aria-labelledby="contract-head" class="contract-band">
+                <section aria-labelledby="contract-head" class="contract-band" style="padding: 28px;">
                     <h2 class="contract-head" id="contract-head"> הסוכן וגבולות הסימולציה</h2>
                     <div class="contract-grid">
                         <div class="contract-card">
                             <div class="contract-label">מצב הפעלה (Trigger Mode)</div>
-                            <div class="contract-val" dir="ltr">Zero-Click Parallel Execution<br><span
+                            <div class="contract-val">Zero-Click Parallel Execution<br><span
                                     style="font-size: 0.88em; color: var(--color-ink-2);">(POST /agent/auto-compare +
                                     Open-Ended /agent/chat)</span></div>
-                        </div>
-                        <div class="contract-card">
-                            <div class="contract-label">פרופיל נהג ייחוס (Reference Driver Persona)</div>
-                            <div class="contract-val">נהג בן 35 • 12 שנות ותק<br>העדר תביעות 3 שנים • שנתון 2025</div>
                         </div>
                         <div class="contract-card">
                             <div class="contract-label">שרשרת 5 הכלים (Deterministic Toolset)</div>
@@ -1932,7 +1938,8 @@
                         </div>
                         <div class="contract-card alert-card">
                             <div class="contract-label">גבולות גזרה (Scope &amp; Non-Claims)</div>
-                            <div class="contract-val">סימולציית תמחור מקומית לפרופיל ייחוס —<br>זו אינה סריקה חיה או הצעה
+                            <div class="contract-val">סימולציית תמחור מקומית לפרופיל ייחוס -<br>זו אינה סריקה חיה או
+                                הצעה
                                 מחייבת</div>
                         </div>
                     </div>
@@ -1943,26 +1950,30 @@
             <div class="hero-figures">
                 <div class="metric-card">
                     <div class="metric-value" dir="ltr">Zero-Click</div>
-                    <div class="metric-label"><strong>הפעלה אוטונומית ברקע:</strong> טריגר מקבילי מיידי בעת בחירת דגם
+                    <div class="metric-label"><strong>הפעלה אוטונומית ברקע:</strong><br>
+                        טריגר מקבילי מיידי בעת בחירת
+                        דגם
                         ועיר (ללא כפתור צף או פרומפט ידני)</div>
 
                 </div>
                 <div class="metric-card">
                     <div class="metric-value">5 כלים <span style="font-size: 0.75em; opacity: 0.85;">(Tools)</span>
                     </div>
-                    <div class="metric-label"><strong>שרשרת אקטוארית דטרמיניסטית:</strong> כולל חישוב הפרשי חיסכון מותאם
+                    <div class="metric-label"><strong>שרשרת אקטוארית דטרמיניסטית:</strong><br>
+                        כולל חישוב הפרשי חיסכון מותאם
                         לשאלות פתוחות (<code>calculate_custom_savings</code>) ו-Grounding קפדני
                         (<code>strict=True</code>)</div>
                 </div>
                 <div class="metric-card">
                     <div class="metric-value"><span dir="ltr">Top-3</span> חלופות</div>
-                    <div class="metric-label"><strong>אופטימיזציית סיכון ועלות:</strong> אלגוריתם איתור חכם של עד 3
+                    <div class="metric-label"><strong>אופטימיזציית סיכון ועלות:</strong><br>
+                        אלגוריתם איתור חכם של עד 3
                         חלופות רכב דומות באותה עיר בעלות סיכון ופרמיה מופחתים</div>
                 </div>
                 <div class="metric-card metric-card--lead">
                     <div class="metric-value" style="color: #ffffff;" dir="ltr">100% Grounded</div>
                     <div class="metric-label"><strong>4 שכבות Guardrails + סכמות <span dir="ltr"
-                                style="white-space: nowrap;">Pydantic v2</span>:</strong> חסימת הזרקות,
+                                style="white-space: nowrap;">Pydantic</span>:</strong> חסימת הזרקות,
                         אי-ניחוש ישויות (<code>needs_clarification</code>), ומאמת מספרים
                         (<code>verify_numeric_grounding</code>)</div>
                 </div>
@@ -2029,7 +2040,7 @@
             </p>
 
             <div class="tbl-wrap">
-                <table class="tbl">
+                <table class="tbl tbl-col-win">
                     <thead>
                         <tr>
                             <th style="width: 20%;">ציר החלטה</th>
@@ -2057,7 +2068,7 @@
                                 עם Bestie בלבד (הראל, הפניקס, מגדל, כלל, מנורה, שומרה, איילון, הכשרה, שלמה ביטוח,
                                 weSure).</td>
                             <td><strong>יציבות חישוב ואמינות מוצרית:</strong> השוואת התרחישים אינה תלויה בטופס חיצוני או
-                                ב־CAPTCHA, ומסירה אי-התאמה צרכנית לאחר הסרת "ביטוח ישיר", "ליברה" ו-"AIG" מכלל הממשק
+                                ב־CAPTCHA,
                                 וטבלאות הכיול.</td>
                         </tr>
                         <tr>
@@ -2069,7 +2080,7 @@
                             <td><strong>עונה על חוויית המשתמש ועלויות API:</strong> הדשבורד עולה ב-10ms, והסוכן רץ
                                 באסינכרוניות מלאה ברקע תוך ביטול בקשות מיותרות אם המשתמש משנה בחירה.</td>
                         </tr>
-                        <tr class="row-win">
+                        <tr>
                             <td><strong>4. אמינות חישובית (LLM Grounding)</strong></td>
                             <td>מתן חופש למודל השפה (LLM) להעריך בעצמו מחירי ביטוח וציוני סיכון מתוך הידע הכללי שלו.
                             </td>
@@ -2079,7 +2090,7 @@
                             <td><strong>עיגון בכלים דטרמיניסטיים:</strong> המספרים מחושבים בקוד ונבדקים
                                 ב־<code>pytest</code>, ללא המצאת מחירים אקראית על ידי מודל השפה.</td>
                         </tr>
-                        <tr class="row-win">
+                        <tr>
                             <td><strong>5. שאלות פתוחות ואימות פלט (Open-Ended Q&amp;A &amp; Guardrails)</strong></td>
                             <td>ניתוב מילות מפתח צר (2–3 תבניות קבועות) או תשובת LLM חופשית עם fallback שקט לדגם/עיר
                                 ברירת מחדל.</td>
@@ -2119,7 +2130,7 @@
                 <div class="station plastic" style="--t: var(--p-thu);">
                     <span aria-hidden="true" class="station-num">1</span>
                     <div>
-                        <h3>כלי 1: <code>get_vehicle_risk</code> שליפת פרופיל סיכון ואומדן ספירה</h3>
+                        <h3><code>get_vehicle_risk</code> שליפת פרופיל סיכון ואומדן ספירה</h3>
                         <p>
                             שולף את אומדן הספירה השנתי ומדד הסיכון היחסי לצירוף דגם–עיר מתוך נכסי המחקר. מחזיר גרסת
                             מודל, ציון סיכון משוקלל וסטטוס כיסוי (מדד מנורמל לאחוזון 99 של האומדנים המחקריים).
@@ -2130,11 +2141,11 @@
                 <div class="station plastic" style="--t: var(--p-fri);">
                     <span aria-hidden="true" class="station-num">2</span>
                     <div>
-                        <h3>כלי 2: <code>fetch_bestie_insurance_quotes</code> סימולציית תמחור לפרופיל נהג ייחוס</h3>
+                        <h3><code>fetch_bestie_insurance_quotes</code> סימולציית תמחור לפרופיל נהג ייחוס</h3>
                         <p>
-                            מחשב מחיר שנתי וחודשי מדומה (ביטוח מקיף + חובה) ודרישות מיגון לפרופיל נהג ייחוס קבוע, עם
-                            שמות חברות התואמים ל-Bestie בלבד (ללא "ביטוח ישיר"). המחירים מחושבים באופן דטרמיניסטי כחלק
-                            מהסימולציה ואינם תוצאת סריקה חיה של Bestie.
+                            מחשב מחיר שנתי וחודשי מדומה (ביטוח מקיף + חובה) ודרישות מיגון לפרופיל נהג ייחוס קבוע,
+                            המחירים מחושבים באופן דטרמיניסטי כחלק
+                            מהסימולציה ואינם תוצאת סריקה חיה.
                         </p>
                     </div>
                 </div>
@@ -2142,7 +2153,7 @@
                 <div class="station plastic" style="--t: var(--p-wed);">
                     <span aria-hidden="true" class="station-num">3</span>
                     <div>
-                        <h3>כלי 3: <code>compare_alternatives</code> איתור ודירוג עד 3 חלופות רכב</h3>
+                        <h3><code>compare_alternatives</code> איתור ודירוג עד 3 חלופות רכב</h3>
                         <p>
                             מדרג עד שלוש חלופות רכב באותה עיר לפי מדד סיכון יחסי נמוך יותר והפרש מחיר מדומה. החיפוש
                             מעדיף אותה קטגוריית רכב (למשל משפחתיות או פנאי) ועשוי להתרחב כשאין די מועמדים.
@@ -2153,7 +2164,7 @@
                 <div class="station plastic" style="--t: var(--p-sat);">
                     <span aria-hidden="true" class="station-num">4</span>
                     <div>
-                        <h3>כלי 4: <code>simulate_mitigation_discount</code> מחשבון הוזלת פרמיה באמצעות מיגון</h3>
+                        <h3><code>simulate_mitigation_discount</code> מחשבון הוזלת פרמיה באמצעות מיגון</h3>
                         <p>
                             מופעל מתוך ווידג'ט הצ'אט ותומך הן בחבילת המיגון המומלצת והן בחילוץ דטרמיניסטי של אמצעי מיגון
                             בודדים שביקש המשתמש (כגון <code>"רק עם קודן"</code> ← <code>"קודן מוגן + עלוקה"</code> בלבד,
@@ -2165,7 +2176,7 @@
                 <div class="station plastic" style="--t: var(--p-mon);">
                     <span aria-hidden="true" class="station-num">5</span>
                     <div>
-                        <h3>כלי 5: <code>calculate_custom_savings</code> מחשבון הפרשי חיסכון ועלות מותאם אישית</h3>
+                        <h3><code>calculate_custom_savings</code> מחשבון הפרשי חיסכון ועלות מותאם אישית</h3>
                         <p>
                             מחשב באופן דטרמיניסטי הפרשי עלות שנתית וחודשית ושינוי בציון הסיכון בין שילוב בסיס ליעד
                             מותאם (החלפת דגם, מעבר עיר ו/או מיגון ספציפי), כולל דיווח שקוף על תוספת עלות שלילית
@@ -2182,13 +2193,13 @@
                         <span>דיאגרמת ארכיטקטורת הסוכן (Interactive Pan &amp; Zoom)</span>
                     </div>
                     <div class="diagram-toolbar-actions">
-                        <button class="diagram-tool-btn" id="agent-diagram-zoom-in" title="התקרב (Zoom In) [+]"
+                        <button class="diagram-tool-btn" id="agent-diagram-zoom-in" title="ZOOMIN (Zoom In) [+]"
                             type="button">
-                            <span>+</span> התקרב
+                            <span>+</span> ZOOMIN
                         </button>
-                        <button class="diagram-tool-btn" id="agent-diagram-zoom-out" title="התרחק (Zoom Out) [-]"
+                        <button class="diagram-tool-btn" id="agent-diagram-zoom-out" title="ZOOMOUT (Zoom Out) [-]"
                             type="button">
-                            <span>−</span> התרחק
+                            <span>−</span> ZOOMOUT
                         </button>
                         <span class="diagram-zoom-badge" id="agent-diagram-zoom-level">100%</span>
                         <button class="diagram-tool-btn" id="agent-diagram-zoom-fit" title="התאם לגודל חלון [0]"
@@ -2326,11 +2337,12 @@
                 <figcaption>
                     <strong>איור 4.3- ווידג'ט שאלות פתוחות וסימולציית חיסכון (Side Copilot):</strong> ווידג'ט הצ'אט
                     הנפתח
-                    בלחיצה על כפתור ה-FAB או מתוך כרטיסיות ההשוואה. מקבל כעת שאלות פתוחות בעברית על כל דגם, יישוב או
+                    בלחיצה על כפתור ה-FAB או מתוך כרטיסיות ההשוואה. מקבל שאלות פתוחות בעברית על כל דגם, יישוב או
                     אמצעי מיגון, שולח את היסטוריית 4 ההודעות האחרונות (<code>history</code>), ומציג מעל תשובת הטקסט
                     כרטיס
-                    מדדים מובנה (<code>SavingsMetrics</code>) עם עלות בסיס מול יעד, חיסכון/תוספת עלות שנתית וחודשית, פער
-                    סיכון והערת כיסוי נתונים לשנת 2024.
+                    מדדים מובנה (<code>SavingsMetrics</code>) עם עלות בסיס מול יעד, חיסכון/תוספת עלות שנתית וחודשית,
+                    ופער
+                    סיכון .
                 </figcaption>
             </figure>
 
@@ -2365,7 +2377,7 @@
 
             <div class="bands">
                 <div class="band plastic" style="--t: var(--p-thu);">
-                    <h3>שכבה 1 — Input Guardrails ותכנון שאילתה (<code>QueryPlan</code>)</h3>
+                    <h3>שכבה 1 - Input Guardrails ותכנון שאילתה (<code>QueryPlan</code>)</h3>
                     <ul>
                         <li><strong>מגבלת אורך וחסימת הזרקות:</strong> הגבלת קלט ל-500 תווים
                             (ב-<code>AgentChatRequest</code>
@@ -2382,7 +2394,7 @@
                     </ul>
                 </div>
                 <div class="band plastic" style="--t: var(--p-wed);">
-                    <h3>שכבה 2 — Strict Entity Grounding (אפס fallback שקט)</h3>
+                    <h3>שכבה 2 - Strict Entity Grounding (אפס fallback שקט)</h3>
                     <ul>
                         <li><strong>דגל <code>strict=True</code>:</strong> ב-<code>resolve_model_entry</code>
                             וב-<code>resolve_city_entry</code>,
@@ -2395,7 +2407,7 @@
                     </ul>
                 </div>
                 <div class="band plastic" style="--t: var(--p-fri);">
-                    <h3>שכבה 3 — כלים דטרמיניסטיים וסכמת <code>GroundedAgentResponse</code></h3>
+                    <h3>שכבה 3 - כלים דטרמיניסטיים וסכמת <code>GroundedAgentResponse</code></h3>
                     <ul>
                         <li><strong>חישוב דלתא חתום:</strong> <code>calculate_custom_savings</code>
                             ו-<code>simulate_mitigation_discount</code>
@@ -2409,7 +2421,7 @@
                     </ul>
                 </div>
                 <div class="band plastic" style="--t: var(--p-mon);">
-                    <h3>שכבה 4 — Post-Generation Numeric Verifier (<code>verify_numeric_grounding</code>)</h3>
+                    <h3>שכבה 4 - Post-Generation Numeric Verifier (<code>verify_numeric_grounding</code>)</h3>
                     <ul>
                         <li><strong>סכמת Gemini מובנית:</strong> שליחת <code>response_schema=GeminiReplyPayload</code>
                             וחלון 4 הודעות
@@ -2426,7 +2438,7 @@
 
             <pre><code># הרצת בדיקות ה-Guardrails, ה-API והחוזים (8 סוויטות חדשות ב-tests/test_agent_guardrails.py + חוזי API/ML):
 $ python -X utf8 -m pytest -v tests/test_agent_guardrails.py tests/test_api_live.py tests/test_v9_runtime_contract.py tests/test_temporal_validation.py
-# תוצאה מאומתת: 16 passed (0 נכשלו) — כולל אימות שאלות דגם/עיר/קודן, דחיית למבורגיני אורוס/אטלנטיס,
+# תוצאה מאומתת: 16 passed (0 נכשלו) - כולל אימות שאלות דגם/עיר/קודן, דחיית למבורגיני אורוס/אטלנטיס,
 # חסימת הזרקות פרומפט, בלימת מספר מומצא ₪99,999 ב-Mock של Gemini והיעדר "ביטוח ישיר".
 
 # אנדפוינטים פעילים ב-FastAPI (src/api.py):
