@@ -225,7 +225,7 @@
 
         strong,
         b {
-            font-weight: 500;
+            font-weight: 600;
             color: var(--color-ink);
         }
 
@@ -748,12 +748,11 @@
             margin: var(--space-2xs) 0 0 0;
             padding: 0 0 0 1.15rem;
             list-style: disc;
-            direction: ltr;
-            text-align: left;
+            text-align: right;
             display: flex;
             flex-direction: column;
             gap: 5px;
-            align-items: flex-end;
+            margin-right: 1rem;
         }
 
         .contract-tools-bullets li {
@@ -1928,7 +1927,7 @@
                         </div>
                         <div class="contract-card">
                             <div class="contract-label">שרשרת 5 הכלים (Deterministic Toolset)</div>
-                            <ul class="contract-tools-bullets" dir="ltr">
+                            <ul class="contract-tools-bullets">
                                 <li><code>get_vehicle_risk</code></li>
                                 <li><code>fetch_bestie_insurance_quotes</code></li>
                                 <li><code>compare_alternatives</code></li>
@@ -1947,7 +1946,7 @@
             </div>
 
             <!-- The 4 figures on the ink band -->
-            <div class="hero-figures">
+            <!-- <div class="hero-figures">
                 <div class="metric-card">
                     <div class="metric-value" dir="ltr">Zero-Click</div>
                     <div class="metric-label"><strong>הפעלה אוטונומית ברקע:</strong><br>
@@ -1977,7 +1976,7 @@
                         אי-ניחוש ישויות (<code>needs_clarification</code>), ומאמת מספרים
                         (<code>verify_numeric_grounding</code>)</div>
                 </div>
-            </div>
+            </div> -->
         </section>
 
 
@@ -2052,9 +2051,15 @@
                     <tbody>
                         <tr>
                             <td><strong>1. תשתית תזמור הסוכן (Agent Orchestration Framework)</strong></td>
-                            <td>שימוש בפריימוורק LangChain / LangGraph עם שכבות הפשטה (Runnables / לולאות ReAct) ועשרות תלויות משנה.</td>
-                            <td><strong>קוד Python ישיר מעל <code>google-genai</code> + <span dir="ltr" style="white-space: nowrap;">Pydantic v2</span> (ללא LangChain)</strong> עם פייפליין דטרמיניסטי מפורש ב-4 שכבות.</td>
-                            <td><strong>שליטה מלאה, דטרמיניסטיות ורזון ב-Production:</strong> מונע "קסם" נסתר, לולאות ReAct בלתי צפויות ושבירות API בין גרסאות, ושומר על 7 תלויות בלבד ב-<code>requirements-prod.txt</code> (קריטי לזמן Build ולזיכרון 512MB ב-Render Free).</td>
+                            <td>שימוש בפריימוורק LangChain / LangGraph עם שכבות הפשטה (Runnables / לולאות ReAct) ועשרות
+                                תלויות משנה.</td>
+                            <td><strong>קוד Python ישיר מעל <code>google-genai</code> + <span dir="ltr"
+                                        style="white-space: nowrap;">Pydantic v2</span> (ללא LangChain)</strong> עם
+                                פייפליין דטרמיניסטי מפורש ב-4 שכבות.</td>
+                            <td><strong>שליטה מלאה, דטרמיניסטיות ורזון ב-Production:</strong> מונע "קסם" נסתר, לולאות
+                                ReAct בלתי צפויות ושבירות API בין גרסאות, ושומר על 7 תלויות בלבד
+                                ב-<code>requirements-prod.txt</code> (קריטי לזמן Build ולזיכרון 512MB ב-Render Free).
+                            </td>
                         </tr>
                         <tr>
                             <td><strong>2. ממשק המשתמש והפעלת הסוכן (UX &amp; Activation)</strong></td>
@@ -2118,7 +2123,7 @@
         <!-- ═══ CHAPTER 03: ARCHITECTURE & 5 TOOLS ═══ -->
         <section class="report-section section-card" id="sec3">
             <header class="chapter-head">
-                <h2><span class="ch-num">03.</span> ארכיטקטורת הסוכן האוטונומי ושרשרת 5 הכלים</h2>
+                <h2><span class="ch-num">03.</span> ארכיטקטורת הסוכן ושרשרת 5 הכלים</h2>
                 <p class="chapter-id">Agent orchestration &amp; toolset</p>
             </header>
             <p class="section-intro">
@@ -2200,11 +2205,11 @@
                     <div class="diagram-toolbar-actions">
                         <button class="diagram-tool-btn" id="agent-diagram-zoom-in" title="הגדל (Zoom In) [+]"
                             type="button">
-                            <span>+</span> הגדל
+                            <span>+</span>
                         </button>
                         <button class="diagram-tool-btn" id="agent-diagram-zoom-out" title="הקטן (Zoom Out) [-]"
                             type="button">
-                            <span>−</span> הקטן
+                            <span>−</span>
                         </button>
                         <span class="diagram-zoom-badge" id="agent-diagram-zoom-level">100%</span>
                         <button class="diagram-tool-btn" id="agent-diagram-zoom-fit" title="התאם לגודל חלון [0]"
@@ -2245,7 +2250,8 @@
                 <p style="max-width: 100%;">
                     מחירי ביטוח רכב משתנים לפי גיל הנהג והיסטוריית התביעות שלו. כדי להשוות תפוחים לתפוחים בין הרכב
                     שנבחר לבין 3 החלופות בלי לאלץ את המשתמש למלא טופס של 15 שדות, הגדרנו פרופיל ייחוס אחיד ושקוף המוצג
-                    בראש אזור הסוכן: <strong>נהג בן 35 · 12 שנות ותק · היעדר תביעות ב-3 השנים האחרונות · שנתון 2025</strong>. כך הפער השקלי בין הכרטיסיות משקף באופן טהור את פערי הסיכון האקטוארי של הדגם
+                    בראש אזור הסוכן: <strong>נהג בן 35 · 12 שנות ותק · היעדר תביעות ב-3 השנים האחרונות · שנתון
+                        2025</strong>. כך הפער השקלי בין הכרטיסיות משקף באופן טהור את פערי הסיכון האקטוארי של הדגם
                     והעיר.
                 </p>
             </div>
@@ -2397,7 +2403,7 @@
                     </ul>
                 </div>
                 <div class="band plastic" style="--t: var(--p-wed);">
-                    <h3>שכבה 2 - Strict Entity Grounding (אפס fallback שקט)</h3>
+                    <h3>שכבה 2 - Strict Entity Grounding (fallback שקט)</h3>
                     <ul>
                         <li><strong>דגל <code>strict=True</code>:</strong> ב-<code>resolve_model_entry</code>
                             וב-<code>resolve_city_entry</code>,
