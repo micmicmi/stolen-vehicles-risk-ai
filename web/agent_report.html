@@ -294,7 +294,6 @@
             font-variant-numeric: lining-nums tabular-nums;
         }
 
-        /* ── reading progress (removed) ────────────────────────── */
 
         /* ── the plastic surface language ───────────────────────── */
         .plastic {
@@ -815,7 +814,7 @@
 
         .section-card>p {
             margin-top: var(--space-md);
-            max-width: 68ch;
+            max-width: 85vw;
         }
 
         .section-card h3 {
@@ -1154,7 +1153,7 @@
             font-size: var(--text-sm);
             color: var(--color-muted);
             line-height: 1.55;
-            max-width: 85ch;
+            max-width: 85vw;
         }
 
         .chart figcaption strong {
@@ -1855,7 +1854,8 @@
                         בחירת דגם ועיר מפעילה ברקע ניתוח כיסוי נתונים, סימולציית מחיר לפרופיל נהג ייחוס (תוך שימוש
                         בחברות ביטוח המופיעות בפועל ב-Bestie בלבד) וחיפוש של עד שלוש חלופות. הצ'אט המובנה תומך כעת
                         בשאלות פתוחות בעברית (השוואת דגמים, מעבר ערים ומיגון ממוקד) תחת פייפליין Guardrails ב-4 שכבות,
-                        סכמות Pydantic v2 (<code>QueryPlan</code>, <code>SavingsMetrics</code>, <code>GroundedAgentResponse</code>)
+                        סכמות <span dir="ltr" style="white-space: nowrap;">Pydantic v2</span> (<bdi><code>QueryPlan</code></bdi>, <bdi><code>SavingsMetrics</code></bdi>,
+                        <bdi><code>GroundedAgentResponse</code></bdi>)
                         ומאמת מספרים לאחר יצירה (Post-Generation Numeric Verifier).
                     </p>
                     <div class="hero-actions">
@@ -1879,12 +1879,14 @@
                         </div>
                         <div class="contract-card">
                             <div class="contract-label">שרשרת 5 הכלים (Deterministic Toolset)</div>
-                            <div class="contract-val">get_vehicle_risk · fetch_bestie_insurance_quotes · compare_alternatives ·
+                            <div class="contract-val">get_vehicle_risk · fetch_bestie_insurance_quotes ·
+                                compare_alternatives ·
                                 simulate_mitigation_discount · calculate_custom_savings</div>
                         </div>
                         <div class="contract-card alert-card">
                             <div class="contract-label">גבולות גזרה (Scope &amp; Non-Claims)</div>
-                            <div class="contract-val">סימולציית תמחור מקומית לפרופיל ייחוס עם שמות מבטחים התואמים ל-Bestie בלבד (ללא "ביטוח ישיר") — אינה סריקה חיה או הצעה מחייבת</div>
+                            <div class="contract-val">סימולציית תמחור מקומית לפרופיל ייחוס עם שמות מבטחים התואמים
+                                ל-Bestie בלבד (ללא "ביטוח ישיר") — אינה סריקה חיה או הצעה מחייבת</div>
                         </div>
                     </div>
                 </section>
@@ -1902,7 +1904,8 @@
                     <div class="metric-value">5 כלים <span style="font-size: 0.75em; opacity: 0.85;">(Tools)</span>
                     </div>
                     <div class="metric-label"><strong>שרשרת אקטוארית דטרמיניסטית:</strong> כולל חישוב הפרשי חיסכון מותאם
-                        לשאלות פתוחות (<code>calculate_custom_savings</code>) ו-Grounding קפדני (<code>strict=True</code>)</div>
+                        לשאלות פתוחות (<code>calculate_custom_savings</code>) ו-Grounding קפדני
+                        (<code>strict=True</code>)</div>
                 </div>
                 <div class="metric-card">
                     <div class="metric-value"><span dir="ltr">Top-3</span> חלופות</div>
@@ -1911,8 +1914,9 @@
                 </div>
                 <div class="metric-card metric-card--lead">
                     <div class="metric-value" style="color: #ffffff;" dir="ltr">100% Grounded</div>
-                    <div class="metric-label"><strong>4 שכבות Guardrails + סכמות Pydantic v2:</strong> חסימת הזרקות,
-                        אי-ניחוש ישויות (<code>needs_clarification</code>), ומאמת מספרים (<code>verify_numeric_grounding</code>)</div>
+                    <div class="metric-label"><strong>4 שכבות Guardrails + סכמות <span dir="ltr" style="white-space: nowrap;">Pydantic v2</span>:</strong> חסימת הזרקות,
+                        אי-ניחוש ישויות (<code>needs_clarification</code>), ומאמת מספרים
+                        (<code>verify_numeric_grounding</code>)</div>
                 </div>
             </div>
         </section>
@@ -1972,7 +1976,7 @@
                 <p class="chapter-id">Product &amp; engineering ADRs</p>
             </header>
             <p class="section-intro">
-                כדי לבנות מערכת שעומדת בסטנדרטים של סביבת ייצור (Production-Grade), בחנו מספר חלופות הנדסיות ומוצריות
+                כדי לבנות מערכת שעומדת בסטנדרטים של סביבת ייצור (Production-Grade), נבחנו מספר חלופות הנדסיות ומוצריות
                 לכל רכיב. הטבלה הבאה מתעדת את החלופות שנפסלו, הבחירה הסופית, והערך המוצרי וההנדסי שעליו היא עונה:
             </p>
 
@@ -1997,11 +2001,16 @@
                             </td>
                         </tr>
                         <tr>
-                            <td><strong>2. תמחור תרחישי ביטוח ושמות חברות (Pricing Simulation &amp; Insurers)</strong></td>
-                            <td>הרצת Headless Browser סינכרונית בלייב ב-Bestie, או הצגת חברות שאינן מופיעות ב-Bestie (כגון "ביטוח ישיר", ליברה ו-AIG).</td>
-                            <td><strong>סימולציה דטרמיניסטית לפרופיל נהג ייחוס</strong> עם רוטציית חברות העובדות בפועל עם Bestie בלבד (הראל, הפניקס, מגדל, כלל, מנורה, שומרה, איילון, הכשרה, שלמה ביטוח, weSure).</td>
+                            <td><strong>2. תמחור תרחישי ביטוח ושמות חברות (Pricing Simulation &amp; Insurers)</strong>
+                            </td>
+                            <td>הרצת Headless Browser סינכרונית בלייב ב-Bestie, או הצגת חברות שאינן מופיעות ב-Bestie
+                                (כגון "ביטוח ישיר", ליברה ו-AIG).</td>
+                            <td><strong>סימולציה דטרמיניסטית לפרופיל נהג ייחוס</strong> עם רוטציית חברות העובדות בפועל
+                                עם Bestie בלבד (הראל, הפניקס, מגדל, כלל, מנורה, שומרה, איילון, הכשרה, שלמה ביטוח,
+                                weSure).</td>
                             <td><strong>יציבות חישוב ואמינות מוצרית:</strong> השוואת התרחישים אינה תלויה בטופס חיצוני או
-                                ב־CAPTCHA, ומסירה אי-התאמה צרכנית לאחר הסרת "ביטוח ישיר", "ליברה" ו-"AIG" מכלל הממשק וטבלאות הכיול.</td>
+                                ב־CAPTCHA, ומסירה אי-התאמה צרכנית לאחר הסרת "ביטוח ישיר", "ליברה" ו-"AIG" מכלל הממשק
+                                וטבלאות הכיול.</td>
                         </tr>
                         <tr>
                             <td><strong>3. ניהול מקביליות ומניעת עומס (Concurrency)</strong></td>
@@ -2017,15 +2026,23 @@
                             <td>מתן חופש למודל השפה (LLM) להעריך בעצמו מחירי ביטוח וציוני סיכון מתוך הידע הכללי שלו.
                             </td>
                             <td><strong>Tool-First Deterministic Grounding:</strong> הסוכן מחויב ל-5 פונקציות
-                                פייתון מבוססות <code>data.json</code> ו-XGBoost תחת סכמות <code>agent_schemas.py</code>.</td>
+                                פייתון מבוססות <code>data.json</code> ו-XGBoost תחת סכמות <code>agent_schemas.py</code>.
+                            </td>
                             <td><strong>עיגון בכלים דטרמיניסטיים:</strong> המספרים מחושבים בקוד ונבדקים
                                 ב־<code>pytest</code>, ללא המצאת מחירים אקראית על ידי מודל השפה.</td>
                         </tr>
                         <tr class="row-win">
                             <td><strong>5. שאלות פתוחות ואימות פלט (Open-Ended Q&amp;A &amp; Guardrails)</strong></td>
-                            <td>ניתוב מילות מפתח צר (2–3 תבניות קבועות) או תשובת LLM חופשית עם fallback שקט לדגם/עיר ברירת מחדל.</td>
-                            <td><strong>פייפליין Guardrails ב-4 שכבות</strong> (<code>plan_query</code> ← <code>strict=True</code> ← כלים ← <code>verify_numeric_grounding</code>) וסכמות Pydantic v2.</td>
-                            <td>מאפשר שאלות פתוחות (<code>"כמה אחסוך בקיה נירו?"</code>, <code>"בראשון לציון לעומת תל אביב?"</code>, <code>"רק עם קודן?"</code>), מחזיר <code>needs_clarification</code> לדגמים/ערים לא קיימים במקום הזיה, ומאמת שכל מספר בפלט Gemini מופיע בפלט הכלים.</td>
+                            <td>ניתוב מילות מפתח צר (2–3 תבניות קבועות) או תשובת LLM חופשית עם fallback שקט לדגם/עיר
+                                ברירת מחדל.</td>
+                            <td><strong>פייפליין Guardrails ב-4 שכבות</strong> (<bdi><code>plan_query</code></bdi> ←
+                                <bdi><code>strict=True</code></bdi> ← כלים ← <bdi><code>verify_numeric_grounding</code></bdi>) וסכמות <span dir="ltr" style="white-space: nowrap;">Pydantic v2</span>.
+                            </td>
+                            <td>מאפשר שאלות פתוחות (<code>"כמה אחסוך בקיה נירו?"</code>,
+                                <code>"בראשון לציון לעומת תל אביב?"</code>, <code>"רק עם קודן?"</code>), מחזיר
+                                <code>needs_clarification</code> לדגמים/ערים לא קיימים במקום הזיה, ומאמת שכל מספר בפלט
+                                Gemini מופיע בפלט הכלים.
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -2041,8 +2058,10 @@
             <p class="section-intro">
                 המערכת בנויה בארכיטקטורת <strong>Dual-Mode Agent</strong>: בעת בחירת דגם ועיר מתבצעת קריאה מקבילית
                 לאנדפוינט <code>POST /agent/auto-compare</code> שמפעיל אוטונומית 3 כלים ברצף לבניית גלריית הכרטיסיות
-                במקביל לרינדור הדשבורד ב-<code>O(1)</code>. בעת שליחת שאלה פתוחה בצ'אט מופעל <code>POST /agent/chat</code>
-                המקבל עד 4 הודעות <code>history</code> אחרונות, אוכף את חוזה הפלט <code>GroundedAgentResponse</code> ומנתב את הבקשה דרך פייפליין ה-Guardrails לשרשרת 5 הכלים:
+                במקביל לרינדור הדשבורד ב-<code>O(1)</code>. בעת שליחת שאלה פתוחה בצ'אט מופעל
+                <code>POST /agent/chat</code>
+                המקבל עד 4 הודעות <code>history</code> אחרונות, אוכף את חוזה הפלט <code>GroundedAgentResponse</code>
+                ומנתב את הבקשה דרך פייפליין ה-Guardrails לשרשרת 5 הכלים:
             </p>
 
             <!-- The 5 Tools as Dose Stations -->
@@ -2087,7 +2106,8 @@
                         <h3>כלי 4: <code>simulate_mitigation_discount</code> מחשבון הוזלת פרמיה באמצעות מיגון</h3>
                         <p>
                             מופעל מתוך ווידג'ט הצ'אט ותומך הן בחבילת המיגון המומלצת והן בחילוץ דטרמיניסטי של אמצעי מיגון
-                            בודדים שביקש המשתמש (כגון <code>"רק עם קודן"</code> ← <code>"קודן מוגן + עלוקה"</code> בלבד, ללא ספירה כפולה).
+                            בודדים שביקש המשתמש (כגון <code>"רק עם קודן"</code> ← <code>"קודן מוגן + עלוקה"</code> בלבד,
+                            ללא ספירה כפולה).
                         </p>
                     </div>
                 </div>
@@ -2145,7 +2165,8 @@
 
                 <div class="diagram-caption">
                     <strong>איור 3.1- ארכיטקטורת סוכן הביטוח Bestie:</strong> מיפוי 5 הכלים הדטרמיניסטיים, פייפליין
-                    ה-Guardrails ב-4 שכבות (<code>QueryPlan</code> ← <code>strict=True</code> ← כלים ← <code>verify_numeric_grounding</code>),
+                    ה-Guardrails ב-4 שכבות (<bdi><code>QueryPlan</code></bdi> ← <bdi><code>strict=True</code></bdi> ← כלים ←
+                    <bdi><code>verify_numeric_grounding</code></bdi>),
                     זרימת הבקשות הא-סינכרוניות מול ה-Web Client, והאינטגרציה עם מחשבון התרחישים ומודל ה-XGBoost.
                     <em>ניתן להשתמש בגלגלת העכבר לזום, גרירה להזזה, התאמה לחלון (↺), 1:1 או מסך מלא.</em>
                 </div>
@@ -2187,7 +2208,8 @@
                 <figcaption style="max-width: 100%;">
                     <strong>איור 4.1- Floating Sticky Dock:</strong> הקפסולה המרחפת מופיעה מיד עם הזנת שילוב העיר ודגם
                     הרכב. היא מציגה חיווי סריקה חי ומעדכנת בזמן אמת על פוטנציאל החיסכון שנמצא (למשל: <em>עד ₪46/חודש
-                        (₪550/שנה)</em>), עם כפתור הנעה לפעולה ישיר (<code>לגלריית ההשוואה ↑</code>) המאפשר לפתוח את חלון
+                        (₪550/שנה)</em>), עם כפתור הנעה לפעולה ישיר (<code>לגלריית ההשוואה ↑</code>) המאפשר לפתוח את
+                    חלון
                     ההמלצה המלא בקליק יחיד מבלי להסתיר את נתוני הדשבורד הראשי.
                 </figcaption>
             </figure>
@@ -2204,7 +2226,8 @@
                 <figcaption>
                     <strong>איור 4.2- חלון הסוכן המלא וגלריית ההשוואה:</strong> נפתח בלחיצה על הקפסולה. בראש המודל
                     מוצגים בועת הפתיח השיחתית בקולו של הסוכן ("נימוק הסוכן"), תגית פרופיל נהג הייחוס (בן 35, ללא תביעות
-                    ב-3 השנים האחרונות), תגית החיסכון המשוער המרבי (<strong>₪46/חודש · ₪550/שנה</strong>), וגלריית 4 כרטיסיות
+                    ב-3 השנים האחרונות), תגית החיסכון המשוער המרבי (<strong>₪46/חודש · ₪550/שנה</strong>), וגלריית 4
+                    כרטיסיות
                     Bestie מעוצבות עם חברות השותפות של Bestie וכפתור <code>התייעץ עם סוכן AI על החיסכון</code>.
                 </figcaption>
             </figure>
@@ -2216,7 +2239,8 @@
                     <h3>פתיח שיחתי בקולו של הסוכן</h3>
                     <p>
                         הסוכן פונה ישירות למשתמש בגוף ראשון בבועת דיבור ממותגת, מפרט את תוצאות הסריקה עבור הרכב הנבחר,
-                        ומציג את פוטנציאל החיסכון השנתי המרבי (למשל עד ₪550/שנה לטויוטה קורולה בתל אביב-יפו) והסיבות לבחירת 3 החלופות.
+                        ומציג את פוטנציאל החיסכון השנתי המרבי (למשל עד ₪550/שנה לטויוטה קורולה בתל אביב-יפו) והסיבות
+                        לבחירת 3 החלופות.
                     </p>
                 </div>
 
@@ -2249,9 +2273,11 @@
                         style="max-width: 540px;" />
                 </div>
                 <figcaption>
-                    <strong>איור 4.3- ווידג'ט שאלות פתוחות וסימולציית חיסכון (Side Copilot):</strong> ווידג'ט הצ'אט הנפתח
+                    <strong>איור 4.3- ווידג'ט שאלות פתוחות וסימולציית חיסכון (Side Copilot):</strong> ווידג'ט הצ'אט
+                    הנפתח
                     בלחיצה על כפתור ה-FAB או מתוך כרטיסיות ההשוואה. מקבל כעת שאלות פתוחות בעברית על כל דגם, יישוב או
-                    אמצעי מיגון, שולח את היסטוריית 4 ההודעות האחרונות (<code>history</code>), ומציג מעל תשובת הטקסט כרטיס
+                    אמצעי מיגון, שולח את היסטוריית 4 ההודעות האחרונות (<code>history</code>), ומציג מעל תשובת הטקסט
+                    כרטיס
                     מדדים מובנה (<code>SavingsMetrics</code>) עם עלות בסיס מול יעד, חיסכון/תוספת עלות שנתית וחודשית, פער
                     סיכון והערת כיסוי נתונים לשנת 2024.
                 </figcaption>
@@ -2265,8 +2291,10 @@
                     משתמש שסוקר את הגרפים בחלק העליון או משווה בין 4 כרטיסיות הפוליסה בגלריה לא צריך לחפש צ'אט שקבור
                     בתחתית הדף. הפרדת הצ'אט ל<strong>ווידג'ט צדדי קבוע</strong> מאפשרת ללחוץ על <code>התייעץ עם סוכן AI על
                         החיסכון</code> בכל כרטיסייה, על כפתורי השאלות המהירות, או להקליד כל שאלה פתוחה (כגון <em>"כמה
-                        אחסוך בקיה נירו?"</em> או <em>"כמה אחסוך רק עם קודן?"</em>), להריץ את <code>calculate_custom_savings</code>
-                    ו-<code>simulate_mitigation_discount</code> ולקבל כרטיס מדדים מובנה ומאומת תוך שמירה על קשר עין מלא עם
+                        אחסוך בקיה נירו?"</em> או <em>"כמה אחסוך רק עם קודן?"</em>), להריץ את
+                    <code>calculate_custom_savings</code>
+                    ו-<code>simulate_mitigation_discount</code> ולקבל כרטיס מדדים מובנה ומאומת תוך שמירה על קשר עין מלא
+                    עם
                     נתוני ההשוואה.
                 </p>
             </div>
@@ -2288,41 +2316,59 @@
                 <div class="band plastic" style="--t: var(--p-thu);">
                     <h3>שכבה 1 — Input Guardrails ותכנון שאילתה (<code>QueryPlan</code>)</h3>
                     <ul>
-                        <li><strong>מגבלת אורך וחסימת הזרקות:</strong> הגבלת קלט ל-500 תווים (ב-<code>AgentChatRequest</code>
-                            ובסוכן) וחסימת <code>prompt_injection</code> ו-<code>out_of_scope</code> עם החזרת <code>status="blocked"</code>
-                            ללא הפעלת כלי תמחור.</li>
-                        <li><strong>חילוץ ישויות בגבולות מילים:</strong> תמיכה בתחיליות עבריות (<code>מקורולה</code>, <code>לקיה נירו</code>,
-                            <code>ל-קיה</code>, <code>בתל אביב</code>) ומניעת התנגשות בין שמות דגמים ליישובים קצרים (<code>"לקיה נירו"</code>
-                            לעומת היישוב <code>לקיה</code>, או <code>"קודן"</code> לעומת <code>דן</code>).</li>
+                        <li><strong>מגבלת אורך וחסימת הזרקות:</strong> הגבלת קלט ל-500 תווים
+                            (ב-<code>AgentChatRequest</code>
+                            ובסוכן) וחסימת <code>prompt_injection</code> ו-<code>out_of_scope</code> עם החזרת
+                            <code>status="blocked"</code>
+                            ללא הפעלת כלי תמחור.
+                        </li>
+                        <li><strong>חילוץ ישויות בגבולות מילים:</strong> תמיכה בתחיליות עבריות (<code>מקורולה</code>,
+                            <code>לקיה נירו</code>,
+                            <code>ל-קיה</code>, <code>בתל אביב</code>) ומניעת התנגשות בין שמות דגמים ליישובים קצרים
+                            (<code>"לקיה נירו"</code>
+                            לעומת היישוב <code>לקיה</code>, או <code>"קודן"</code> לעומת <code>דן</code>).
+                        </li>
                     </ul>
                 </div>
                 <div class="band plastic" style="--t: var(--p-wed);">
                     <h3>שכבה 2 — Strict Entity Grounding (אפס fallback שקט)</h3>
                     <ul>
-                        <li><strong>דגל <code>strict=True</code>:</strong> ב-<code>resolve_model_entry</code> וב-<code>resolve_city_entry</code>,
+                        <li><strong>דגל <code>strict=True</code>:</strong> ב-<code>resolve_model_entry</code>
+                            וב-<code>resolve_city_entry</code>,
                             תוך סינון מפתחות מלוכלכים (כמו <code>למבורגיני|VENUE</code>).</li>
-                        <li><strong>הבהרה מנומסת (<code>needs_clarification</code>):</strong> שאלה על דגם או עיר שאינם במאגר
-                            (כגון <code>"למבורגיני אורוס"</code> או <code>"אטלנטיס"</code>) מחזירה הצעות קרובות מ-<code>suggest_similar_models</code>
+                        <li><strong>הבהרה מנומסת (<code>needs_clarification</code>):</strong> שאלה על דגם או עיר שאינם
+                            במאגר
+                            (כגון <code>"למבורגיני אורוס"</code> או <code>"אטלנטיס"</code>) מחזירה הצעות קרובות
+                            מ-<code>suggest_similar_models</code>
                             ו-<code>suggest_similar_cities</code> במקום נפילה שקטה ל-cold-start.</li>
                     </ul>
                 </div>
                 <div class="band plastic" style="--t: var(--p-fri);">
                     <h3>שכבה 3 — כלים דטרמיניסטיים וסכמת <code>GroundedAgentResponse</code></h3>
                     <ul>
-                        <li><strong>חישוב דלתא חתום:</strong> <code>calculate_custom_savings</code> ו-<code>simulate_mitigation_discount</code>
-                            מחשבים את <code>SavingsMetrics</code> בפייתון בלבד, כולל דיווח שקוף על תוספת עלות שלילית כשהיעד
+                        <li><strong>חישוב דלתא חתום:</strong> <code>calculate_custom_savings</code>
+                            ו-<code>simulate_mitigation_discount</code>
+                            מחשבים את <code>SavingsMetrics</code> בפייתון בלבד, כולל דיווח שקוף על תוספת עלות שלילית
+                            כשהיעד
                             יקר יותר (למשל פיקנטו ← לנד קרוזר או חיפה ← תל אביב).</li>
-                        <li><strong>שקיפות מבטחים (אפשרות ב׳):</strong> הסרה מלאה של <code>"ביטוח ישיר"</code>, <code>"ליברה"</code> ו-<code>"AIG"</code> ושימוש בחברות העובדות עם Bestie בלבד (הראל, הפניקס, מגדל, כלל, מנורה, שומרה, איילון, הכשרה, שלמה ביטוח, weSure).</li>
+                        <li><strong>שקיפות מבטחים (אפשרות ב׳):</strong> הסרה מלאה של <code>"ביטוח ישיר"</code>,
+                            <code>"ליברה"</code> ו-<code>"AIG"</code> ושימוש בחברות העובדות עם Bestie בלבד (הראל,
+                            הפניקס, מגדל, כלל, מנורה, שומרה, איילון, הכשרה, שלמה ביטוח, weSure).
+                        </li>
                     </ul>
                 </div>
                 <div class="band plastic" style="--t: var(--p-mon);">
                     <h3>שכבה 4 — Post-Generation Numeric Verifier (<code>verify_numeric_grounding</code>)</h3>
                     <ul>
-                        <li><strong>סכמת Gemini מובנית:</strong> שליחת <code>response_schema=GeminiReplyPayload</code> וחלון 4 הודעות
+                        <li><strong>סכמת Gemini מובנית:</strong> שליחת <code>response_schema=GeminiReplyPayload</code>
+                            וחלון 4 הודעות
                             מ-<code>history</code> כאשר <code>GEMINI_API_KEY</code> מוגדר.</li>
-                        <li><strong>בלימת הזיות מספריות:</strong> כל מספר בפלט ה-LLM נבדק מול <code>collect_allowed_numbers</code>;
-                            זיהוי מספר חריג (כגון <code>₪99,999</code>) מפעיל fallback אוטומטי לניסוח הדטרמיניסטי (<code>engine="deterministic_grounded"</code>,
-                            <code>numeric_verifier_fallback_triggered</code>).</li>
+                        <li><strong>בלימת הזיות מספריות:</strong> כל מספר בפלט ה-LLM נבדק מול
+                            <code>collect_allowed_numbers</code>;
+                            זיהוי מספר חריג (כגון <code>₪99,999</code>) מפעיל fallback אוטומטי לניסוח הדטרמיניסטי
+                            (<code>engine="deterministic_grounded"</code>,
+                            <code>numeric_verifier_fallback_triggered</code>).
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -2355,9 +2401,12 @@ POST /agent/chat           # מחזיר GroundedAgentResponse (status, engine, i
                     <ul>
                         <li><strong>Multi-Step Tool Chaining:</strong> תזמור אוטונומי של 5 כלים אקטואריים המחוברים למודל
                             הספירה המחקרי (<code>XGBoost Poisson</code>) ולמטריצת הנתונים.</li>
-                        <li><strong>4-Layer Guardrails &amp; Numeric Verification:</strong> תכנון שאילתות מוקלד (<code>QueryPlan</code>),
-                            Grounding קפדני (<code>strict=True</code>), סכמות <code>GroundedAgentResponse</code> ומאמת מספרים לאחר יצירה.</li>
-                        <li><strong>Hybrid Resilience &amp; Async Lifecycle:</strong> עבודה חלקה מול FastAPI + Gemini API עם
+                        <li><strong>4-Layer Guardrails &amp; Numeric Verification:</strong> תכנון שאילתות מוקלד
+                            (<code>QueryPlan</code>),
+                            Grounding קפדני (<code>strict=True</code>), סכמות <code>GroundedAgentResponse</code> ומאמת
+                            מספרים לאחר יצירה.</li>
+                        <li><strong>Hybrid Resilience &amp; Async Lifecycle:</strong> עבודה חלקה מול FastAPI + Gemini
+                            API עם
                             Fallback דטרמיניסטי בצד השרת והלקוח, ו-<code>AbortController</code> למניעת חסימת ה-UI.</li>
                     </ul>
                 </div>
@@ -2366,11 +2415,15 @@ POST /agent/chat           # מחזיר GroundedAgentResponse (status, engine, i
                     <span class="chip chip-mint">Product Management (PM)</span>
                     <h3>חשיבה מוצרית ומיקוד בערך למשתמש</h3>
                     <ul>
-                        <li><strong>תרגום מדד טכני לערך כספי שקוף (Monetizable User Value):</strong> מעבר מציון סיכון מופשט
-                            לכרטיסיית <code>SavingsMetrics</code> ברורה המציגה חיסכון או תוספת עלות במעבר דגם, עיר או מיגון.</li>
-                        <li><strong>אמינות ושקיפות מול המשתמש:</strong> הסרת <code>"ביטוח ישיר"</code> (אפשרות ב׳) לשמירה על
+                        <li><strong>תרגום מדד טכני לערך כספי שקוף (Monetizable User Value):</strong> מעבר מציון סיכון
+                            מופשט
+                            לכרטיסיית <code>SavingsMetrics</code> ברורה המציגה חיסכון או תוספת עלות במעבר דגם, עיר או
+                            מיגון.</li>
+                        <li><strong>אמינות ושקיפות מול המשתמש:</strong> הסרת <code>"ביטוח ישיר"</code> (אפשרות ב׳)
+                            לשמירה על
                             הלימה לחברות שב-Bestie, ודיווח גלוי כשדגם אינו מופיע במאגר במקום ניחוש.</li>
-                        <li><strong>Product Iteration:</strong> חיבור כפתור <code>התייעץ עם סוכן AI על החיסכון</code> ישירות
+                        <li><strong>Product Iteration:</strong> חיבור כפתור <code>התייעץ עם סוכן AI על החיסכון</code>
+                            ישירות
                             מכל כרטיסייה לצ'אט הצד הפתוח עם שמירת הקשר השיחה (<code>history</code>).</li>
                     </ul>
                 </div>
