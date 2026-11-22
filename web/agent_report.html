@@ -733,6 +733,47 @@
             line-height: 1.55;
         }
 
+        .contract-persona-list {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 4px 8px;
+            margin-top: var(--space-2xs);
+            font-family: var(--font-outlier);
+            font-size: var(--text-sm);
+            color: var(--color-ink);
+            line-height: 1.55;
+        }
+
+        .contract-tools-bullets {
+            margin: var(--space-2xs) 0 0 0;
+            padding: 0 0 0 1.15rem;
+            list-style: disc;
+            direction: ltr;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .contract-tools-bullets li {
+            color: var(--color-accent-deep);
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .contract-tools-bullets li code {
+            background: color-mix(in oklab, var(--p-thu) 12%, white);
+            border: 1px solid color-mix(in oklab, var(--p-thu) 30%, transparent);
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-family: var(--font-outlier);
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: var(--color-ink);
+            letter-spacing: -0.01em;
+        }
+
         .contract-card.alert-card {
             margin: 0;
             padding: var(--space-md);
@@ -1854,7 +1895,8 @@
                         בחירת דגם ועיר מפעילה ברקע ניתוח כיסוי נתונים, סימולציית מחיר לפרופיל נהג ייחוס (תוך שימוש
                         בחברות ביטוח המופיעות בפועל ב-Bestie בלבד) וחיפוש של עד שלוש חלופות. הצ'אט המובנה תומך כעת
                         בשאלות פתוחות בעברית (השוואת דגמים, מעבר ערים ומיגון ממוקד) תחת פייפליין Guardrails ב-4 שכבות,
-                        סכמות <span dir="ltr" style="white-space: nowrap;">Pydantic v2</span> (<bdi><code>QueryPlan</code></bdi>, <bdi><code>SavingsMetrics</code></bdi>,
+                        סכמות <span dir="ltr" style="white-space: nowrap;">Pydantic v2</span>
+                        (<bdi><code>QueryPlan</code></bdi>, <bdi><code>SavingsMetrics</code></bdi>,
                         <bdi><code>GroundedAgentResponse</code></bdi>)
                         ומאמת מספרים לאחר יצירה (Post-Generation Numeric Verifier).
                     </p>
@@ -1870,23 +1912,28 @@
                     <div class="contract-grid">
                         <div class="contract-card">
                             <div class="contract-label">מצב הפעלה (Trigger Mode)</div>
-                            <div class="contract-val">Zero-Click Parallel Execution (POST /agent/auto-compare +
-                                Open-Ended /agent/chat)</div>
+                            <div class="contract-val" dir="ltr">Zero-Click Parallel Execution<br><span
+                                    style="font-size: 0.88em; color: var(--color-ink-2);">(POST /agent/auto-compare +
+                                    Open-Ended /agent/chat)</span></div>
                         </div>
                         <div class="contract-card">
                             <div class="contract-label">פרופיל נהג ייחוס (Reference Driver Persona)</div>
-                            <div class="contract-val">נהג בן 35 · 12 שנות ותק · העדר תביעות 3 שנים · שנתון 2025</div>
+                            <div class="contract-val">נהג בן 35 • 12 שנות ותק<br>העדר תביעות 3 שנים • שנתון 2025</div>
                         </div>
                         <div class="contract-card">
                             <div class="contract-label">שרשרת 5 הכלים (Deterministic Toolset)</div>
-                            <div class="contract-val">get_vehicle_risk · fetch_bestie_insurance_quotes ·
-                                compare_alternatives ·
-                                simulate_mitigation_discount · calculate_custom_savings</div>
+                            <ul class="contract-tools-bullets" dir="ltr">
+                                <li><code>get_vehicle_risk</code></li>
+                                <li><code>fetch_bestie_insurance_quotes</code></li>
+                                <li><code>compare_alternatives</code></li>
+                                <li><code>simulate_mitigation_discount</code></li>
+                                <li><code>calculate_custom_savings</code></li>
+                            </ul>
                         </div>
                         <div class="contract-card alert-card">
                             <div class="contract-label">גבולות גזרה (Scope &amp; Non-Claims)</div>
-                            <div class="contract-val">סימולציית תמחור מקומית לפרופיל ייחוס עם שמות מבטחים התואמים
-                                ל-Bestie בלבד (ללא "ביטוח ישיר") — אינה סריקה חיה או הצעה מחייבת</div>
+                            <div class="contract-val">סימולציית תמחור מקומית לפרופיל ייחוס —<br>זו אינה סריקה חיה או הצעה
+                                מחייבת</div>
                         </div>
                     </div>
                 </section>
@@ -1914,7 +1961,8 @@
                 </div>
                 <div class="metric-card metric-card--lead">
                     <div class="metric-value" style="color: #ffffff;" dir="ltr">100% Grounded</div>
-                    <div class="metric-label"><strong>4 שכבות Guardrails + סכמות <span dir="ltr" style="white-space: nowrap;">Pydantic v2</span>:</strong> חסימת הזרקות,
+                    <div class="metric-label"><strong>4 שכבות Guardrails + סכמות <span dir="ltr"
+                                style="white-space: nowrap;">Pydantic v2</span>:</strong> חסימת הזרקות,
                         אי-ניחוש ישויות (<code>needs_clarification</code>), ומאמת מספרים
                         (<code>verify_numeric_grounding</code>)</div>
                 </div>
@@ -2036,7 +2084,9 @@
                             <td>ניתוב מילות מפתח צר (2–3 תבניות קבועות) או תשובת LLM חופשית עם fallback שקט לדגם/עיר
                                 ברירת מחדל.</td>
                             <td><strong>פייפליין Guardrails ב-4 שכבות</strong> (<bdi><code>plan_query</code></bdi> ←
-                                <bdi><code>strict=True</code></bdi> ← כלים ← <bdi><code>verify_numeric_grounding</code></bdi>) וסכמות <span dir="ltr" style="white-space: nowrap;">Pydantic v2</span>.
+                                <bdi><code>strict=True</code></bdi> ← כלים ←
+                                <bdi><code>verify_numeric_grounding</code></bdi>) וסכמות <span dir="ltr"
+                                    style="white-space: nowrap;">Pydantic v2</span>.
                             </td>
                             <td>מאפשר שאלות פתוחות (<code>"כמה אחסוך בקיה נירו?"</code>,
                                 <code>"בראשון לציון לעומת תל אביב?"</code>, <code>"רק עם קודן?"</code>), מחזיר
@@ -2165,7 +2215,8 @@
 
                 <div class="diagram-caption">
                     <strong>איור 3.1- ארכיטקטורת סוכן הביטוח Bestie:</strong> מיפוי 5 הכלים הדטרמיניסטיים, פייפליין
-                    ה-Guardrails ב-4 שכבות (<bdi><code>QueryPlan</code></bdi> ← <bdi><code>strict=True</code></bdi> ← כלים ←
+                    ה-Guardrails ב-4 שכבות (<bdi><code>QueryPlan</code></bdi> ← <bdi><code>strict=True</code></bdi> ←
+                    כלים ←
                     <bdi><code>verify_numeric_grounding</code></bdi>),
                     זרימת הבקשות הא-סינכרוניות מול ה-Web Client, והאינטגרציה עם מחשבון התרחישים ומודל ה-XGBoost.
                     <em>ניתן להשתמש בגלגלת העכבר לזום, גרירה להזזה, התאמה לחלון (↺), 1:1 או מסך מלא.</em>
