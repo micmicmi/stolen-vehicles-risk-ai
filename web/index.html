@@ -2064,13 +2064,6 @@
                 color: #B91C1C;
             }
 
-            .agent-metrics-note {
-                margin-top: 6px;
-                font-size: 0.68rem;
-                color: #475569;
-                line-height: 1.35;
-            }
-
             .agent-chat-input-row {
                 display: flex;
                 gap: 8px;
@@ -4192,7 +4185,7 @@
                 .replace(/\n/g, '<br>');
         }
 
-        function renderAgentMetricsCard(metrics, coverageNote) {
+        function renderAgentMetricsCard(metrics) {
             if (!metrics || typeof metrics !== 'object') return '';
             const annSave = Number(metrics.annual_savings_nis || 0);
             const moSave = Number(metrics.monthly_savings_nis || 0);
@@ -4229,7 +4222,6 @@
                             <span class="agent-metric-sub">${riskSign} נק׳</span>
                         </div>
                     </div>
-                    ${coverageNote ? `<div class="agent-metrics-note">${escapeHtml(coverageNote)}</div>` : ''}
                 </div>
             `;
         }
@@ -4526,7 +4518,7 @@
                     const data = await res.json();
                     if (data.reply) reply = data.reply;
                     if (data.metrics) {
-                        metricsHtml = renderAgentMetricsCard(data.metrics, data.data_coverage_note || '');
+                        metricsHtml = renderAgentMetricsCard(data.metrics);
                     }
                 }
             } catch (_) { /* offline fallback */ }
