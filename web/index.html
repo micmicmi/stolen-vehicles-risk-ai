@@ -809,6 +809,83 @@
         /* ===== RESULTS BENTO WORKSPACE ===== */
         #results-section {
             display: none;
+            scroll-margin-top: 84px;
+        }
+
+        #verdict-card {
+            scroll-margin-top: 84px;
+        }
+
+        #verdict-card.verdict-flash {
+            animation: verdictPulse 1150ms cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        @keyframes verdictPulse {
+            0% {
+                border-color: var(--accent);
+                box-shadow: 0 0 0 3px var(--accent-tint), var(--shadow-card);
+            }
+
+            100% {
+                border-color: var(--border-hairline);
+                box-shadow: var(--shadow-card);
+            }
+        }
+
+        .switch-toast {
+            position: fixed;
+            bottom: 84px;
+            left: 50%;
+            transform: translate(-50%, 12px) scale(0.96);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 115;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            max-width: calc(100vw - 28px);
+            padding: 9px 16px;
+            border-radius: var(--radius-pill);
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px) saturate(1.5);
+            -webkit-backdrop-filter: blur(24px) saturate(1.5);
+            border: 1px solid rgba(0, 85, 212, 0.22);
+            box-shadow: var(--glass-specular), var(--glass-shadow);
+            color: var(--ink-primary);
+            font-size: 0.84rem;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: opacity 220ms ease, transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        [data-theme="dark"] .switch-toast {
+            border-color: rgba(96, 165, 250, 0.32);
+        }
+
+        .switch-toast.visible {
+            opacity: 1;
+            transform: translate(-50%, 0) scale(1);
+        }
+
+        .switch-toast-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: #FFFFFF;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.72rem;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        [data-theme="dark"] .switch-toast-icon {
+            background: #60A5FA;
+            color: #05070B;
         }
 
         #results-section.visible {
@@ -1422,6 +1499,7 @@
 
         .peer-table tbody tr {
             cursor: pointer;
+            touch-action: manipulation;
             transition: background-color 120ms ease;
         }
 
@@ -1429,14 +1507,46 @@
             background: var(--bg-row-hover);
         }
 
+        .peer-table tbody tr:not(.selected-row):active td {
+            background: var(--accent-tint);
+            transition-duration: 50ms;
+        }
+
         .peer-table tbody tr:last-child td {
             border-bottom: none;
+        }
+
+        .peer-table tbody tr.selected-row {
+            cursor: default;
         }
 
         .peer-table tr.selected-row td {
             background: var(--accent-tint);
             color: var(--ink-primary);
             font-weight: 700;
+        }
+
+        .peer-model-cell {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 2px;
+        }
+
+        .peer-mobile-cue {
+            display: none;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--accent);
+            line-height: 1.2;
+        }
+
+        [data-theme="dark"] .peer-mobile-cue {
+            color: #60A5FA;
+        }
+
+        .peer-table tr.selected-row .peer-mobile-cue {
+            color: var(--ink-muted);
         }
 
         .peer-action-col {
@@ -2511,6 +2621,23 @@
                 padding: 0 16px 12px;
             }
 
+            .peer-table th,
+            .peer-table td {
+                padding: 12px 14px;
+            }
+
+            .peer-mobile-cue {
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+            }
+
+            .switch-toast {
+                bottom: calc(max(14px, env(safe-area-inset-bottom)) + 64px);
+                font-size: 0.78rem;
+                padding: 8px 14px;
+            }
+
             .bestie-cards-grid {
                 grid-template-columns: 1fr;
             }
@@ -2703,6 +2830,11 @@
         </div>
     </header>
 
+    <div class="switch-toast" id="switch-toast" role="status" aria-live="polite" aria-atomic="true">
+        <span class="switch-toast-icon" aria-hidden="true">✓</span>
+        <span id="switch-toast-text"></span>
+    </div>
+
     <main id="main-content">
         <section class="hero-header">
             <div class="hero-eyebrow">
@@ -2798,7 +2930,7 @@
         <!-- Main Results Bento Workspace -->
         <section id="results-section" aria-live="polite">
             <div class="bento-top">
-                <article class="panel">
+                <article class="panel" id="verdict-card">
                     <div class="verdict-header">
                         <div>
                             <h2 class="verdict-title" id="verdict-title">-</h2>
@@ -3455,7 +3587,7 @@
                 const btn = document.createElement('button');
                 btn.type = 'button';
                 btn.className = 'watch-card';
-                btn.onclick = () => quickPick(pair.model, pair.city);
+                btn.onclick = () => quickPick(pair.model, pair.city, { source: 'watchlist' });
                 btn.innerHTML = `
                     <div class="watch-card-top">
                         <div>
@@ -3646,14 +3778,47 @@
             document.getElementById('city-input').focus();
         }
 
-        function quickPick(modelKey, city) {
+        let switchToastTimer = null;
+
+        function showSwitchToast(modelKey, city, score) {
+            const toast = document.getElementById('switch-toast');
+            const textEl = document.getElementById('switch-toast-text');
+            if (!toast || !textEl) return;
+            const scorePart = typeof score === 'number' ? ` · ${score}/100` : '';
+            textEl.textContent = `עודכן ל: ${getHebrewModelName(modelKey)} (${city})${scorePart}`;
+            toast.classList.add('visible');
+            if (switchToastTimer) clearTimeout(switchToastTimer);
+            switchToastTimer = setTimeout(() => {
+                toast.classList.remove('visible');
+            }, 2600);
+        }
+
+        function scrollResultsIntoView() {
+            const targetEl = document.getElementById('verdict-card') || document.getElementById('results-section');
+            if (!targetEl) return;
+            const headerEl = document.querySelector('.top-bar-row');
+            const headerH = headerEl ? headerEl.getBoundingClientRect().height : 64;
+            const top = Math.max(0, window.pageYOffset + targetEl.getBoundingClientRect().top - headerH - 12);
+            const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            window.scrollTo({ top, behavior: reduceMotion ? 'auto' : 'smooth' });
+        }
+
+        function triggerVerdictArrival() {
+            const card = document.getElementById('verdict-card');
+            if (!card) return;
+            card.classList.remove('verdict-flash');
+            void card.offsetWidth;
+            card.classList.add('verdict-flash');
+        }
+
+        function quickPick(modelKey, city, options = {}) {
             selectedModel = modelKey;
             selectedCity = city;
             document.getElementById('model-input').value = getHebrewModelName(modelKey);
             document.getElementById('city-input').value = city;
             document.getElementById('model-clear').style.display = 'flex';
             document.getElementById('city-clear').style.display = 'flex';
-            runSearch();
+            runSearch(options);
         }
 
         function resolveModel(text) {
@@ -3681,7 +3846,7 @@
             return Object.keys(DATA.locations).find(k => k.replace(/-/g, ' ').includes(n)) || null;
         }
 
-        function runSearch() {
+        function runSearch(options = {}) {
             clearError();
             const mText = document.getElementById('model-input').value.trim();
             const cText = document.getElementById('city-input').value.trim();
@@ -3703,17 +3868,44 @@
             selectedModel = rModel;
             selectedCity = rCity;
 
+            const resultsEl = document.getElementById('results-section');
+            const loadingEl = document.getElementById('loading-state');
+            const alreadyVisible = resultsEl.classList.contains('visible');
+            const isContextSwitch = options.source === 'peer-table' || options.source === 'gallery';
+            const shouldScroll = isContextSwitch || options.source === 'watchlist' || Boolean(options.scrollToResults) || window.innerWidth <= 640;
+
             document.getElementById('watchlist-stage').style.display = 'none';
-            document.getElementById('results-section').classList.remove('visible');
-            document.getElementById('loading-state').classList.add('visible');
+
+            if (alreadyVisible) {
+                loadingEl.classList.remove('visible');
+                const score = renderVerdict(rModel, rCity, { resetDial: isContextSwitch });
+                if (shouldScroll) {
+                    requestAnimationFrame(() => scrollResultsIntoView());
+                }
+                if (isContextSwitch) {
+                    triggerVerdictArrival();
+                    showSwitchToast(rModel, rCity, score);
+                }
+                return;
+            }
+
+            resultsEl.classList.remove('visible');
+            loadingEl.classList.add('visible');
 
             setTimeout(() => {
-                document.getElementById('loading-state').classList.remove('visible');
-                renderVerdict(rModel, rCity);
+                loadingEl.classList.remove('visible');
+                const score = renderVerdict(rModel, rCity, { resetDial: false });
+                if (shouldScroll) {
+                    requestAnimationFrame(() => scrollResultsIntoView());
+                }
+                if (isContextSwitch) {
+                    triggerVerdictArrival();
+                    showSwitchToast(rModel, rCity, score);
+                }
             }, 180);
         }
 
-        function renderVerdict(modelKey, city) {
+        function renderVerdict(modelKey, city, options = {}) {
             const mData = DATA.models[modelKey] || getSmartModelData(modelKey);
             const cData = DATA.locations[city];
             const mKey = mData.model_clean || modelKey;
@@ -3738,6 +3930,12 @@
             dialProg.setAttribute('stroke', tier.strokeVar);
             dialProg.style.strokeDasharray = String(GAUGE_LEN);
             const offset = GAUGE_LEN * (1 - score / 100);
+            if (options.resetDial) {
+                dialProg.style.transition = 'none';
+                dialProg.style.strokeDashoffset = String(GAUGE_LEN);
+                void dialProg.getBoundingClientRect();
+                dialProg.style.transition = '';
+            }
             requestAnimationFrame(() => {
                 dialProg.style.strokeDashoffset = offset.toFixed(1);
             });
@@ -3782,6 +3980,7 @@
             updateFormulaBreakdown(modelKey, city, mData, cData, mRisk, cRisk, mContrib, cContrib, macroContrib, score);
 
             document.getElementById('results-section').classList.add('visible');
+            return score;
         }
 
         function renderCharts(modelKey, mData, city, cData) {
@@ -3904,9 +4103,15 @@
                 const tr = document.createElement('tr');
                 const isSelected = p.display_name === mData.display_name;
                 if (isSelected) tr.className = 'selected-row';
+                const modelHeb = p.name_hebrew || p.display_name;
                 const cls = p.risk_score >= 70 ? 'high' : (p.risk_score >= 40 ? 'medium' : 'low');
                 tr.innerHTML = `
-                    <td>${escapeHtml(p.name_hebrew || p.display_name)}</td>
+                    <td>
+                        <div class="peer-model-cell">
+                            <span>${escapeHtml(modelHeb)}</span>
+                            <span class="peer-mobile-cue">${isSelected ? 'נבחר כעת' : 'בדוק דגם ↑'}</span>
+                        </div>
+                    </td>
                     <td>${Math.round(p.risk_score || 0)}/100</td>
                     <td><span class="risk-pill ${cls}">${levelHeb[p.risk_category] || '-'}</span></td>
                     <td>${(p.total_thefts || 0).toLocaleString()}</td>
@@ -3914,7 +4119,17 @@
                     <td class="peer-action-col">${isSelected ? 'נבחר כעת' : 'בדוק דגם ›'}</td>
                 `;
                 if (!isSelected) {
-                    tr.onclick = () => quickPick(p.display_name, city);
+                    tr.tabIndex = 0;
+                    tr.setAttribute('role', 'button');
+                    tr.setAttribute('aria-label', `בדוק דגם ${modelHeb} ב${city}`);
+                    const selectPeer = () => quickPick(p.display_name, city, { source: 'peer-table' });
+                    tr.onclick = selectPeer;
+                    tr.onkeydown = e => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            selectPeer();
+                        }
+                    };
                 }
                 tbody.appendChild(tr);
             });
@@ -4109,7 +4324,7 @@
 
         function inspectFromGallery(modelKey, city) {
             closeBestieAgentModal();
-            quickPick(modelKey, city);
+            quickPick(modelKey, city, { source: 'gallery' });
         }
 
         function consultAgentForCard(modelKey, modelHeb, city) {
