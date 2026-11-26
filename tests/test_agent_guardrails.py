@@ -42,6 +42,7 @@ client = TestClient(app)
 
 
 def test_open_ended_model_savings_and_negative_delta(monkeypatch):
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     monkeypatch.delenv("GEMINI_API_KEY", raising=False)
 
     expected = calculate_custom_savings("COROLLA", "תל אביב-יפו", target_model="NIRO")
@@ -107,6 +108,7 @@ def test_open_ended_city_savings(monkeypatch):
 
 
 def test_specific_mitigation_measure_without_short_city_collision(monkeypatch):
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     monkeypatch.delenv("GEMINI_API_KEY", raising=False)
 
     single_mit = simulate_mitigation_discount(
@@ -211,6 +213,7 @@ def test_post_generation_numeric_verifier_blocks_hallucination(monkeypatch):
     fake_genai_bad = types.SimpleNamespace(Client=lambda api_key: types.SimpleNamespace(models=fake_bad_models))
     fake_google_bad = types.SimpleNamespace(genai=fake_genai_bad)
 
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     monkeypatch.setenv("GEMINI_API_KEY", "fake-key")
     monkeypatch.setitem(sys.modules, "google", fake_google_bad)
     monkeypatch.setitem(sys.modules, "google.genai", fake_genai_bad)
@@ -315,3 +318,41 @@ def test_followup_history_and_query_plan_schema_whitelist(monkeypatch):
     assert fdata["status"] == "answered"
     assert fdata["intent"] == IntentEnum.compare_model_savings.value
     assert "נירו" in (fdata["metrics"]["target_model_he"] or "")
+
+
+def test_openai_primary_llm_path_and_verifier_fallback(monkeypatch):
+    """מוודא שמסלול OpenAI כברירת מחדל מאומת ב-Layer 4 ומפעיל fallback בהזיה מספרית."""
+    monkeypatch.setenv("OPENAI_API_KEY", "fake-openai-key")
+    monkeypatch.setenv("GEMINI_API_KEY", "fake-gemini-key")
+
+    det = calculate_custom_savings("COROLLA", "תל אביב-יפו", target_model="NIRO")
+    exact_save = det["metrics"]["annual_savings_nis"]
+
+    # 1. Mock תקין של OpenAI -> עובר Layer 4 ומחזיר engine='openai_verified'
+    monkeypatch.setattr(
+        "src.agent._generate_openai_reply",
+        lambda prompt, api_key, model_name="gpt-4o-mini": f"מעבר מטויוטה קורולה לקיה נירו בתל אביב חוסך ₪{exact_save:,} בשנה.",
+    )
+    ok_res = client.post(
+        "/agent/chat",
+        json={"message": "כמה אחסוך אם אעבור מקורולה לקיה נירו בתל אביב?", "model": "טויוטה קורולה", "city": "תל אביב-יפו"},
+    )
+    assert ok_res.status_code == 200
+    ok_body = ok_res.json()
+    assert ok_body["engine"] == "openai_verified"
+    assert "numeric_output_verified" in ok_body["guardrails_passed"]
+
+    # 2. Mock הוזה של OpenAI (₪99,999) -> נפסל ב-Layer 4 ונופל לדטרמיניסטי בלי לפנות ל-Gemini
+    monkeypatch.setattr(
+        "src.agent._generate_openai_reply",
+        lambda prompt, api_key, model_name="gpt-4o-mini": "תחסוך בדיוק ₪99,999 בשנה!",
+    )
+    bad_res = client.post(
+        "/agent/chat",
+        json={"message": "כמה אחסוך אם אעבור מקורולה לקיה נירו בתל אביב?", "model": "טויוטה קורולה", "city": "תל אביב-יפו"},
+    )
+    assert bad_res.status_code == 200
+    bad_body = bad_res.json()
+    assert bad_body["engine"] == "deterministic_grounded"
+    assert "99,999" not in bad_body["reply"]
+    assert "numeric_verifier_fallback_triggered" in bad_body["guardrails_passed"]

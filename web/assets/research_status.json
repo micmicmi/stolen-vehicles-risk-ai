@@ -64,5 +64,29 @@
   "insurance": {
     "status": "simulation_only",
     "disclaimer": "Reference-driver pricing simulation; no insurer or Bestie quote is fetched."
+  },
+  "agent_evaluation": {
+    "runner": "src/agent_eval.py",
+    "dataset": "evals/golden_dataset.json",
+    "results_artifact": "evals/agent_eval_results.json",
+    "pytest_count": 38,
+    "golden_pass_rate": 0.8571,
+    "golden_passed": 30,
+    "golden_total": 35,
+    "schema_valid_rate": 1.0,
+    "verifier_stress_recall": 1.0,
+    "verifier_false_alarm_rate": 0.0,
+    "auto_compare_pass_rate": 1.0,
+    "live_llm_judge_status": "executed",
+    "agent_provider": "openai",
+    "agent_model": "gpt-4o-mini",
+    "live_llm_verified_count": 5,
+    "live_llm_sample_size": 6,
+    "judge_provider": "openai",
+    "judge_model": "gpt-4o-mini",
+    "judge_sample_evaluated": 6,
+    "judge_mean_faithfulness": 4.67,
+    "judge_mean_numeric_consistency": 4.5,
+    "judge_mean_clarity_he": 4.83
   }
 }

@@ -1,9 +1,18 @@
-"""Leakage-safe, one-step-ahead backtest for CarTheftRisk.
+"""
+temporal_validation.py
+======================
+בדיקת אימות כרונולוגית צעד אחד קדימה (One-Step-Ahead Chronological Backtest) נטולת זליגת מידע (Leakage-Safe).
 
-Train on 2023 observations to predict 2024 theft counts and evaluate only on
-2025.  It deliberately excludes the composite risk score, population and
-corridor-proximity fields: in the current notebook those fields are either
-calculated over the full period or may be simulated.
+עקרון הפעולה המדעי:
+-------------------
+כדי למנוע זליגת מידע (Data Leakage) מהעתיד אל העבר, המודל מתאמן אך ורק על תצפיות עבר:
+- מערך האימון (Train): משתמש בתצפיות שנת 2023 (lag_thefts) כמשתנה מנבא עבור שנת היעד 2024.
+- מערך המבחן (Test): משתמש בתצפיות שנת 2024 (lag_thefts) ומבצע חיזוי והערכה בלבד על שנת היעד 2025.
+
+החרגת פיצ'רים מוטים (Banned Features):
+--------------------------------------
+המודל מונע בכוונה שימוש בציוני סיכון מורכבים, נתוני אוכלוסייה מודרניים או קרבה למסדרונות הברחה,
+מכיוון ששדות אלו חושבו על כל תקופת הזמן יחד או מכילים סימולציה, ושימוש בהם עלול לגרום לאופטימיות כוזבת.
 """
 
 from __future__ import annotations
@@ -18,7 +27,9 @@ import xgboost as xgb
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
-
+# ==============================================================================
+# נתיבי קבצי קלט, פלט, מודלים, דוחות וגרפים
+# ==============================================================================
 ROOT = Path(__file__).resolve().parents[1]
 INPUT = ROOT / "data" / "processed" / "merged_clean.csv"
 OUTPUT = ROOT / "models" / "temporal_backtest_final.json"
@@ -35,17 +46,16 @@ LEGACY_CHART = ROOT / "web" / "assets" / "charts" / "temporal_backtest_v9.png"
 SCATTER_CHART = ROOT / "web" / "assets" / "charts" / "temporal_actual_vs_pred_final.png"
 LEGACY_SCATTER_CHART = ROOT / "web" / "assets" / "charts" / "temporal_actual_vs_pred_v9.png"
 
-
+# רשימת המשתנים המנבאים (Features) המורשים והמאומתים
 FEATURES = [
-    "model_year",
-    "lag_thefts",
-    "city_detection_rate",
-    "city_unsolved_rate",
-    "city_cases_total",
+    "model_year",           # שנת ייצור הרכב
+    "lag_thefts",           # כמות גניבות היסטורית בשנה הקודמת
+    "city_detection_rate",  # שיעור פענוח ותפיסת חשודים בעיר
+    "city_unsolved_rate",   # שיעור תיקי גניבה לא מפוענחים בעיר
+    "city_cases_total",     # סך תיקי הפשיעה הרשומים בעיר
 ]
 
-# Contract: every feature must have been observable by the prediction cutoff.
-# Do not add derived full-period scores or simulated enrichments here.
+# חוזה אימות: אסור בשום אופן לכלול תכונות שנמדדו או חושבו בדיעבד
 BANNED_FEATURES = {
     "risk_score",
     "model_risk_score",
@@ -56,6 +66,10 @@ BANNED_FEATURES = {
 
 
 def _metrics(actual: pd.Series, predicted: np.ndarray) -> dict[str, float]:
+    """
+    חישוב מדדי איכות הרגרסיה (MAE, RMSE, R^2).
+    חוסם תחזיות שליליות (np.maximum(0, predicted)) כדי לוודא ספירה הגיונית.
+    """
     predicted = np.maximum(0, predicted)
     return {
         "mae": round(float(mean_absolute_error(actual, predicted)), 4),
@@ -65,10 +79,13 @@ def _metrics(actual: pd.Series, predicted: np.ndarray) -> dict[str, float]:
 
 
 def _mae_confidence_interval(actual: pd.Series, predicted: np.ndarray) -> dict[str, float]:
-    """Deterministic bootstrap interval for holdout MAE."""
+    """
+    חישוב רווח סמך של 95% ל-MAE באמצעות Bootstrap דטרמיניסטי.
+    מבצע 400 דגימות חוזרות עם החזרה כדי לאמוד את טווח השגיאה הסביר.
+    """
     actual_values = actual.to_numpy(dtype=float)
     predicted_values = np.maximum(0, np.asarray(predicted, dtype=float))
-    rng = np.random.default_rng(42)
+    rng = np.random.default_rng(42)  # Seed קבוע לשחזוריות מלאה
     samples = np.empty(400, dtype=float)
     for index in range(len(samples)):
         rows = rng.integers(0, len(actual_values), size=len(actual_values))
@@ -80,7 +97,10 @@ def _mae_confidence_interval(actual: pd.Series, predicted: np.ndarray) -> dict[s
 
 
 def _feature_drift(train: pd.DataFrame, test: pd.DataFrame) -> dict[str, float]:
-    """Descriptive feature drift; it is not a causal or production monitor."""
+    """
+    מדידת סטיית תכונות (Feature Drift) בין תקופת האימון לתקופת המבחן.
+    מנרמל את ההפרש בממוצע לפי סטיית התקן של הבסיס.
+    """
     drift = {}
     for feature in FEATURES:
         baseline_std = float(train[feature].std()) or 1.0
@@ -89,6 +109,14 @@ def _feature_drift(train: pd.DataFrame, test: pd.DataFrame) -> dict[str, float]:
 
 
 def run_backtest() -> dict:
+    """
+    מריץ את תהליך האימות הכרונולוגי המלא:
+    1. קורא את מאגר הנתונים המעובד ובודק שלמות עמודות.
+    2. מפצל למערך אימון (למידה על 2023->2024) ומערך מבחן (חיזוי 2024->2025).
+    3. מאמן מודל XGBoost Poisson Regressor ושומר את המשקולות.
+    4. משווה ביצועים מול מודלי בסיס: התמדה (Persistence) וחציון (Median Baseline).
+    5. מייצר קבצי תוצאות, ציוני סיכון מעודכנים וגרפי אבחון לממשק המשתמש.
+    """
     if BANNED_FEATURES.intersection(FEATURES):
         raise ValueError("Leakage-prone or simulated feature included in v9")
     raw = pd.read_csv(INPUT)
@@ -100,16 +128,16 @@ def run_backtest() -> dict:
     if missing:
         raise ValueError(f"Missing required columns: {sorted(missing)}")
 
-    # Values from police-case history are fixed at the pre-2024 cutoff.  All
-    # nonnumeric values become zero only after explicit coercion.
+    # המרת ערכים למספרים והחלפת ערכים חסרים באפסים
     frame = raw.copy()
     for column in required:
         frame[column] = pd.to_numeric(frame[column], errors="coerce").fillna(0.0)
 
+    # פיצול כרונולוגי צעד אחד קדימה
     train = frame.assign(lag_thefts=frame["thefts_2023"], target=frame["thefts_2024"])
     test = frame.assign(lag_thefts=frame["thefts_2024"], target=frame["thefts_2025"])
 
-    # Poisson is trained on raw non-negative counts, not on log1p(counts).
+    # אימון מודל רגרסיית פואסון המותאם לספירת מאורעות נדירים
     model = xgb.XGBRegressor(
         objective="count:poisson",
         n_estimators=300,
@@ -124,6 +152,7 @@ def run_backtest() -> dict:
     prediction = model.predict(test[FEATURES])
     model.save_model(MODEL_OUTPUT)
 
+    # חישוב מדדי ביצועים והשוואה למודלי בסיס
     xgb_metrics = _metrics(test["target"], prediction)
     xgb_metrics.update(_mae_confidence_interval(test["target"], prediction))
     persistence_metrics = _metrics(test["target"], test["lag_thefts"].to_numpy())
@@ -178,13 +207,13 @@ def run_backtest() -> dict:
         encoding="utf-8",
     )
 
-    # `data.json` remains the single web lookup dataset. Load it first so model/city
-    # lookups and official city_unified keys align with the web UI.
+    # טעינת מאגר הווב data.json למיפוי וסנכרון שמות דגמים וערים
     web_data = json.loads(DATA_PATH.read_text(encoding="utf-8"))
 
     def _normalize_city_name(city_name: str) -> str:
         return re.sub(r"\s+", " ", str(city_name or "").replace("-", " ")).strip()
 
+    # בניית מילוני מיפוי לסיכוני דגמים וערים
     model_risk_lookup: dict[str, float] = {}
     for m_info in web_data.get("models", {}).values():
         mc = m_info.get("model_clean")
@@ -210,6 +239,7 @@ def run_backtest() -> dict:
             c_str, city_unified_lookup.get(_normalize_city_name(c_str), c_str)
         )
 
+    # צבירת תחזיות עבור שילוב דגם-עיר (אגרגציה על פני כל השנתונים)
     agg_frame = pd.DataFrame(
         {
             "model_clean": test["model_clean"].astype(str),
@@ -223,6 +253,7 @@ def run_backtest() -> dict:
         observed_thefts_2024=("obs_2024", "sum"),
     )
 
+    # שקלול ציון סיכון משולב (50% דגם, 45% עיר, 5% בסיס)
     scores = {}
     for row in combo_agg.itertuples(index=False):
         key = f"{row.model_clean}|{row.city_unified}"
@@ -244,6 +275,8 @@ def run_backtest() -> dict:
         json.dumps({"version": "v9", "status": "research_only", "scores": scores}, ensure_ascii=False),
         encoding="utf-8",
     )
+
+    # עדכון מטא-דאטה במאגר הווב
     original_metadata = web_data.get("metadata", {})
     web_data["metadata"] = {
         "pipeline_version": "CarTheftRisk_final",
@@ -256,9 +289,7 @@ def run_backtest() -> dict:
         "data_cutoff_for_prediction": "2024 observed counts; evaluated against 2025",
         "disclaimer": "Research-only annual count estimate. Not an individual theft forecast or insurance quote.",
     }
-    # Embed the same final-overlaid lookup for `file://` usage. This is a delivery
-    # fallback, not a second source of truth: it is regenerated from web_data on
-    # every backtest run.
+    # עדכון שילוב דגם-מיקום עבור קובץ הווב
     existing_ml = web_data.get("model_location", {})
     web_data["model_location"] = {
         k: v
@@ -300,6 +331,7 @@ def run_backtest() -> dict:
         encoding="utf-8",
     )
 
+    # הפקת תרשים עמודות: השוואת מדד MAE בין המודלים
     labels = ["XGBoost\nPoisson", "Persistence", "Median\nbaseline"]
     values = [result["xgboost_poisson"]["mae"], result["persistence_baseline"]["mae"], result["median_baseline"]["mae"]]
     colors = ["#2563eb", "#94a3b8", "#f59e0b"]
@@ -319,7 +351,7 @@ def run_backtest() -> dict:
     fig.savefig(LEGACY_CHART, bbox_inches="tight")
     plt.close(fig)
 
-    # A compact diagnostic: prediction quality across the 2025 holdout.
+    # הפקת תרשים פיזור (Scatter Plot): תצפיות בפועל מול חיזוי
     sample = pd.DataFrame({"actual": test["target"], "predicted": np.maximum(0, prediction)}).sample(
         min(3_000, len(test)), random_state=42
     )

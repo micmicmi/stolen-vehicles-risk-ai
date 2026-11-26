@@ -7,17 +7,20 @@
   - **Track 1 (Count Champion):** `XGBoost Poisson (max_depth=3, Offset log(0.75))` על מבחן עיוור 2025 (`n=16,853`, 9 חודשים): `MAE = 0.4776`, `RMSE = 1.2898`, `R² = +0.1984`, `Poisson Deviance = 0.9690`, `Tail MAE = 8.6687`, `Spearman ρ = 0.4089`, נתח עשירון עליון `D10 = 58.18%`.
   - **Track 2 (Continuous 0–100 Champion):** `Random Forest Regressor` (תקרת אימון 2024 בלבד): `R² = +0.3157`, `MAE = 5.5951`.
   - **5 מאפייני ML נקיים מזליגה:** `['model_year', 'lag_1_thefts', 'city_lag_1_thefts', 'city_detection_rate', 'city_unsolved_rate']`.
-- **חוזה הריצה המאוחד (Final Runtime Contract):** `CarTheftRisk_final.ipynb` + `src/temporal_validation.py` מזינים את `web/assets/data.json` ו-`web/assets/final_scores.json` עבור `web/index.html`, `src/api.py` וסוכן ה-AI (`src/agent.py`, `src/agent_schemas.py`, `src/agent_tools.py`), ומוגנים ב-32 בדיקות `pytest`. גרסה 9 הועברה רשמית לארכיון (`archive/notebooks/`).
+- **חוזה הריצה המאוחד (Final Runtime Contract):** `CarTheftRisk_final.ipynb` + `src/temporal_validation.py` מזינים את `web/assets/data.json` ו-`web/assets/final_scores.json` עבור `web/index.html`, `src/api.py` וסוכן ה-AI (`src/agent.py` בתצורת OpenAI-First מעל `gpt-4o-mini`, `src/agent_schemas.py`, `src/agent_tools.py`), ומוגנים ב-**38 בדיקות `pytest`** + חבילת **Agent Evaluation** (`src/agent_eval.py`, `evals/golden_dataset.json`, `evals/agent_eval_results.json`: `85.7%` Golden, `100%` Verifier Stress, `100%` Auto-Compare, `5/6` Live `openai_verified`, וציוני Judge `4.67 / 4.50 / 4.83`). גרסה 9 הועברה רשמית לארכיון (`archive/notebooks/`).
 
 ## Standard Commands
 ```powershell
-# 1. הרצת 32 בדיקות המערכת
+# 1. הרצת 38 בדיקות המערכת
 python -X utf8 -m pytest -v
 
-# 2. הפעלת שרת FastAPI
+# 2. הרצת הערכת איכות ואמינות הסוכן (Golden Dataset + Stress + Live .env)
+python -X utf8 -m src.agent_eval
+
+# 3. הפעלת שרת FastAPI
 python -X utf8 -m uvicorn src.api:app --reload
 
-# 3. הגשת אפליקציית ה-Web והדוחות
+# 4. הגשת אפליקציית ה-Web והדוחות
 python -X utf8 -m http.server 8080 --directory web
 ```
 

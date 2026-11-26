@@ -1,9 +1,14 @@
 """
 agent_tools.py
 ==============
-Deterministic research toolset for the CarTheftRisk AI Agent (v9).
-Theft estimates use `web/assets/v9_scores.json` and the v9 XGBoost artifact.
-Insurance prices are a reference-driver simulation, not live insurer quotes.
+ערכת הכלים הדטרמיניסטית של סוכן ה-AI לניתוח סיכוני גניבה והשוואת ביטוח Bestie (CarTheftRisk).
+
+תפקיד המודול:
+-------------
+1. ביצוע חישובים אקטואריים וסטטיסטיים מדויקים (ללא שום שימוש ב-LLM לצורך חישובים מתמטיים).
+2. חילוץ ומיפוי שמות דגמים וערים בעברית ובאנגלית בצורה קפדנית (Strict Entity Resolution).
+3. סימולציית מחירי ביטוח מקיף וחובה מול חברות הביטוח המובילות בישראל בהתבסס על פרופיל נהג ייחוס.
+4. איתור חלופות רכב בטוחות וזולות יותר וחישוב השפעת התקנת אמצעי מיגון שונים.
 """
 from __future__ import annotations
 
@@ -17,6 +22,9 @@ from typing import Any
 import numpy as np
 import xgboost as xgb
 
+# ==============================================================================
+# הגדרת נתיבי מערכת לקבצי נתונים ומודלים
+# ==============================================================================
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MODEL_PATH = os.path.join(BASE_DIR, "models", "xgb_theft_regressor.json")
 CARD_PATH = os.path.join(BASE_DIR, "models", "model_card.json")
@@ -24,6 +32,10 @@ V9_SCORES_PATH = os.path.join(BASE_DIR, "web", "assets", "v9_scores.json")
 FINAL_SCORES_PATH = os.path.join(BASE_DIR, "web", "assets", "final_scores.json")
 DATA_PATH = os.path.join(BASE_DIR, "web", "assets", "data.json")
 
+# ==============================================================================
+# פרופיל נהג ייחוס אקטוארי קבוע (Reference Driver Profile)
+# כל סימולציות מחירי הביטוח מנורמלות לפי פרופיל זה כדי לאפשר השוואת תפוחים לתפוחים
+# ==============================================================================
 REFERENCE_DRIVER_PROFILE = {
     "age": 35,
     "license_years": 12,
@@ -33,6 +45,7 @@ REFERENCE_DRIVER_PROFILE = {
     "label_he": "נהג בן 35 · 12 שנות ותק · היעדר תביעות 3 שנים · שנתון 2025",
 }
 
+# מילות מפתח לזיהוי וסינון רכבים דו-גלגליים (אופנועים/קטנועים) כדי לוודא שמוצגים רק רכבי 4 גלגלים
 TWO_WHEELER_KEYWORDS = {
     "ADV750", "CRUISYM", "JOYRIDES125", "JOYRIDES200", "LFA3", "N.DOWNTOWN",
     "TE 250", "TMAX560", "X-MAX 300", "TMAX", "XMAX", "DOWNTOWN", "FORZA",
@@ -41,6 +54,7 @@ TWO_WHEELER_KEYWORDS = {
     "דוקאטי", "הוסקוורנה", "קטנוע", "אופנוע", "דו-גלגלי", "דו/תלת גלגלי",
 }
 
+# מילון כינויים (Aliases) לדגמי רכב נפוצים בעברית ותרגומם לשם האנגלי הרשמי
 MODEL_ALIASES = {
     "קורולה": "COROLLA",
     "טוסון": "TUCSON",
@@ -75,7 +89,7 @@ MODEL_ALIASES = {
     "CX-5": "CX-5",
 }
 
-# Pre-fetched & calibrated Bestie reference base rates by model keyword (annual comprehensive + mandatory in NIS)
+# תעריפי בסיס מכוילים של Bestie עבור דגמי עוגן פופולריים (מחיר מקיף + חובה בש"ח וחברות ביטוח מובילות)
 BESTIE_CALIBRATED_MODELS = {
     "LAND CRUISER": {"base_comp": 9800, "base_mand": 1580, "insurer": "הראל ביטוח", "alt_insurer": "הפניקס"},
     "RAV 4": {"base_comp": 6450, "base_mand": 1490, "insurer": "הפניקס", "alt_insurer": "כלל ביטוח"},
@@ -96,6 +110,7 @@ BESTIE_CALIBRATED_MODELS = {
     "CIVIC": {"base_comp": 4550, "base_mand": 1460, "insurer": "איילון ביטוח", "alt_insurer": "מנורה מבטחים"},
 }
 
+# חברות ביטוח משויכות לפי דרגות סיכון (מסיכון נמוך לגבוה מאוד)
 INSURERS_BY_TIER = [
     ("weSure", "שלמה ביטוח"),
     ("איילון ביטוח", "שומרה"),
@@ -104,6 +119,7 @@ INSURERS_BY_TIER = [
     ("הראל ביטוח", "מנורה מבטחים"),
 ]
 
+# מילון כינויים וקיצורים ליישובים וערים בישראל (למשל ר"ג, ראשל"צ, פ"ת)
 CITY_ALIASES = {
     "תל אביב": "תל אביב-יפו",
     "תל אביב יפו": "תל אביב-יפו",
@@ -117,6 +133,7 @@ CITY_ALIASES = {
     'כפ"ס': "כפר סבא",
 }
 
+# קטלוג אמצעי מיגון: אחוז הפחתת סיכון, אחוז הנחה במקיף ועלות התקנה משוערת
 MITIGATION_CATALOG = {
     "איתוראן פעיל כפול": {"risk_reduction_pct": 18, "comp_discount_pct": 12, "cost_nis": 650},
     "קודן מוגן + עלוקה": {"risk_reduction_pct": 10, "comp_discount_pct": 7, "cost_nis": 450},
@@ -124,6 +141,7 @@ MITIGATION_CATALOG = {
     "חניה פרטית סגורה / מצלמות": {"risk_reduction_pct": 12, "comp_discount_pct": 8, "cost_nis": 0},
 }
 
+# מילות נרדפות בעברית ובאנגלית לזיהוי אמצעי המיגון מתוך טקסט חופשי של המשתמש
 MITIGATION_SYNONYMS: dict[str, tuple[str, ...]] = {
     "איתוראן פעיל כפול": ("איתוראן", "איתורן", "מערכת איתור", "פוינטר", "ituran", "pointer", "gps"),
     "קודן מוגן + עלוקה": ("קודן", "עלוקה", "משבת", "אימובילייזר", "kodan"),
@@ -131,6 +149,7 @@ MITIGATION_SYNONYMS: dict[str, tuple[str, ...]] = {
     "חניה פרטית סגורה / מצלמות": ("חניה", "חנייה", "מצלמ", "חניון סגור", "שער חשמלי"),
 }
 
+# רשימת שמות מוגנים שאסור להוריד מהם אותיות ראשונות כאילו היו מיליות יחס (כגון מ/ל/ב)
 _HEB_PREFIX_WHITELIST_PROTECTED = {
     "מזדה",
     "מאזדה",
@@ -149,7 +168,10 @@ _FILLER_MODEL_WORDS = {"רכב", "הרכב", "דגם", "מכונית", "אוטו
 
 
 def extract_mitigation_measures(text: str) -> list[str]:
-    """Deterministically extracts canonical MITIGATION_CATALOG measure keys mentioned in free text."""
+    """
+    מחלץ בצורה דטרמיניסטית את שמות אמצעי המיגון המופיעים בטקסט חופשי של המשתמש.
+    בודק מול מילות המפתח והמילים הנרדפות ומחזיר רשימת מפתחות קנוניים.
+    """
     if not text:
         return []
     low = re.sub(r"\s+", " ", text.lower()).strip()
@@ -164,6 +186,7 @@ def extract_mitigation_measures(text: str) -> list[str]:
 
 @lru_cache(maxsize=1)
 def load_artifacts():
+    """טוען לזיכרון פעם אחת את מודל ה-XGBoost, כרטיס המודל ומאגר הווב."""
     with open(CARD_PATH, encoding="utf-8") as f:
         card = json.load(f)
     with open(DATA_PATH, encoding="utf-8") as f:
@@ -175,6 +198,7 @@ def load_artifacts():
 
 @lru_cache(maxsize=1)
 def load_final_scores() -> dict[str, Any]:
+    """טוען את קובץ ציוני הסיכון המחושבים מראש (final_scores.json)."""
     path = FINAL_SCORES_PATH if os.path.exists(FINAL_SCORES_PATH) else V9_SCORES_PATH
     with open(path, encoding="utf-8") as f:
         return json.load(f)["scores"]
@@ -184,6 +208,7 @@ load_v9_scores = load_final_scores
 
 
 def _norm_heb(text: str) -> str:
+    """נרמול טקסט עברי: הסרת סימני פיסוק, איחוד איותים נפוצים (מאזדה/מזדה, ניסאן/ניסן) והקטנת אותיות."""
     if not text:
         return ""
     s = str(text)
@@ -193,6 +218,7 @@ def _norm_heb(text: str) -> str:
 
 
 def _is_two_wheeler(info: dict[str, Any] | None, key: str = "") -> bool:
+    """בודק האם מדובר בכלי רכב דו-גלגלי כדי לסננו מרשימות רכב פרטי."""
     cat = (info or {}).get("category", "")
     disp = f"{key} {(info or {}).get('display_name', '')} {(info or {}).get('model_name', '')} {(info or {}).get('maker', '')}".upper()
     if "דו" in cat or "אופנוע" in cat or "קטנוע" in cat:
@@ -204,6 +230,7 @@ def _is_two_wheeler(info: dict[str, Any] | None, key: str = "") -> bool:
 
 
 def get_hebrew_display_name(model_key: str, info: dict[str, Any] | None = None) -> str:
+    """מחזיר שם תצוגה עברי נקי עבור דגם הרכב (מסיר אותיות לטיניות וסוגריים מיותרים)."""
     if info and info.get("name_hebrew"):
         return str(info["name_hebrew"]).strip()
     raw = (info or {}).get("display_name") or model_key or ""
@@ -217,6 +244,7 @@ def get_hebrew_display_name(model_key: str, info: dict[str, Any] | None = None) 
 
 
 def _prefer_canonical_model(key: str, models: dict[str, Any]) -> tuple[str, dict[str, Any]]:
+    """מעדיף את רשומת האב הקנונית בעלת כמות הגניבות הגבוהה ביותר כאשר יש פיצול."""
     entry = models[key]
     disp = entry.get("display_name")
     if disp and disp in models and not _is_two_wheeler(models[disp], disp):
@@ -226,6 +254,7 @@ def _prefer_canonical_model(key: str, models: dict[str, Any]) -> tuple[str, dict
 
 
 def _model_query_variants(norm_q: str) -> list[str]:
+    """מייצר וריאציות חיפוש עבור מחרוזת הדגם, כולל הפשטת אותיות יחס עבריות (ב/ל/מ/ה/ו)."""
     if not norm_q:
         return []
     variants = [norm_q]
@@ -240,8 +269,12 @@ def _model_query_variants(norm_q: str) -> list[str]:
 
 def resolve_model_entry(query: str, strict: bool = False) -> tuple[str, dict[str, Any]] | None:
     """
-    Resolves a vehicle model name to a `(model_key, info)` entry from `data.json`.
-    When `strict=True`, returns `None` instead of silently falling back to a default/cold-start model.
+    מפענח שם דגם רכב וממפה אותו לרשומה מאומתת ב-data.json.
+    
+    פרמטרים:
+    - query: שם הדגם שהוזן על ידי המשתמש (חופשי).
+    - strict: אם מוגדר True, לא מתבצע שום fallback שקט; במקרה של חוסר התאמה מוחזר None,
+              מה שמאפשר לסוכן לבקש הבהרה מהמשתמש במקום להמציא נתונים.
     """
     _, _, data = load_artifacts()
     models = data.get("models", {})
@@ -261,7 +294,7 @@ def resolve_model_entry(query: str, strict: bool = False) -> tuple[str, dict[str
         sorted_aliases = sorted(MODEL_ALIASES.items(), key=lambda kv: len(_norm_heb(kv[0])), reverse=True)
         for q_cand in _model_query_variants(norm_q):
             q_tokens_all = q_cand.split()
-            # 1. Exact normalized match across canonical non-pipe 4-wheel entries
+            # 1. בדיקת התאמה מדויקת מנורמלת
             exact_hits: list[tuple[str, dict[str, Any]]] = []
             for k, info in models.items():
                 if not info or "|" in k or _is_two_wheeler(info, k):
@@ -282,7 +315,7 @@ def resolve_model_entry(query: str, strict: bool = False) -> tuple[str, dict[str
                 exact_hits.sort(key=lambda item: int(item[1].get("total_thefts", 0)), reverse=True)
                 return _prefer_canonical_model(exact_hits[0][0], models)
 
-            # 2. Alias token-boundary match (all remaining non-filler tokens must also match candidate)
+            # 2. התאמת כינוי (Alias) עם גבולות מילים
             for alias_heb, alias_eng in sorted_aliases:
                 norm_alias = _norm_heb(alias_heb)
                 if not norm_alias:
@@ -309,7 +342,7 @@ def resolve_model_entry(query: str, strict: bool = False) -> tuple[str, dict[str
                         alias_hits.sort(key=lambda item: int(item[1].get("total_thefts", 0)), reverse=True)
                         return _prefer_canonical_model(alias_hits[0][0], models)
 
-            # 3. Full-token coverage match (must cover all significant tokens + at least one non-maker token)
+            # 3. התאמה לפי כיסוי מלא של כל הטוקנים המשמעותיים
             sig_tokens = [t for t in q_tokens_all if (len(t) >= 2 or t.isdigit()) and t not in _FILLER_MODEL_WORDS]
             if sig_tokens:
                 token_hits: list[tuple[str, dict[str, Any]]] = []
@@ -333,6 +366,7 @@ def resolve_model_entry(query: str, strict: bool = False) -> tuple[str, dict[str
 
         return None
 
+    # חיפוש במצב לא-קפדני (מאפשר התאמה חלקית מבוססת כינויים)
     alias_eng = ""
     for heb, eng in MODEL_ALIASES.items():
         if _norm_heb(heb) in norm_q or norm_q in _norm_heb(heb):
@@ -373,7 +407,7 @@ def resolve_model_entry(query: str, strict: bool = False) -> tuple[str, dict[str
         candidates.sort(key=lambda item: item[1].get("total_thefts", 0), reverse=True)
         return _prefer_canonical_model(candidates[0][0], models)
 
-    # Cold-start fallback based on global/maker average (non-strict mode only)
+    # ברירת מחדל להתחלה קרה (Cold-Start Fallback) - בשימוש רק במצב שאינו strict
     fallback_key = next(
         (k for k, v in models.items() if not _is_two_wheeler(v, k)),
         next(iter(models.keys())),
@@ -394,11 +428,13 @@ def resolve_model_entry(query: str, strict: bool = False) -> tuple[str, dict[str
 
 
 def _norm_city_name(text: str) -> str:
+    """מנרמל שם יישוב ומחליף מקפים ברווחים."""
     s = re.sub(r"[-–]+", " ", text or "")
     return re.sub(r"\s+", " ", s).strip()
 
 
 def _city_query_variants(raw: str) -> list[str]:
+    """מייצר וריאציות של שם היישוב עם ובלי אותיות יחס (ב/ל/מ/ה/ו)."""
     clean = re.sub(r"\s+", " ", (raw or "").strip())
     if not clean:
         return []
@@ -414,8 +450,8 @@ def _city_query_variants(raw: str) -> list[str]:
 
 def resolve_city_entry(query: str, strict: bool = False) -> tuple[str, dict[str, Any]] | None:
     """
-    Resolves a municipality/city name to a `(city_key, info)` entry from `data.json`.
-    When `strict=True`, returns `None` instead of falling back to Tel Aviv-Yafo.
+    מפענח שם עיר או רשות מקומית מול מאגר הווב.
+    במצב strict=True, מחזיר None אם העיר אינה קיימת ומאומתת, במקום ברירת מחדל לתל אביב.
     """
     _, _, data = load_artifacts()
     locations = data.get("locations", {})
@@ -455,6 +491,7 @@ def resolve_city_entry(query: str, strict: bool = False) -> tuple[str, dict[str,
     if strict:
         return None
 
+    # התאמה חלקית עבור מצב לא קפדני
     norm_q = _norm_city_name(raw)
     partial_matches = []
     for k, info in locations.items():
@@ -478,7 +515,7 @@ def resolve_city_entry(query: str, strict: bool = False) -> tuple[str, dict[str,
 
 
 def suggest_similar_models(query: str, limit: int = 5) -> list[str]:
-    """Returns canonical Hebrew vehicle model names closest to `query` or top mainstream models."""
+    """מחזיר רשימת דגמי רכב מאומתים הקרובים ביותר לשאילתת המשתמש (לשימוש בשאלת הבהרה)."""
     _, _, data = load_artifacts()
     models = data.get("models", {})
     by_heb: dict[str, int] = {}
@@ -525,7 +562,7 @@ def suggest_similar_models(query: str, limit: int = 5) -> list[str]:
 
 
 def suggest_similar_cities(query: str, limit: int = 5) -> list[str]:
-    """Returns verified Israeli municipality names closest to `query` or top cities by theft count."""
+    """מחזיר רשימת יישובים מאומתים הקרובים ביותר לשאילתה (לשימוש בשאלת הבהרה)."""
     _, _, data = load_artifacts()
     locations = data.get("locations", {})
     ranked_cities = [
@@ -553,10 +590,16 @@ def suggest_similar_cities(query: str, limit: int = 5) -> list[str]:
     return suggestions
 
 
+# ==============================================================================
+# כלי 1 (Tool 1): חיזוי סיכון גניבה מבוסס מודל XGBoost וציון משולב
+# ==============================================================================
 def get_vehicle_risk(model: str, city: str, model_year: int = 2022) -> dict[str, Any]:
     """
-    Tool 1: Returns the grounded ML theft prediction (XGBoost Regressor) and combined
-    risk profile for a given (model, city, model_year).
+    כלי 1: מחשב את פרופיל הסיכון המקיף עבור שילוב (דגם, עיר, שנתון).
+    משלב:
+    1. ציון סיכון מורכב (Composite Risk Score) בסולם 10-100: 50% דגם, 45% עיר, 2.5 נקודות בסיס.
+    2. חיזוי כמות גניבות שנתית צפויה באמצעות מודל XGBoost Poisson Regressor.
+    3. רמת סיכון מילולית בעברית (נמוכה / בינונית / גבוהה / גבוהה מאוד).
     """
     xgb_model, card, data = load_artifacts()
     model_key, m_info = resolve_model_entry(model)
@@ -584,6 +627,7 @@ def get_vehicle_risk(model: str, city: str, model_year: int = 2022) -> dict[str,
         else "Option B composite risk (cold-start calculated)"
     )
 
+    # הכנת הפיצ'רים למודל ה-XGBoost
     features = {
         "model_year": int(model_year),
         "growth_factor": float(m_info.get("growth_rate", 0.0)),
@@ -599,6 +643,7 @@ def get_vehicle_risk(model: str, city: str, model_year: int = 2022) -> dict[str,
     live_xgb_pred = float(max(0.0, xgb_model.predict(x)[0]))
     oof_annual_pred = float(combo.get("count", combo.get("estimated_thefts_2025", live_xgb_pred))) if combo else round(live_xgb_pred, 2)
 
+    # סיווג רמת סיכון מילולית
     if combined_score >= 75:
         risk_level_he = "גבוהה מאוד"
     elif combined_score >= 50:
@@ -630,6 +675,9 @@ def get_vehicle_risk(model: str, city: str, model_year: int = 2022) -> dict[str,
     }
 
 
+# ==============================================================================
+# כלי 2 (Tool 2): סימולציית תמחור ביטוח Bestie (מקיף + חובה + מיגון)
+# ==============================================================================
 def fetch_bestie_insurance_quotes(
     model: str,
     city: str,
@@ -637,16 +685,20 @@ def fetch_bestie_insurance_quotes(
     category: str | None = None,
 ) -> dict[str, Any]:
     """
-    Tool 2: Hybrid Bestie Insurance Aggregator Quote Engine.
-    Computes realistic Bestie market quotes (comprehensive + mandatory + insurer +
-    protection requirements) for the standard reference driver profile.
+    כלי 2: מנוע סימולציית הצעות מחיר מקיף וחובה מפלטפורמת Bestie עבור נהג ייחוס.
+    מחשב:
+    - עלות ביטוח מקיף שנתית (מותאמת לרמת הסיכון ופופולריות הדגם).
+    - עלות ביטוח חובה שנתית.
+    - סך העלות השנתית הכוללת.
+    - חברות ביטוח מובילות המציעות את המחיר האטרקטיבי ביותר.
+    - דרישות המיגון ההכרחיות (קודן / עלוקה / איתוראן כפול).
     """
     risk_data = get_vehicle_risk(model, city)
     eff_risk = float(risk_score) if risk_score is not None else float(risk_data["combined_risk_score"])
     eff_cat = category or risk_data["category"]
     disp_up = risk_data["model_display"].upper()
 
-    # Match calibrated Bestie base or derive from category + risk
+    # בדיקה האם הדגם מופיע בטבלת הדגמים המכוילים
     matched_cal = None
     for kw, cal in BESTIE_CALIBRATED_MODELS.items():
         if kw in disp_up:
@@ -671,10 +723,9 @@ def fetch_bestie_insurance_quotes(
     base_comp = matched_cal["base_comp"] if matched_cal else cat_base_map.get(eff_cat, 3900)
     base_mand = matched_cal["base_mand"] if matched_cal else 1450
 
-    # Reference-driver simulation. No insurer, Bestie, or municipal pricing feed is queried.
+    # התאמת המחיר לפי מקדם הסיכון האקטוארי
     risk_factor = 0.72 + (eff_risk / 100.0) * 0.68
     if matched_cal:
-        # Calibrated models already encode model popularity; adjust smoothly for city & risk delta
         comp_nis = int(round((base_comp * (0.82 + (eff_risk / 100.0) * 0.36)) / 50.0) * 50)
     else:
         comp_nis = int(round((base_comp * risk_factor) / 50.0) * 50)
@@ -687,6 +738,7 @@ def fetch_bestie_insurance_quotes(
     leading_insurer = matched_cal["insurer"] if matched_cal else default_insurer
     second_insurer = matched_cal["alt_insurer"] if matched_cal else default_alt
 
+    # קביעת דרישות המיגון של חברת הביטוח בהתאם לציון הסיכון
     if eff_risk >= 75:
         protection = "איתוראן פעיל כפול + קודן + עלוקה"
     elif eff_risk >= 55:
@@ -718,10 +770,13 @@ def fetch_bestie_insurance_quotes(
     }
 
 
+# ==============================================================================
+# כלי 3 (Tool 3): איתור חלופות רכב בטוחות וזולות יותר לביטוח באותה קטגוריה
+# ==============================================================================
 def compare_alternatives(model: str, city: str, top_k: int = 3) -> dict[str, Any]:
     """
-    Tool 3: Finds top_k alternative 4-wheel vehicles in the same category with lower
-    theft risk and lower Bestie insurance quotes in the selected city.
+    כלי 3: מאתר ומדרג רכבים חלופיים באותה קטגוריה בעלי סיכון גניבה מופחת וחיסכון בעלויות ביטוח.
+    מבטיח שהחלופות המוצגות הן רכבי 4 גלגלים פופולריים ובעלי נוכחות אמיתית בכביש.
     """
     _, _, data = load_artifacts()
     base_risk = get_vehicle_risk(model, city)
@@ -737,7 +792,7 @@ def compare_alternatives(model: str, city: str, top_k: int = 3) -> dict[str, Any
     base_total_nis = base_quote["total_annual_nis"]
     base_heb = base_risk["model_hebrew"]
 
-    # Collect canonical 4-wheel candidates in the same category
+    # סינון דגמים מאותה קטגוריה עם לפחות 25 גניבות היסטוריות (רכבים נפוצים)
     seen_heb = {base_heb}
     pool = []
     for k, info in data.get("models", {}).items():
@@ -751,7 +806,6 @@ def compare_alternatives(model: str, city: str, top_k: int = 3) -> dict[str, Any
             continue
         cat = info.get("category", "פרטי")
         thefts = int(info.get("total_thefts", 0))
-        # Ensure we pick recognizable mainstream vehicles (with real road presence)
         if thefts < 25:
             continue
         pool.append((k, info, cat))
@@ -773,15 +827,14 @@ def compare_alternatives(model: str, city: str, top_k: int = 3) -> dict[str, Any
             risk_score=cand_score,
             category=cat,
         )
-        # Guarantee that alternatives shown to the user have lower risk & lower insurance cost
-        # when the selected vehicle has medium/high risk
         savings_nis = base_total_nis - cand_quote["total_annual_nis"]
         risk_diff = base_score - cand_score
+        # בדיקה שהחלופה אכן מפחיתה סיכון ומוזילה ביטוח
         if risk_diff > 0 and savings_nis > 0:
             seen_heb.add(heb)
             scored_candidates.append((savings_nis, risk_diff, cand_risk, cand_quote))
 
-    # Sort by meaningful savings and mainstream relevance (prefer 20-45 risk score sweet spot)
+    # מיון לפי גובה החיסכון והתאמה לקבוצת הסיכון המאוזנת (20-45 נקודות)
     scored_candidates.sort(
         key=lambda x: (
             1 if 18 <= x[2]["combined_risk_score"] <= 48 else 0,
@@ -791,10 +844,8 @@ def compare_alternatives(model: str, city: str, top_k: int = 3) -> dict[str, Any
         reverse=True,
     )
 
-    # If selected vehicle is already low-risk or few candidates met both criteria,
-    # find peers with lower or equal theft risk (never suggest higher-risk vehicles)
+    # אם הרכב הנבחר כבר בעל סיכון נמוך ואין מספיק חלופות זולות יותר
     if len(scored_candidates) < top_k:
-        # Sort remaining pool by lowest risk first
         remaining = []
         seen_cand_heb = set()
         for k, info, cat in same_cat:
@@ -822,7 +873,6 @@ def compare_alternatives(model: str, city: str, top_k: int = 3) -> dict[str, Any
             savings_nis = base_total_nis - cand_quote["total_annual_nis"]
             risk_diff = max(0, base_score - cand_score)
             if savings_nis <= 0:
-                # Honest reporting: Lower risk does not guarantee cheaper insurance across different segments
                 savings_nis = 0
             scored_candidates.append((savings_nis, risk_diff, cand_risk, cand_quote))
             if len(scored_candidates) >= top_k:
@@ -861,14 +911,20 @@ def compare_alternatives(model: str, city: str, top_k: int = 3) -> dict[str, Any
     }
 
 
+# ==============================================================================
+# כלי 4 (Tool 4): סימולציית הנחת ביטוח והפחתת סיכון באמצעות אמצעי מיגון
+# ==============================================================================
 def simulate_mitigation_discount(
     model: str,
     city: str,
     measures: list[str] | None = None,
 ) -> dict[str, Any]:
     """
-    Tool 4: Calculates actuarial risk reduction and estimated Bestie comprehensive
-    insurance discount when installing anti-theft protection measures.
+    כלי 4: מחשב את השפעת התקנת אמצעי מיגון (קודן, איתוראן כפול, מנעול הגה, חניה סגורה).
+    מחשב:
+    - ירידה באחוז הסיכון של הרכב (עד תקרה של 40%).
+    - גובה ההנחה השנתית בביטוח המקיף ב-Bestie (עד תקרה של 25%).
+    - העלות השנתית המעודכנת לאחר שקלול המיגון.
     """
     quote = fetch_bestie_insurance_quotes(model, city)
     chosen = measures or list(MITIGATION_CATALOG.keys())[:3]
@@ -882,7 +938,6 @@ def simulate_mitigation_discount(
         canonical = m
         spec = MITIGATION_CATALOG.get(canonical)
         if not spec:
-            # Fuzzy match
             for k, v in MITIGATION_CATALOG.items():
                 if m in k or k in m:
                     spec = v
@@ -894,6 +949,7 @@ def simulate_mitigation_discount(
             total_comp_disc_pct += spec["comp_discount_pct"]
             applied_details.append({"measure": canonical, **spec})
 
+    # הגבלת מקסימום אחוזי הפחתה כדי לשמור על ריאליזם אקטוארי
     total_risk_red_pct = min(40, total_risk_red_pct)
     total_comp_disc_pct = min(25, total_comp_disc_pct)
 
@@ -914,6 +970,9 @@ def simulate_mitigation_discount(
     }
 
 
+# ==============================================================================
+# כלי 5 (Tool 5): חישוב חיסכון מותאם אישית (Custom Savings Calculator)
+# ==============================================================================
 def calculate_custom_savings(
     base_model: str,
     base_city: str,
@@ -922,9 +981,11 @@ def calculate_custom_savings(
     measures: list[str] | None = None,
 ) -> dict[str, Any]:
     """
-    Tool 5: Deterministically calculates exact risk and annual/monthly Bestie simulation deltas
-    between a base (model, city) and a custom target (model, city, and/or mitigation measures).
-    Never clamps negative savings to zero so cost increases are reported transparently.
+    כלי 5: מחשב בצורה דטרמיניסטית מדויקת את פערי הסיכון והעלויות בין שילוב בסיס לשילוב יעד:
+    - מעבר לדגם אחר (target_model).
+    - מעבר לעיר אחרת (target_city).
+    - התקנת אמצעי מיגון ביעד (measures).
+    חשוב: הכלי אינו חוסם חיסכון שלילי; אם היעד יקר יותר, החיסכון מוצג כשלילי (תוספת עלות) בשקיפות מלאה.
     """
     resolved_base_model = resolve_model_entry(base_model, strict=True)
     if resolved_base_model is None:
@@ -981,6 +1042,7 @@ def calculate_custom_savings(
     monthly_savings = int(round(annual_savings / 12.0))
     risk_delta_pts = int(base_risk["combined_risk_score"]) - final_target_risk
 
+    # ניסוח הערת כיסוי נתונים לשקיפות מלאה
     base_obs = "observed" in str(base_risk.get("coverage_status", "")).lower()
     target_obs = "observed" in str(target_risk.get("coverage_status", "")).lower()
     if base_obs and target_obs:

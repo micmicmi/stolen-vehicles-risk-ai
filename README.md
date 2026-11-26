@@ -3,7 +3,8 @@
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![XGBoost Poisson](https://img.shields.io/badge/Model-XGBoost%20Poisson%20(Offset%200.75)-16a34a)](notebooks/CarTheftRisk_final.ipynb)
 [![FastAPI](https://img.shields.io/badge/API-FastAPI-009688?logo=fastapi&logoColor=white)](src/api.py)
-[![Tests](https://img.shields.io/badge/Pytest-32%20Passed-brightgreen)](tests/)
+[![Tests](https://img.shields.io/badge/Pytest-38%20Passed-brightgreen)](tests/)
+[![Agent Eval](https://img.shields.io/badge/Agent%20Eval-85.7%25%20Golden%20%7C%20100%25%20Verifier-2563eb)](src/agent_eval.py)
 
 מערכת הנדסית ומחקרית לדירוג סיכון כמותי יחסי של גניבות רכב בישראל ברזולוציית **יצרן × דגם × שנתון × רשות מקומית**, המבוססת על מאגרי משטרת ישראל ומצבת כלי הרכב הרשמית של הלמ"ס (2017–2025). הפרויקט מפריד באופן חד בין **שכבת חיזוי אמפירית נקייה מזליגה (ML)** לבין **שכבת תמיכה בהחלטות וסימולציית סוכן AI (Bestie Copilot)** להדגמה מוצרית.
 
@@ -72,20 +73,25 @@ stolen-vehicles-project/
 │
 ├── src/                                         # קוד צד-שרת, ולידציה וסוכן AI
 │   ├── api.py                                   # שרת FastAPI (/health, /predict, /agent/*)
-│   ├── agent.py                                 # תזמור סוכן Tool-First היברידי מעל google-genai + 4 שכבות Guardrails
+│   ├── agent.py                                 # תזמור סוכן Tool-First מעל OpenAI gpt-4o-mini (וגיבוי Gemini) + 4 שכבות Guardrails
 │   ├── agent_schemas.py                         # סכמות Pydantic v2 קשיחות (QueryPlan, Guardrails)
 │   ├── agent_tools.py                           # 5 כלי Python דטרמיניסטיים לסימולציית Bestie
+│   ├── agent_eval.py                            # חבילת Agent Evaluation (Golden Dataset, Verifier Stress, Live OpenAI Judge)
 │   └── temporal_validation.py                   # בקרת אי-זליגה וולידציה טמפורלית לחוזה הריצה
+│
+├── evals/                                       # הערכת סוכן ה-AI (Agent Evaluation)
+│   ├── golden_dataset.json                      # 35 תרחישי זהב בעברית ב-7 קטגוריות (כולל Red Teaming)
+│   └── agent_eval_results.json                  # תוצאות מדודות (85.7% Golden, 100% Verifier, 5/6 OpenAI Live, Judge 4.67/4.5/4.83)
 │
 ├── web/                                         # ממשק המשתמש והדוחות ההנדסיים
 │   ├── index.html                               # סימולטור הסיכון וסוכן ה-AI האינטראקטיבי
 │   ├── final.html                               # דוח הפרויקט המסכם (מסונכרן ל-CarTheftRisk_final)
-│   ├── agent_report.html                        # דוח ארכיטקטורת סוכן ה-AI (Bestie Copilot)
+│   ├── agent_report.html                        # דוח ארכיטקטורת סוכן ה-AI ופרק ה-Agent Evaluation
 │   ├── stolen_vehicles_web_engineering_guide_v5.html # מדריך הנדסי ומחקרי מקיף (מהדורה 5)
 │   └── assets/                                  # קובצי data.json, final_scores.json וגרפים
 │
 ├── docs/                                        # תוכנית פרויקט (CAPSTONE_PROJECT_PLAN) ומגבלות המחקר (RESEARCH_LIMITATIONS)
-├── tests/                                       # 32 בדיקות אינטגרציה, חוזה ריצה וסוכן (pytest)
+├── tests/                                       # 38 בדיקות אינטגרציה, חוזה ריצה, סוכן ו-Agent Eval (pytest)
 └── archive/                                     # ארכיון מסודר של גרסאות קודמות וקובצי טיוטה
 ```
 
@@ -99,10 +105,16 @@ cd stolen-vehicles-project
 pip install -r requirements.txt
 ```
 
-### 2. הרצת חבילת הבדיקות האוטומטית (32 בדיקות)
+### 2. הרצת חבילת הבדיקות האוטומטית (38 בדיקות)
 בסביבת Windows מומלץ להריץ עם דגל UTF-8:
 ```powershell
 python -X utf8 -m pytest -v
+```
+
+### 3. הרצת חבילת הערכת הסוכן (Agent Evaluation Suite)
+מודדת דיוק על 35 תרחישי זהב בעברית, עמידות Layer 4 Numeric Verifier (`10/10`), אינווריאנטים של Auto-Compare (`8/8`) והרצה חיה מול Gemini מה-`.env`:
+```powershell
+python -X utf8 -m src.agent_eval
 ```
 
 ### 3. הפעלת שרת ה-API והסוכן (FastAPI)

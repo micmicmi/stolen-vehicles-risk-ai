@@ -43,6 +43,7 @@ def test_health_and_predict_endpoints():
 
 
 def test_agent_endpoints_without_and_with_gemini(monkeypatch):
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     monkeypatch.delenv("GEMINI_API_KEY", raising=False)
 
     comp = client.post("/agent/auto-compare", json={"model": "TOYOTA COROLLA", "city": "תל אביב - יפו"})

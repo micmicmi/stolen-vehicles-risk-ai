@@ -687,7 +687,7 @@
 <p>
       המערכת בנויה בחמש שכבות הנדסיות (L0–L5) ומקפידה על הפרדה נקייה בין תוצרי המחקר הקנוניים
       (<code>CarTheftRisk_final.ipynb</code> → <code>notebooks/data_final.json</code>) לבין חוזה הריצה הנעול של
-      האפליקציה והסוכן (<code>web/assets/data.json</code> תחת חוזה <code>final</code> המוגן ב-32 בדיקות אוטומטיות).
+      האפליקציה והסוכן (<code>web/assets/data.json</code> תחת חוזה <code>final</code> המוגן ב-38 בדיקות אוטומטיות וחבילת Agent Evaluation).
     </p>
 <h3 style="margin-top: 12px; font-size: 10.2pt; color: #0284c7;">6.1 חמש השכבות ההנדסיות (L0 → L5)</h3>
 <table class="modern-table" style="margin-bottom: 12px;">
@@ -742,9 +742,9 @@
 </tr>
 <tr>
 <td style="background: #f8fafc; border-right: 4px solid #0f172a; padding: 7px 12px;">
-<span style="font-weight: 800; color: #0f172a;">L5: ממשל מודלים, תיעוד ובדיקות</span>  |  מקור האמת
-          <code>SINGLE_SOURCE_OF_TRUTH.md</code> • דוח המחקר המלא <code>web/final.html</code> • מדריך זה • 32 בדיקות
-          <code>pytest</code> אוטומטיות ירוקות.
+<span style="font-weight: 800; color: #0f172a;">L5: ממשל מודלים, תיעוד, בדיקות ו-Eval</span>  |  מקור האמת
+          <code>SINGLE_SOURCE_OF_TRUTH.md</code> • דוח המחקר המלא <code>web/final.html</code> • מדריך זה • 38 בדיקות
+          <code>pytest</code> ירוקות + חבילת הערכת סוכן (<code>src/agent_eval.py</code>: 85.7% Golden, 100% Verifier, 5/6 Live OpenAI, Judge 4.67/4.5/4.83).
         </td>
 </tr>
 </table>
@@ -927,7 +927,7 @@
 <p style="margin: 0; font-size: 8.6pt; color: #334155; line-height: 1.55;">
         המודל מוכיח יכולת תעדוף שימושית: עשירון הסיכון העליון מרכז <b>58.18% מכלל הגניבות בישראל</b> (Lift של <b>פי
           109.39</b> מעשירון 1, <code>ρ = 0.4089</code>), והממצאים מונגשים למשתמש הקצה תוך פחות מ-5ms באמצעות
-        ארכיטקטורת <code>O(1)</code> וסוכן AI דטרמיניסטי המגובה ב-32 בדיקות תוכנה.
+        ארכיטקטורת <code>O(1)</code> וסוכן AI דטרמיניסטי המגובה ב-38 בדיקות תוכנה וחבילת Agent Evaluation כמותית.
       </p>
 </div>
 <!-- ================= CHAPTER 9 ================= -->
@@ -1069,8 +1069,7 @@
 <tr>
 <td style="padding: 4.5px 7px; text-align: center; font-weight: bold;">18</td>
 <td style="padding: 4.5px 9px; font-weight: bold; color: #0369a1;">אילו בדיקות תוכנה מגינות על המערכת?</td>
-<td style="padding: 4.5px 9px;">32 בדיקות <code>pytest</code> אוטומטיות הבודקות תקינות סכמה, אי-שליליות,
-              ולידציה כרונולוגית, התאמת ארטיפקטים בין ה-Backend ל-Frontend ותגובות דטרמיניסטיות של כלי הסוכן.</td>
+<td style="padding: 4.5px 9px;">38 בדיקות <code>pytest</code> אוטומטיות (תקינות סכמה, אי-שליליות, ולידציה כרונולוגית, חוזה Backend–Frontend ומעקות סוכן) + חבילת <strong>Agent Evaluation</strong> ב-<code>src/agent_eval.py</code> (35 תרחישי זהב: 85.7%, Verifier 10/10, 5/6 Live OpenAI ו-Judge 4.67/4.50/4.83).</td>
 </tr>
 <tr style="background: #f8fafc;">
 <td style="padding: 4.5px 7px; text-align: center; font-weight: bold;">19</td>
@@ -1185,8 +1184,8 @@
 <div class="qa-question">11. מדוע שמרנו במקביל גם את <code>CarTheftRisk_final.ipynb</code> וגם את חוזה הריצה
         <code>v9</code>?</div>
 <div class="qa-answer"><b>תשובה:</b> זוהי פרקטיקה הנדסית של <b>Contract Pinning</b> בסביבות פרודקשן: האפליקציה
-        החיה (<code>web/index.html</code>), שרת ה-API והסוכן נבדקים אוטומטית ב-32 בדיקות <code>pytest</code> מול חוזה
-        הסכמה של <code>v9</code> (<code>web/assets/data.json</code>). ייצוא תוצרי המחקר המעודכנים של
+        החיה (<code>web/index.html</code>), שרת ה-API והסוכן נבדקים אוטומטית ב-38 בדיקות <code>pytest</code> מול חוזה
+        הסכמה של <code>v9</code> (<code>web/assets/data.json</code>), לצד הערכת Agent Eval מלאה ב-<code>src/agent_eval.py</code>. ייצוא תוצרי המחקר המעודכנים של
         <code>CarTheftRisk_final.ipynb</code> לקובץ ייעודי (<code>notebooks/data_final.json</code>) מאפשר שקיפות מחקרית
         מלאה בדוח הסופי (<code>web/final.html</code>) מבלי לשבור אף בדיקת רגרסיה חיה.</div>
 </div>
@@ -1412,7 +1411,7 @@
         🌟 <b>משפט סיכום לראיון עבודה:</b><br/>
 <i>״הערך המרכזי שלמדתי בפרויקט הזה הוא לא להתאהב במדד גבוה שמסתיר זליגת מידע, אלא לבדוק את הדאטה והמודל בעיניים
           ביקורתיות. זיהיתי ותיקנתי בעצמי כשלי קוהורטה, חשיפה חלקית ושברי סדרה, בניתי מודל ספירה אקטוארי שלוכד 58.2%
-          מהגניבות בעשירון העליון במבחן עיוור, והפכתי אותו למוצר עובד ומהיר עם 32 בדיקות אוטומטיות. זו הרמה ההנדסית שאני
+          מהגניבות בעשירון העליון במבחן עיוור, והפכתי אותו למוצר עובד ומהיר עם 38 בדיקות אוטומטיות והערכת Agent Eval כמותית. זו הרמה ההנדסית שאני
           מביאה איתי לצוות.״</i>
 </p>
 </div>

@@ -1,16 +1,23 @@
 """
 agent.py
 ========
-Research AI Agent Orchestrator for CarTheftRisk (Final).
-Supports two execution modes:
-1. Background Auto-Compare (`run_auto_compare_agent`): Triggered automatically in parallel
-   as soon as the user selects a vehicle model and city. Chains the 3 core tools to inspect
-   Bestie simulation prices and compare against 3 lower-risk / cheaper-to-insure alternatives.
-2. Contextual & Open-Ended Chat (`run_chat_agent`): 4-layer guardrailed pipeline:
-   - Layer 1: Input Guardrails & structured `QueryPlan` (length cap, injection/scope check, entity extraction)
-   - Layer 2: Strict Entity Grounding (`strict=True`, clarification on unknown model/city, zero silent fallback)
-   - Layer 3: Deterministic Tool Execution (`calculate_custom_savings`, `simulate_mitigation_discount`, etc.)
-   - Layer 4: Post-Generation Numeric Verifier (blocks/falls back on any ungrounded number from Gemini)
+סוכן ה-AI האוטונומי לחקר סיכוני גניבת רכב והשוואת ביטוח Bestie (CarTheftRisk Copilot).
+
+מצבי פעולה של הסוכן:
+---------------------
+1. סוכן השוואה אוטונומי ברקע (Background Auto-Compare - `run_auto_compare_agent`):
+   מופעל אוטומטית ובמקביל מיד כשהמשתמש בוחר דגם ועיר בממשק הווב. מריץ שרשרת של 3 כלים
+   להפקת נתוני סימולציית ביטוח ב-Bestie ואיתור 3 חלופות רכב בטוחות וזולות יותר באותה קטגוריה.
+
+2. סוכן צ'אט מבוסס שיחה חופשית (Contextual & Open-Ended Chat - `run_chat_agent`):
+   מבוסס על ארכיטקטורת 4 שכבות הגנה קשיחות (4-Layer Guardrailed Pipeline) למניעת הזיות לחלוטין:
+   - שכבה 1 (Layer 1): Input Guardrails & Query Planning - בדיקת אורך קלט, סינון הזרקות קוד (Prompt Injection),
+     בדיקת שאלות מחוץ לתחום (Out-of-Scope) וחילוץ מובנה של ישויות וכוונת המשתמש (`QueryPlan`).
+   - שכבה 2 (Layer 2): Strict Entity Grounding - וידוא קפדני (strict=True) שכל דגם ועיר קיימים במאגר המאומת.
+     אם דגם או עיר אינם מוכרים, מוחזרת שאלת הבהרה עם הצעות מתאימות במקום ניחוש שקט (Zero Silent Fallback).
+   - שכבה 3 (Layer 3): Deterministic Tool Execution - הרצת כלי החישוב האקטואריים הדטרמיניסטיים ללא שימוש ב-LLM.
+   - שכבה 4 (Layer 4): Post-Generation Numeric Verifier - בדיקה קפדנית של כל מספר ומספר שנוסח ע"י Gemini;
+     במקרה ש-Gemini המציא או שינה מספר שלא הופק ע"י הכלים, התשובה נפסלת ונשלפת התשובה הדטרמיניסטית המאומתת.
 """
 from __future__ import annotations
 
@@ -45,10 +52,12 @@ from src.agent_tools import (
     suggest_similar_models,
 )
 
+# דיסקליימר משפטי קבוע המצורף לכל תשובה של הסוכן
 DISCLAIMER_HE = (
     "הערכה אקטוארית וסטטיסטית לצרכי מחקר ולימוד בלבד ואינה מהווה הצעת ביטוח מחייבת או ייעוץ פנסיוני/ביטוחי."
 )
 
+# הנחיית מערכת קפדנית ל-LLM (System Prompt) הכוללת את חוקי הברזל של המערכת
 SYSTEM_PROMPT = """אתה CarTheftRisk Copilot, סוכן AI אקטוארי אוטונומי לניתוח סיכוני גניבת רכב והשוואת מחירי ביטוח מאתר Bestie בישראל.
 חוקי ברזל (Guardrails):
 1. אסור בתכלית האיסור להמציא ציוני סיכון, כמויות גניבה או מחירי ביטוח. עליך להסתמך אך ורק על המספרים שהופקו מהכלים הדטרמיניסטיים.
@@ -57,8 +66,10 @@ SYSTEM_PROMPT = """אתה CarTheftRisk Copilot, סוכן AI אקטוארי או�
 4. אם הוזכר חיסכון שלילי (החלופה יקרה יותר), דווח זאת בכנות ובשקיפות כתוספת עלות.
 """
 
+# מגבלת תווים לקלט משתמש למניעת התקפות הצפה
 MAX_MESSAGE_LENGTH = 500
 
+# דפוסי טקסט המעידים על ניסיון הזרקת פרומפט (Prompt Injection) או עקיפת מגבלות
 PROMPT_INJECTION_PATTERNS = (
     "ignore previous",
     "ignore all previous",
@@ -80,6 +91,7 @@ PROMPT_INJECTION_PATTERNS = (
     "המצא מספר",
 )
 
+# דפוסי נושאים שאינם בתחום המערכת (Out of Scope)
 OUT_OF_SCOPE_PATTERNS = (
     "מתכון",
     "פסטה",
@@ -103,6 +115,7 @@ OUT_OF_SCOPE_PATTERNS = (
     "crypto",
 )
 
+# מילות מפתח המעידות על שאלות לגיטימיות בתחום הביטוח והרכב
 DOMAIN_KEYWORDS = (
     "ביטוח",
     "מקיף",
@@ -143,6 +156,7 @@ DOMAIN_KEYWORDS = (
     "ציון",
 )
 
+# ביטויי המשכיות לזיהוי שאלות מעקב בהיסטוריית השיחה (Follow-up Cues)
 FOLLOWUP_CUES = (
     "ומה עם",
     "ואם",
@@ -156,6 +170,7 @@ FOLLOWUP_CUES = (
     "איתה",
 )
 
+# שמות יישובים קצרים אך בטוחים (למניעת זיהוי שגוי של מילים בעברית כערים)
 _SAFE_SHORT_CITIES = {"לוד", "עכו", "צפת", "ערד", "יפו"}
 _COMMON_CITY_FALSE_POSITIVES = {"שלום", "עיר", "אחד", "כמה", "רק", "לא", "גם", "כל", "טוב", "יפה", "חם", "קר", "גן"}
 _NON_ENTITY_TAIL_WORDS = {
@@ -203,11 +218,16 @@ _MODEL_PROTECTED_FIRST = {
 }
 
 
+# ==============================================================================
+# מצב פעולה 1: סוכן השוואה אוטונומי ברקע (Auto-Compare Agent)
+# ==============================================================================
 def run_auto_compare_agent(model: str, city: str) -> dict[str, Any]:
     """
-    Runs automatically in the background when the user enters (model, city).
-    Executes the multi-step tool chain and returns structured Bestie comparison cards
-    plus the live execution trace.
+    מופעל ברקע ברגע שהמשתמש מזין (דגם, עיר).
+    מריץ שרשרת של 3 כלים דטרמיניסטיים:
+    שלב 1: חישוב סיכון גניבה וכמות גניבות צפויה (get_vehicle_risk).
+    שלב 2: סימולציית תמחור Bestie לפרופיל נהג ייחוס (fetch_bestie_insurance_quotes).
+    שלב 3: איתור חלופות מובילות מאותה קטגוריה בעלות סיכון מופחת וחיסכון כספי (compare_alternatives).
     """
     risk = get_vehicle_risk(model, city)
     comp = compare_alternatives(risk["model_key"], risk["city"], top_k=3)
@@ -217,6 +237,7 @@ def run_auto_compare_agent(model: str, city: str) -> dict[str, Any]:
 
     best_alt = alt_cards[0] if alt_cards else None
 
+    # רישום שלבי ביצוע שקופים (Execution Trace) לתצוגה בממשק
     steps = [
         {
             "step": 1,
@@ -250,6 +271,7 @@ def run_auto_compare_agent(model: str, city: str) -> dict[str, Any]:
         },
     ]
 
+    # ניסוח תקציר בעברית ברורה
     if best_alt:
         summary = (
             f"בדיקת הסוכן ב-Bestie מראה שעלות הביטוח השנתית (מקיף + חובה) עבור {risk['model_hebrew']} ב{risk['city']} "
@@ -279,6 +301,7 @@ def run_auto_compare_agent(model: str, city: str) -> dict[str, Any]:
 
 
 def _norm_tok(text: str) -> str:
+    """נרמול טוקן: איחוד גרסאות איות עבריות והסרת מרכאות וגרשים."""
     s = (text or "").strip().lower()
     s = s.replace("מאזדה", "מזדה").replace("טיוטה", "טויוטה").replace("ניסן", "ניסאן").replace("שקודה", "סקודה")
     s = re.sub(r'["\'״׳`]', "", s)
@@ -286,6 +309,7 @@ def _norm_tok(text: str) -> str:
 
 
 def _tokenize_with_spans(text: str) -> list[dict[str, Any]]:
+    """מפרק טקסט לטוקנים ושומר את מיקום ההתחלה והסיום של כל טוקן (spans)."""
     tokens: list[dict[str, Any]] = []
     for m in re.finditer(r"[^\s\?\.,!;:\(\)\[\]\"״׳']+", text or ""):
         raw = m.group(0)
@@ -304,8 +328,8 @@ def _tokenize_with_spans(text: str) -> list[dict[str, Any]]:
 @lru_cache(maxsize=1)
 def _get_model_phrase_index() -> list[tuple[tuple[str, ...], str, int]]:
     """
-    Returns sorted `(token_tuple, canonical_query_str, priority_score)` for safe
-    token-boundary extraction of vehicle models from free Hebrew/English text.
+    בונה אינדקס ממוין של ביטויי דגמים (בעברית ובאנגלית) לצורך חילוץ מדויק מטקסט חופשי.
+    ממיין לפי אורך ביטוי ועדיפות (דגמים נפוצים יותר זוכים לקדימות).
     """
     _, _, data = load_artifacts()
     models = data.get("models", {})
@@ -347,8 +371,7 @@ def _get_model_phrase_index() -> list[tuple[tuple[str, ...], str, int]]:
 @lru_cache(maxsize=1)
 def _get_city_phrase_index() -> list[tuple[tuple[str, ...], str, int]]:
     """
-    Returns sorted `(token_tuple, canonical_city_key, total_thefts)` for safe
-    token-boundary extraction of Israeli cities from free text.
+    בונה אינדקס ממוין של שמות יישובים לצורך חילוץ בטוח מטקסט חופשי.
     """
     _, _, data = load_artifacts()
     locations = data.get("locations", {})
@@ -382,6 +405,7 @@ def _match_first_token(
     protected_words: set[str] | None = None,
     min_prep_tok_len: int = 4,
 ) -> tuple[bool, str | None]:
+    """בודק התאמה של הטוקן הראשון כולל פתיחה אפשרית של אות יחס עברית (ב/ל/מ)."""
     if tok == expected:
         return True, None
     if allow_prep and len(tok) >= 3 and tok[0] in _HEB_PREPS:
@@ -395,12 +419,14 @@ def _match_first_token(
 
 
 def _overlaps_spans(start_char: int, end_char: int, forbidden_spans: list[tuple[int, int]] | None) -> bool:
+    """מוודא שקטע טקסט אינו חופף לקטע שכבר זוהה כישות אחרת."""
     if not forbidden_spans:
         return False
     return any(not (end_char <= s or start_char >= e) for s, e in forbidden_spans)
 
 
 def _extract_models_from_text(text: str) -> list[dict[str, Any]]:
+    """מחלץ את כל דגמי הרכב המוכרים מטקסט המשתמש ומחזיר רשימה ממוינת לפי סדר הופעתם."""
     tokens = _tokenize_with_spans(text)
     if not tokens:
         return []
@@ -444,7 +470,6 @@ def _extract_models_from_text(text: str) -> list[dict[str, Any]]:
             )
 
     hits.sort(key=lambda h: h["start_char"])
-    # Deduplicate same canonical model keeping earliest mention
     unique: list[dict[str, Any]] = []
     seen_clean: set[str] = set()
     for h in hits:
@@ -459,7 +484,7 @@ def _extract_cities_from_text(
     text: str,
     forbidden_char_spans: list[tuple[int, int]] | None = None,
 ) -> list[dict[str, Any]]:
-    # Expand hyphenated tokens (e.g. "בחיפה-כרמל" or "תל-אביב" or "בראשון-לציון") properly
+    """מחלץ שמות ערים ורשויות מקומיות מטקסט חופשי, תוך הימנעות מחפיפה עם דגמי רכב שזוהו."""
     expanded_tokens: list[dict[str, Any]] = []
     for m in re.finditer(r"[^\s\?\.,!;:\(\)\[\]\"״׳']+", text or ""):
         raw = m.group(0)
@@ -507,7 +532,6 @@ def _extract_cities_from_text(
             if needs_explicit_city_cue and not has_city_cue:
                 continue
 
-            # Guard low-theft single-word settlements from matching unrelated Hebrew words
             if n == 1 and thefts < 15 and len(phrase_str) <= 5 and phrase_str not in _SAFE_SHORT_CITIES:
                 if not prep and not has_city_cue and prev_word not in {"לעומת", "מול", "אגור", "לגור", "ב", "ל", "מ"}:
                     continue
@@ -539,10 +563,9 @@ def _extract_cities_from_text(
 
 def _extract_unknown_target_phrase(text: str) -> tuple[str | None, str | None]:
     """
-    When the user asks a savings/comparison question about an unrecognised model or city
-    (e.g. `"כמה אחסוך בלמבורגיני אורוס?"` or `"כמה אחסוך אם אגור באטלנטיס?"`),
-    returns `(candidate_phrase, "city" | "model")` so Layer 2 asks for clarification
-    instead of falling back to a random car or city.
+    מחלץ ביטוי יעד בלתי-מוכר כאשר המשתמש שואל שאלת השוואה על ישות שאינה במאגר.
+    למשל: "כמה אחסוך בלמבורגיני אורוס?" או "כמה אחסוך אם אגור באטלנטיס?".
+    מאפשר לשכבה 2 לבקש הבהרה במקום להמציא רכב או עיר.
     """
     city_move_cues = ("אגור", "לגור", "בעיר", "ביישוב", "לעיר")
     patterns: list[tuple[str, str]] = [
@@ -558,7 +581,6 @@ def _extract_unknown_target_phrase(text: str) -> tuple[str | None, str | None]:
         if not m:
             continue
         raw_cand = m.group(1).strip()
-        # Cut off trailing comparison connectors or questions
         raw_cand = re.split(r"\s+(?:לעומת|מול|במקום|אם|ומה|וכמה|בשנה|לחודש|לשנה)\b", raw_cand)[0].strip()
         words = [w.strip("\"'״׳-") for w in raw_cand.split() if w.strip("\"'״׳-")]
         while words and words[-1].lower() in _NON_ENTITY_TAIL_WORDS:
@@ -575,17 +597,18 @@ def _extract_unknown_target_phrase(text: str) -> tuple[str | None, str | None]:
 
 
 def _assign_pair_roles(first: dict[str, Any], second: dict[str, Any], text: str) -> tuple[dict[str, Any], dict[str, Any]]:
-    """Returns `(base_item, target_item)` from two mentions ordered left-to-right."""
+    """קובע מי מבין שני האזכורים הוא ישות הבסיס ומי ישות היעד (למשל 'מחיפה לתל אביב' או 'בראשון לעומת ת"א')."""
     between = text[first["end_char"] : second["start_char"]]
     if "לעומת" in between or "מול" in between or "בהשוואה ל" in between:
-        # e.g. "בראשון לציון לעומת תל אביב" -> target is Rishon, base is Tel Aviv
         return second, first
     if first.get("prep") == "מ" and second.get("prep") == "ל":
-        # e.g. "מקורולה לקיה נירו" / "מחיפה לתל אביב"
         return first, second
     return first, second
 
 
+# ==============================================================================
+# שכבה 1 (Layer 1): תכנון שאילתה ו-Guardrails לקלט (plan_query)
+# ==============================================================================
 def plan_query(
     message: str,
     model: str,
@@ -593,11 +616,18 @@ def plan_query(
     history: list[dict[str, str]] | None = None,
 ) -> QueryPlan:
     """
-    Layer 1: Runs deterministic input guardrails and produces a validated `QueryPlan`.
+    שכבה 1: מנתחת את שאלת המשתמש, מבצעת בדיקות אבטחה ומפיקה QueryPlan מובנה.
+    בודקת:
+    1. אורך ההודעה (עד 500 תווים).
+    2. ניסיונות Prompt Injection.
+    3. האם השאלה מחוץ לתחום.
+    4. חילוץ ישויות רכב, עיר ואמצעי מיגון.
+    5. סיווג הכוונה (Intent) לכוונה המדויקת.
     """
     msg = (message or "").strip()
     msg_low = msg.lower()
 
+    # בדיקת אורך קלט
     if not msg or len(msg) > MAX_MESSAGE_LENGTH:
         return QueryPlan(
             intent=IntentEnum.out_of_scope,
@@ -605,6 +635,7 @@ def plan_query(
             clarification_question_he=f"אנא הזינו שאלה באורך של עד {MAX_MESSAGE_LENGTH} תווים.",
         )
 
+    # בדיקת ניסיון הזרקת פרומפט
     if any(pat in msg_low for pat in PROMPT_INJECTION_PATTERNS):
         return QueryPlan(intent=IntentEnum.prompt_injection)
 
@@ -621,6 +652,7 @@ def plan_query(
     has_domain_kw = any(kw in msg_low for kw in DOMAIN_KEYWORDS) or bool(measures or models_found or cities_found)
     is_followup = any(cue in msg for cue in FOLLOWUP_CUES)
 
+    # סינון שאלות שאינן בתחום המערכת
     if any(pat in msg_low for pat in OUT_OF_SCOPE_PATTERNS) and not (has_domain_kw and not any(w in msg_low for w in ("מתכון", "פסטה", "בדיחה", "כתוב שיר"))):
         return QueryPlan(intent=IntentEnum.out_of_scope)
 
@@ -632,6 +664,7 @@ def plan_query(
     base_city_override: str | None = None
     target_city: str | None = None
 
+    # שיוך דגמי רכב שנמצאו (בסיס מול יעד)
     if len(models_found) >= 2:
         b_m, t_m = _assign_pair_roles(models_found[0], models_found[1], msg)
         base_model_override = b_m["model_key"]
@@ -643,6 +676,7 @@ def plan_query(
         else:
             target_model = m0["model_key"]
 
+    # שיוך יישובים שנמצאו (בסיס מול יעד)
     if len(cities_found) >= 2:
         b_c, t_c = _assign_pair_roles(cities_found[0], cities_found[1], msg)
         base_city_override = b_c["city_key"]
@@ -650,14 +684,13 @@ def plan_query(
     elif len(cities_found) == 1:
         c0 = cities_found[0]
         if len(models_found) >= 2 or target_model is not None:
-            # A city alongside a model comparison specifies the shared comparison city
             base_city_override = c0["city_key"]
         elif c0["city_unified"] == base_city_unified:
             base_city_override = c0["city_key"]
         else:
             target_city = c0["city_key"]
 
-    # Reuse prior user turn entities for short follow-up questions ("ומה עם...")
+    # שחזור ישויות מההיסטוריה עבור שאלות המשך קצרות ("ומה עם...")
     if history and is_followup and not target_model and not target_city and not measures:
         for prev in reversed(history[-4:]):
             if str(prev.get("role", "")).lower() != "user":
@@ -675,7 +708,7 @@ def plan_query(
                 target_city = prev_cities[-1]["city_key"]
                 break
 
-    # Unknown target model or city detection (for "כמה אחסוך בלמבורגיני אורוס?" / "...באטלנטיס?")
+    # זיהוי ישות יעד לא מוכרת (למניעת המצאת נתונים)
     savings_or_switch_kw = (
         "אחסוך",
         "חיסכון",
@@ -704,6 +737,7 @@ def plan_query(
             elif unknown_kind == "model" and resolve_model_entry(unknown_cand, strict=True) is None:
                 target_model = unknown_cand
 
+    # סיווג סופי של כוונת המשתמש
     mitigation_general_kw = ("מיגון", "להוזיל", "הנחה")
     if measures and not target_model and not target_city:
         intent = IntentEnum.mitigation_savings
@@ -734,6 +768,7 @@ def plan_query(
 
 
 def _format_savings_reply(plan_intent: IntentEnum, res: dict[str, Any], measures: list[str] | None = None) -> str:
+    """מעצב את תשובת ההשוואה בעברית קולחת, שקופה ומדויקת לפי מדדי ה-SavingsMetrics."""
     m = res["metrics"]
     b_model = m["base_model_he"]
     b_city = m["base_city"]
@@ -749,6 +784,7 @@ def _format_savings_reply(plan_intent: IntentEnum, res: dict[str, Any], measures
         same_city_note = f" ב-{b_city}" if b_city == t_city else f" ({b_city} לעומת {t_city})"
         header = f"🚗 **השוואת חלופת דגם{same_city_note} ({b_model} לעומת {t_model}):**\n\n"
 
+    # דיווח שקוף על חיסכון או תוספת עלות
     if ann_save > 0:
         delta_line = f"• **חיסכון שנתי משוער ב-Bestie:** **₪{ann_save:,}/שנה** (כ-**₪{mo_save:,}/חודש**).\n"
     elif ann_save < 0:
@@ -758,6 +794,7 @@ def _format_savings_reply(plan_intent: IntentEnum, res: dict[str, Any], measures
     else:
         delta_line = "• **הפרש עלות ב-Bestie:** ללא שינוי משמעותי בעלות השנתית (**₪0/שנה**).\n"
 
+    # דיווח על שינוי בציון הסיכון
     if risk_delta > 0:
         risk_line = f"• **שינוי בציון הסיכון:** ירידה של **{risk_delta} נק׳** (מ-{m['base_risk_score']} ל-{m['target_risk_score']}/100).\n"
     elif risk_delta < 0:
@@ -781,17 +818,24 @@ def _format_savings_reply(plan_intent: IntentEnum, res: dict[str, Any], measures
     )
 
 
+# ==============================================================================
+# שכבות 2 ו-3: עיגון ישויות קפדני והרצת כלים דטרמיניסטיים (execute_grounded_plan)
+# ==============================================================================
 def execute_grounded_plan(
     plan: QueryPlan,
     base_model: str,
     base_city: str,
 ) -> tuple[GroundedAgentResponse, dict[str, Any]]:
     """
-    Layer 2 & 3: Performs strict entity resolution and executes deterministic ML/simulation tools.
+    שכבות 2 ו-3:
+    1. שכבה 2: מוודאת עיגון ישויות קפדני (Strict Entity Grounding). אם דגם או עיר אינם מאומתים,
+       עוצרת ומחזירה שאלת הבהרה עם הצעות מתאימות במקום להמשיך.
+    2. שכבה 3: מפעילה את הכלים הדטרמיניסטיים המתאימים ומחזירה מבנה נתונים מלא ומאומת.
     """
     assumptions = dict(REFERENCE_DRIVER_PROFILE)
     base_guards = ["input_length_ok", "prompt_injection_checked"]
 
+    # טיפול בחסימת אבטחה של Prompt Injection
     if plan.intent == IntentEnum.prompt_injection:
         return (
             GroundedAgentResponse(
@@ -812,6 +856,7 @@ def execute_grounded_plan(
             {},
         )
 
+    # טיפול בבקשה מחוץ לתחום
     if plan.intent == IntentEnum.out_of_scope:
         reply_txt = plan.clarification_question_he or (
             "אני סוכן AI ייעודי לניתוח סיכוני גניבת רכב והשוואת מחירי ביטוח בישראל (Bestie). "
@@ -833,7 +878,7 @@ def execute_grounded_plan(
             {},
         )
 
-    # Resolve base model & city (explicit overrides use strict resolution first)
+    # עיגון קפדני של דגם הבסיס ועיר הבסיס
     eff_base_model_input = plan.base_model_override or base_model
     eff_base_city_input = plan.base_city_override or base_city
 
@@ -892,6 +937,7 @@ def execute_grounded_plan(
     base_model_key, _ = resolved_base_m
     base_city_key, _ = resolved_base_c
 
+    # טיפול בהשוואת דגם או השוואת עיר
     if plan.intent in (IntentEnum.compare_model_savings, IntentEnum.compare_city_savings):
         target_model_key: str | None = None
         target_city_key: str | None = None
@@ -946,6 +992,7 @@ def execute_grounded_plan(
                 )
             target_city_key = resolved_tc[0]
 
+        # חישוב דטרמיניסטי של פערי העלויות
         res = calculate_custom_savings(
             base_model=base_model_key,
             base_city=base_city_key,
@@ -974,6 +1021,7 @@ def execute_grounded_plan(
             res,
         )
 
+    # טיפול בהנחת אמצעי מיגון
     if plan.intent == IntentEnum.mitigation_savings:
         measures_arg = plan.mitigation_measures or None
         risk = get_vehicle_risk(base_model_key, base_city_key)
@@ -1021,6 +1069,7 @@ def execute_grounded_plan(
             {"mitigation": mit, "risk": risk, "metrics": metrics.model_dump()},
         )
 
+    # טיפול ברשימת חלופות רכב
     if plan.intent == IntentEnum.alternatives_list:
         risk = get_vehicle_risk(base_model_key, base_city_key)
         comp = compare_alternatives(base_model_key, base_city_key, top_k=3)
@@ -1069,7 +1118,7 @@ def execute_grounded_plan(
             {"comparison": comp, "risk": risk},
         )
 
-    # IntentEnum.risk_explanation
+    # כוונת ברירת מחדל: הסבר סיכונים מפורט (IntentEnum.risk_explanation)
     risk = get_vehicle_risk(base_model_key, base_city_key)
     quote = fetch_bestie_insurance_quotes(base_model_key, base_city_key, risk_score=risk["combined_risk_score"])
     reply = (
@@ -1097,8 +1146,12 @@ def execute_grounded_plan(
     )
 
 
+# ==============================================================================
+# שכבה 4 (Layer 4): אימות נומרי לאחר ניסוח (Post-Generation Numeric Verifier)
+# ==============================================================================
 _NUMBER_TOKEN_RE = re.compile(r"\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?")
 
+# קבועים מספריים מורשים הנובעים מפרופיל הנהג (שנתונים, גיל, שנות ותק וכו')
 _PROFILE_CONSTANT_NUMBERS: frozenset[float] = frozenset(
     {
         0.0,
@@ -1118,13 +1171,14 @@ _PROFILE_CONSTANT_NUMBERS: frozenset[float] = frozenset(
 
 
 def extract_numbers_from_text(text: str) -> list[str]:
-    """Extracts all integer/decimal numeric tokens (including comma-separated thousands)."""
+    """מחלץ את כל הטוקנים המספריים מטקסט (כולל פסיקים להפרדת אלפים ונקודות עשרוניות)."""
     if not text:
         return []
     return _NUMBER_TOKEN_RE.findall(text)
 
 
 def _walk_numbers(obj: Any, out: set[float]) -> None:
+    """סורק רקורסיבית מבנה נתונים ואוסף את כל המספרים המופיעים בו."""
     if isinstance(obj, bool) or obj is None:
         return
     if isinstance(obj, (int, float)):
@@ -1153,7 +1207,7 @@ def _walk_numbers(obj: Any, out: set[float]) -> None:
 
 
 def collect_allowed_numbers(tool_payload: Any, deterministic_reply: str) -> set[float]:
-    """Builds the authoritative set of numbers an LLM phrasing is allowed to state."""
+    """בונה את קבוצת המספרים המורשים היחידים שמותר ל-LLM לציין בתשובתו."""
     allowed = set(_PROFILE_CONSTANT_NUMBERS)
     _walk_numbers(tool_payload, allowed)
     _walk_numbers(deterministic_reply, allowed)
@@ -1162,9 +1216,8 @@ def collect_allowed_numbers(tool_payload: Any, deterministic_reply: str) -> set[
 
 def verify_numeric_grounding(reply_text: str, allowed_numbers: set[float]) -> tuple[bool, list[str]]:
     """
-    Layer 4 Post-Generation Numeric Verifier.
-    Every number in `reply_text` must appear in `allowed_numbers`.
-    Returns `(is_valid, ungrounded_tokens)`.
+    שכבה 4: מאמתת שכל מספר ומספר בתשובת ה-LLM מופיע ברשימת המספרים המאושרים.
+    מחזירה (האם תקין, רשימת מספרים שהומצאו ללא אימות).
     """
     tokens = extract_numbers_from_text(reply_text)
     if not tokens:
@@ -1182,6 +1235,7 @@ def verify_numeric_grounding(reply_text: str, allowed_numbers: set[float]) -> tu
 
 
 def _extract_gemini_text(resp: Any) -> str:
+    """מחלץ טקסט מתשובת מודל השפה ובודק תקינות פורמט JSON מובנה."""
     raw_text = (getattr(resp, "text", None) or "").strip()
     if not raw_text:
         return ""
@@ -1194,6 +1248,52 @@ def _extract_gemini_text(resp: Any) -> str:
     return raw_text
 
 
+def _generate_openai_reply(prompt: str, api_key: str, model_name: str = "gpt-4o-mini") -> str:
+    """
+    מנסח תשובה עברית טבעית באמצעות OpenAI Chat Completions (`gpt-4o-mini` כברירת מחדל)
+    עם אכיפת JSON Schema קשיחה (`reply` בלבד), ומחזיר את הטקסט לאימות מספרי בשכבה 4.
+    """
+    import httpx
+
+    payload = {
+        "model": model_name,
+        "temperature": 0.1,
+        "messages": [
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": prompt},
+        ],
+        "response_format": {
+            "type": "json_schema",
+            "json_schema": {
+                "name": "agent_grounded_reply",
+                "strict": True,
+                "schema": {
+                    "type": "object",
+                    "properties": {"reply": {"type": "string"}},
+                    "required": ["reply"],
+                    "additionalProperties": False,
+                },
+            },
+        },
+    }
+    resp = httpx.post(
+        "https://api.openai.com/v1/chat/completions",
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+        },
+        json=payload,
+        timeout=25.0,
+    )
+    resp.raise_for_status()
+    raw_content = resp.json()["choices"][0]["message"]["content"].strip()
+    parsed = GeminiReplyPayload.model_validate_json(raw_content)
+    return parsed.reply.strip()
+
+
+# ==============================================================================
+# מצב פעולה 2: פונקציית צ'אט ראשית (Main Chat Agent Orchestrator)
+# ==============================================================================
 def run_chat_agent(
     message: str,
     model: str,
@@ -1201,18 +1301,27 @@ def run_chat_agent(
     history: list[dict[str, str]] | None = None,
 ) -> dict[str, Any]:
     """
-    Executes the 4-layer guardrailed chat agent pipeline and returns a
-    `GroundedAgentResponse`-conformant dictionary.
+    מנהל את תהליך השיחה המלא מול המשתמש:
+    1. שכבה 1: הרצת ולידציות קלט וסיווג שאילתה (plan_query).
+    2. שכבות 2 ו-3: עיגון ישויות קפדני וחישוב נתונים דטרמיניסטי (execute_grounded_plan).
+    3. אם מוגדר מפתח OPENAI_API_KEY (ברירת המחדל הראשית) או GEMINI_API_KEY (כגיבוי / במפורש דרך LLM_PROVIDER='gemini'),
+       נשלחת בקשה לניסוח עברי טבעי של המספרים המאומתים בלבד.
+    4. שכבה 4: אימות נומרי של תשובת ה-LLM (verify_numeric_grounding).
+       אם התשובה עברה בהצלחה -> מוחזרת (`openai_verified` / `gemini_verified`).
+       אם התגלתה חריגה/הזיה -> מתבצע Fallback אוטומטי לתשובה הדטרמיניסטית.
     """
     plan = plan_query(message, model, city, history=history)
     response, tool_payload = execute_grounded_plan(plan, model, city)
 
+    # אם הבקשה נחסמה או דורשת הבהרה, מוחזרת התשובה ישירות ללא קריאה ל-LLM
     if response.status != "answered":
         return response.model_dump()
 
-    api_key = os.environ.get("GEMINI_API_KEY", "").strip()
-    if api_key:
-        model_name = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash").strip() or "gemini-2.5-flash"
+    openai_key = os.environ.get("OPENAI_API_KEY", "").strip()
+    gemini_key = os.environ.get("GEMINI_API_KEY", "").strip()
+    provider_pref = os.environ.get("LLM_PROVIDER", "auto").strip().lower()
+
+    if openai_key or gemini_key:
         recent_history = ""
         if history:
             tail = history[-4:]
@@ -1225,44 +1334,71 @@ def run_chat_agent(
                 recent_history = f"\nהיסטוריית שיחה קצרה:\n{formatted}\n"
 
         metrics_block = response.metrics.model_dump_json(indent=2) if response.metrics else "{}"
-        prompt = (
-            f"{SYSTEM_PROMPT}\n"
+        user_context_prompt = (
             f"{recent_history}\n"
             f"נתוני אמת מאומתים מהכלים (אסור לשנות או להוסיף אף מספר):\n{response.reply}\n\n"
             f"מדדים מובנים (SavingsMetrics):\n{metrics_block}\n\n"
             f"שאלת המשתמש: {message}\n"
             f"נסח תשובה קצרה, ברורה ומדויקת בעברית בהתבסס אך ורק על המספרים שלעיל."
         )
-        try:
-            from google import genai  # type: ignore
 
-            client = genai.Client(api_key=api_key)
+        # ברירת מחדל ראשית: שימוש ב-OpenAI כשמפתח OPENAI_API_KEY מוגדר (ללא פנייה מיותרת ל-Gemini)
+        use_openai_first = bool(openai_key) and provider_pref != "gemini"
+        if use_openai_first:
+            openai_model = os.environ.get("OPENAI_MODEL", "gpt-4o-mini").strip() or "gpt-4o-mini"
             try:
-                resp = client.models.generate_content(
-                    model=model_name,
-                    contents=prompt,
-                    config={
-                        "response_mime_type": "application/json",
-                        "response_schema": GeminiReplyPayload,
-                        "temperature": 0.1,
-                    },
-                )
-            except TypeError:
-                resp = client.models.generate_content(model=model_name, contents=prompt)
-
-            candidate_text = _extract_gemini_text(resp)
-            if candidate_text:
-                allowed = collect_allowed_numbers(tool_payload, response.reply)
-                ok, _ungrounded = verify_numeric_grounding(candidate_text, allowed)
-                if ok:
-                    response.reply = candidate_text
-                    response.engine = "gemini_verified"
-                    response.guardrails_passed.append("numeric_output_verified")
+                candidate_text = _generate_openai_reply(user_context_prompt, openai_key, openai_model)
+                if candidate_text:
+                    allowed = collect_allowed_numbers(tool_payload, response.reply)
+                    ok, _ungrounded = verify_numeric_grounding(candidate_text, allowed)
+                    if ok:
+                        response.reply = candidate_text
+                        response.engine = "openai_verified"
+                        response.guardrails_passed.append("numeric_output_verified")
+                        return response.model_dump()
+                    response.guardrails_passed.append("numeric_verifier_fallback_triggered")
                     return response.model_dump()
-                response.guardrails_passed.append("numeric_verifier_fallback_triggered")
-                return response.model_dump()
-        except Exception:
-            pass
+            except Exception:
+                # במקרה שכשלה התקשורת ל-OpenAI ומוגדר במפורש LLM_PROVIDER='auto', לא מדלגים ל-Gemini ללא בקשה; נופלים לדטרמיניסטי בטוח
+                pass
 
+        # מסלול Gemini (מופעל רק אם אין OPENAI_API_KEY או אם הוגדר במפורש LLM_PROVIDER='gemini')
+        if gemini_key and (provider_pref == "gemini" or not openai_key):
+            model_name = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash").strip() or "gemini-2.5-flash"
+            prompt = f"{SYSTEM_PROMPT}\n{user_context_prompt}"
+            try:
+                from google import genai  # type: ignore
+
+                client = genai.Client(api_key=gemini_key)
+                try:
+                    resp = client.models.generate_content(
+                        model=model_name,
+                        contents=prompt,
+                        config={
+                            "response_mime_type": "application/json",
+                            "response_schema": GeminiReplyPayload,
+                            "temperature": 0.1,
+                        },
+                    )
+                except TypeError:
+                    resp = client.models.generate_content(model=model_name, contents=prompt)
+
+                candidate_text = _extract_gemini_text(resp)
+                if candidate_text:
+                    # שכבה 4: אימות שאין שום מספר שהומצא
+                    allowed = collect_allowed_numbers(tool_payload, response.reply)
+                    ok, _ungrounded = verify_numeric_grounding(candidate_text, allowed)
+                    if ok:
+                        response.reply = candidate_text
+                        response.engine = "gemini_verified"
+                        response.guardrails_passed.append("numeric_output_verified")
+                        return response.model_dump()
+                    # במקרה של חריגה במספרים, נרשם טריגר ה-Fallback ומוחזרת התשובה הדטרמיניסטית המאומתת
+                    response.guardrails_passed.append("numeric_verifier_fallback_triggered")
+                    return response.model_dump()
+            except Exception:
+                pass
+
+    # במצב ללא LLM או במקרה של שגיאת תקשורת, התשובה הדטרמיניסטית המאומתת מוחזרת כברירת מחדל בטוחה
     response.guardrails_passed.append("numeric_output_verified")
     return response.model_dump()

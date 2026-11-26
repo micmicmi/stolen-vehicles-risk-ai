@@ -9,8 +9,9 @@
 | שכבה | קובצי מקור ותוצרים פעילים | תפקיד ומעמד מתודולוגי |
 | :--- | :--- | :--- |
 | **מחברת המחקר והריצה הקנונית (Final)** | `notebooks/CarTheftRisk_final.ipynb`<br>`notebooks/data_final.json` (3.54 MB)<br>`web/assets/final_scores.json`, `web/assets/data.json` | פייפליין המחקר והריצה המלא (58 תאים: 33 קוד + 25 Markdown): חילוץ מכונת מצבים, בקרת איכות והסגר, פאנל כרונולוגי ללא בחירת אוכלוסייה מהעתיד, ניתוח GIS מרחבי של קרבה לצירי מילוט בפרק 4, ולידציה מרחבית `GroupKFold`, התאמת חשיפה `Exposure Offset = 0.75`, השוואת מודלים דו-מסלולית, `PyTorch CountMLP` עם `Early Stopping`, `SHAP`, תא סיכום ומסקנות דינמי בפרק 18, אשכולות ונספח למ"ס 2025. המחברת והנכסים שלה מזינים באופן מאוחד הן את דוח המחקר והן את כל יישומי הריצה. |
-| **חוזה הריצה והבדיקות המאומת (Final Runtime Contract)** | `src/temporal_validation.py`<br>`web/assets/final_scores.json`, `web/assets/embedded_data.js`<br>`models/temporal_backtest_final.json`, `models/model_registry.json` | שכבת הוולידציה והריצה המאוחדת של אפליקציית ה-Web (`web/index.html`), שרת ה-FastAPI (`src/api.py`) וסוכן ה-AI (`src/agent.py`, `src/agent_schemas.py`, `src/agent_tools.py`), הנעולה באמצעות 32 בדיקות `pytest` אוטומטיות. גרסה 9 הישנה הועברה לארכיון (`archive/notebooks/CarTheftRisk_v9.ipynb`). |
-| **דוחות ומדריכי המערכת** | `web/final.html` (דוח הפרויקט המסכם)<br>`web/stolen_vehicles_web_engineering_guide_v5.html`<br>`web/agent_report.html` (דוח סוכן ה-AI) | תיעוד הנדסי ומחקרי מלא. דוח הפרויקט הראשי (`web/final.html`) והמדריך ההנדסי (`v5`) מסונכרנים במלואם עם מסמך זה ועם `CarTheftRisk_final.ipynb`. |
+| **חוזה הריצה והבדיקות המאומת (Final Runtime Contract)** | `src/temporal_validation.py`<br>`web/assets/final_scores.json`, `web/assets/embedded_data.js`<br>`models/temporal_backtest_final.json`, `models/model_registry.json` | שכבת הוולידציה והריצה המאוחדת של אפליקציית ה-Web (`web/index.html`), שרת ה-FastAPI (`src/api.py`) וסוכן ה-AI (`src/agent.py` בתצורת OpenAI-First מעל `gpt-4o-mini` עם גיבוי Gemini אופציונלי, `src/agent_schemas.py`, `src/agent_tools.py`), הנעולה באמצעות **38 בדיקות `pytest`** אוטומטיות. גרסה 9 הישנה הועברה לארכיון (`archive/notebooks/CarTheftRisk_v9.ipynb`). |
+| **חבילת הערכת הסוכן (Agent Evaluation Suite)** | `src/agent_eval.py`<br>`evals/golden_dataset.json`<br>`evals/agent_eval_results.json`<br>`tests/test_agent_eval.py` | הערכה כמותית מקצה לקצה של סוכן ה-AI (`35` תרחישי זהב בעברית ב-7 קטגוריות, `10` מקרי Numeric Verifier Stress, `8` זוגות Auto-Compare Invariants והרצה חיה מול Gemini ו-`LLM-as-a-Judge` דרך `.env`). |
+| **דוחות ומדריכי המערכת** | `web/final.html` (דוח הפרויקט המסכם)<br>`web/stolen_vehicles_web_engineering_guide_v5.html`<br>`web/agent_report.html` (דוח סוכן ה-AI + פרק Eval) | תיעוד הנדסי ומחקרי מלא. דוח הפרויקט הראשי (`web/final.html`), דוח הסוכן (`web/agent_report.html`) והמדריך ההנדסי (`v5`) מסונכרנים במלואם עם מסמך זה ועם `CarTheftRisk_final.ipynb`. |
 
 ---
 
@@ -140,7 +141,12 @@ $$\text{composite\_theft\_score} = 0.50 \times \text{Model\_Risk}_{\le 2024} + 0
 
 ---
 
-## 7. בדיקות תוכנה וניהול ארכיון (`Governance & Archive`)
+## 7. בדיקות תוכנה, הערכת סוכן וניהול ארכיון (`Governance, Agent Eval & Archive`)
 
-- **בדיקות אוטומטיות (`pytest`):** 32 בדיקות בתיקיית `tests/` (`test_pipeline.py`, `test_v9_runtime_contract.py`, `test_temporal_validation.py`, `test_model_registry.py`, `test_agent_guardrails.py`, `test_api_live.py`) מאמתות את חוזה הנתונים של ה-Web, אי-זליגת מאפיינים, כלי סוכן ה-AI ומעקות הבטיחות (Guardrails), ונקודות הקצה ב-FastAPI.
+- **בדיקות אוטומטיות (`pytest`):** **38 בדיקות** בתיקיית `tests/` (`test_pipeline.py`, `test_v9_runtime_contract.py`, `test_temporal_validation.py`, `test_model_registry.py`, `test_agent_guardrails.py`, `test_agent_eval.py`, `test_api_live.py`) מאמתות את חוזה הנתונים של ה-Web, אי-זליגת מאפיינים, כלי סוכן ה-AI, מסלול OpenAI/Gemini, חבילת ההערכה ונקודות הקצה ב-FastAPI.
+- **הערכת איכות הסוכן (`src/agent_eval.py`, נשמר ב-`evals/agent_eval_results.json`):**
+  - **Golden Dataset (`evals/golden_dataset.json`, 35 תרחישים):** **`30/35` (`85.7%`)** — `Schema = 100.0%`, `Status = 94.3%`, `Intent = 91.4%`, `Entity = 91.4%`, `Savings Sign = 100.0%`, Latency: `p50 = 71.10 ms`, `Mean = 214.09 ms`, `p95 = 681.65 ms`. חשף בשקיפות 5 מקרי קצה אמיתיים (קיצורי ערים עם גרשיים `ראשל"צ`/`ת"א`/`ב"ש`, סינון דגמים מתחת ל-15 גניבות עבור `טסלה מודל 3`, כפילות מקף ב`אום אל-פחם` וסיווג פרפרזת הזרקה).
+  - **Layer 4 Numeric Verifier Stress:** **`10/10` (`100.0%`)** — `Hallucination Recall = 100.0%`, `False Alarm Rate = 0.0%`.
+  - **Auto-Compare Invariants:** **`8/8` (`100.0%`)**, ממוצע `123.50 ms`.
+  - **Live Agent + `LLM-as-a-Judge` (`openai/gpt-4o-mini` מול `.env`):** הסוכן הופעל מול `gpt-4o-mini` — **`5/6` מקרים (`83.3%`, ו-`5/5` מכלל השאלות שנענו) חזרו כ-`openai_verified` עם `0` Fallbacks** (והמקרה השישי `EG-01` נחסם מראש ב-Layer 2 כ-`needs_clarification`), `Mean Latency = 1934.34 ms`. השופט האוטומטי דירג את `6/6` התשובות החיות: **`Faithfulness = 4.67/5`**, **`Numeric Consistency = 4.50/5`**, **`Clarity (HE) = 4.83/5`**.
 - **מדיניות ארכיון (`archive/`):** כל מחברות הטיוטה והריצה הקודמות (`CarTheftRisk_v1` עד `CarTheftRisk_v9`, `v10`), ייצואי ביניים ישנים (`production_assets.json`), קובצי ביקורת זמניים וסקריפטי עזר חד-פעמיים מרוכזים בתיקיית `archive/` ומתועדים ב-`ARCHIVE_STATUS.md`. המחברת הפעילה היחידה בתיקיית `notebooks/` היא `CarTheftRisk_final.ipynb`.

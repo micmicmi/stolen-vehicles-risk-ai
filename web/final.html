@@ -2827,7 +2827,7 @@
                   <td>איך מייצאים תחזיות ב-$O(1)$ מבלי לדרוס נכסי ריצה של אפליקציית ה-Web והסוכן?</td>
                   <td>ייצוא מבודד ל-<code>notebooks/data_final.json</code> (8,099 צירופים חזויים) לצד שמירת חוזה הריצה
                     ב-<code>web/assets/data.json</code>.</td>
-                  <td>12 אסרטציות הנדסיות במחברת + 32 בדיקות <code>pytest</code> עוברות ב-100% ללא התנגשות.</td>
+                  <td>12 אסרטציות הנדסיות במחברת + 38 בדיקות <code>pytest</code> עוברות ב-100% ללא התנגשות.</td>
                 </tr>
               </tbody>
             </table>
@@ -4432,7 +4432,7 @@
         <span class="chip chip-ink">Agentic AI Extension · Tool-First Architecture</span>
       </h3>
       <p class="block-sub">
-        מעל שכבת הנתונים פותח סוכן <strong>Tool-First</strong> ישיר מעל <code>google-genai</code> + <code>Pydantic v2</code> המפעיל 5 כלי Python דטרמיניסטיים לחישוב סיכון, סימולציית
+        מעל שכבת הנתונים פותח סוכן <strong>Tool-First</strong> ישיר מעל <code>OpenAI (gpt-4o-mini)</code> + <code>Pydantic v2</code> (עם תמיכת גיבוי Gemini אופציונלית) המפעיל 5 כלי Python דטרמיניסטיים לחישוב סיכון, סימולציית
         הצעות מחיר מחקריות, השוואת חלופות והערכת הנחת מיגון — כך שכל חישוב כספי מתבצע בקוד מבוקר ללא הזיות LLM:
       </p>
 
@@ -4442,7 +4442,8 @@
             <span>🤖</span> תיעוד הנדסי מלא: סוכן ה-AI לביטוח (Bestie Copilot)
           </div>
           <p class="agent-cta-desc">
-            ארכיטקטורת 5 כלי ה-Python הדטרמיניסטיים, מנגנון ה-Guardrails (4 שכבות) וחבילת 32 בדיקות ה-Pytest מרוכזים
+            ארכיטקטורת 5 כלי ה-Python הדטרמיניסטיים, מנגנון ה-Guardrails (4 שכבות), חבילת 38 בדיקות ה-Pytest
+            ו-<strong>Agent Evaluation Suite</strong> (35 תרחישי זהב: 85.7% דיוק כולל, 100% Verifier, 5/6 OpenAI Live Verified, ו-<code>LLM-as-a-Judge</code> 4.67/4.50/4.83) מרוכזים
             בדוח הסוכן הייעודי.
           </p>
         </div>

@@ -253,7 +253,7 @@
         code {
             font-family: var(--font-outlier);
             font-weight: 500;
-            font-size: 0.88em;
+            font-size: 1em;
             overflow-wrap: break-word;
         }
 
@@ -681,6 +681,7 @@
         .metric-label strong {
             color: #ffffff;
             font-weight: 600;
+            letter-spacing: 0.5px;
         }
 
         /* ── the signature: the contract as a pharmacy tray ── */
@@ -1871,7 +1872,8 @@
                 <a class="mobile-drawer-link" href="#sec3">03 · ארכיטקטורת הסוכן ו-5 הכלים</a>
                 <a class="mobile-drawer-link" href="#sec4">04 · המוצר בפעולה וניתוח UX</a>
                 <a class="mobile-drawer-link" href="#sec5">05 · Guardrails, סכמות פלט ובדיקות Pytest</a>
-                <a class="mobile-drawer-link" href="#sec6">06 · סיכום ותובנות</a>
+                <a class="mobile-drawer-link" href="#sec6">06 · הערכת איכות ודיוק (Agent Evaluation)</a>
+                <a class="mobile-drawer-link" href="#sec7">07 · סיכום ותובנות</a>
             </div>
         </div>
 
@@ -1883,8 +1885,9 @@
                 <a class="chap-nav-pill" href="#sec2"><span class="pill-num">02</span> בחינת חלופות (ADRs)</a>
                 <a class="chap-nav-pill" href="#sec3"><span class="pill-num">03</span> ארכיטקטורת הסוכן ו-5 הכלים</a>
                 <a class="chap-nav-pill" href="#sec4"><span class="pill-num">04</span> המוצר בפעולה וניתוח UX</a>
-                <a class="chap-nav-pill" href="#sec5"><span class="pill-num">05</span> Guardrails ובדיקות Pytest</a>
-                <a class="chap-nav-pill" href="#sec6"><span class="pill-num">06</span> סיכום ותובנות</a>
+                <a class="chap-nav-pill" href="#sec5"><span class="pill-num">05</span> Guardrails ו-Pytest</a>
+                <a class="chap-nav-pill" href="#sec6"><span class="pill-num">06</span> Agent Evaluation</a>
+                <a class="chap-nav-pill" href="#sec7"><span class="pill-num">07</span> סיכום ותובנות</a>
             </div>
         </nav>
     </header>
@@ -2053,8 +2056,8 @@
                             <td><strong>1. תשתית תזמור הסוכן (Agent Orchestration Framework)</strong></td>
                             <td>שימוש בפריימוורק LangChain / LangGraph עם שכבות הפשטה (Runnables / לולאות ReAct) ועשרות
                                 תלויות משנה.</td>
-                            <td><strong>קוד Python ישיר מעל <code>google-genai</code> + <span dir="ltr"
-                                        style="white-space: nowrap;">Pydantic v2</span> (ללא LangChain)</strong> עם
+                            <td><strong>קוד Python ישיר מעל <code>OpenAI (gpt-4o-mini)</code> + <span dir="ltr"
+                                        style="white-space: nowrap;">Pydantic v2</span> (ללא LangChain, עם גיבוי Gemini אופציונלי)</strong> עם
                                 פייפליין דטרמיניסטי מפורש ב-4 שכבות.</td>
                             <td><strong>שליטה מלאה, דטרמיניסטיות ורזון ב-Production:</strong> מונע "קסם" נסתר, לולאות
                                 ReAct בלתי צפויות ושבירות API בין גרסאות, ושומר על 7 תלויות בלבד
@@ -2432,33 +2435,196 @@
                 <div class="band plastic" style="--t: var(--p-mon);">
                     <h3>שכבה 4 - Post-Generation Numeric Verifier (<code>verify_numeric_grounding</code>)</h3>
                     <ul>
-                        <li><strong>סכמת Gemini מובנית:</strong> שליחת <code>response_schema=GeminiReplyPayload</code>
-                            וחלון 4 הודעות
-                            מ-<code>history</code> כאשר <code>GEMINI_API_KEY</code> מוגדר.</li>
+                        <li><strong>סכמת LLM מובנית (<code>OpenAI-First</code>):</strong> שליחת JSON Schema
+                            מובנה (<code>strict=True</code>) ל-<code>gpt-4o-mini</code> כאשר <code>OPENAI_API_KEY</code> מוגדר
+                            (עם חלון 4 הודעות <code>history</code> ותמיכה בגיבוי Gemini אופציונלי), או ניסוח דטרמיניסטי.</li>
                         <li><strong>בלימת הזיות מספריות:</strong> כל מספר בפלט ה-LLM נבדק מול
                             <code>collect_allowed_numbers</code>;
                             זיהוי מספר חריג (כגון <code>₪99,999</code>) מפעיל fallback אוטומטי לניסוח הדטרמיניסטי
                             (<code>engine="deterministic_grounded"</code>,
-                            <code>numeric_verifier_fallback_triggered</code>).
+                            <code>numeric_verifier_fallback_triggered</code>) במקום <code>openai_verified</code> / <code>gemini_verified</code>.
                         </li>
                     </ul>
                 </div>
             </div>
 
             <pre><code># הרצת בדיקות ה-Guardrails, ה-API והחוזים (8 סוויטות חדשות ב-tests/test_agent_guardrails.py + חוזי API/ML):
-$ python -X utf8 -m pytest -v tests/test_agent_guardrails.py tests/test_api_live.py tests/test_v9_runtime_contract.py tests/test_temporal_validation.py
-# תוצאה מאומתת: 16 passed (0 נכשלו) - כולל אימות שאלות דגם/עיר/קודן, דחיית למבורגיני אורוס/אטלנטיס,
-# חסימת הזרקות פרומפט, בלימת מספר מומצא ₪99,999 ב-Mock של Gemini והיעדר "ביטוח ישיר".
+$ python -X utf8 -m pytest -v
+# תוצאה מאומתת: 38 בדיקות חוזה ויחידה עברו בהצלחה (ראו פרק 06 להערכת Agent Evaluation כמותית מלאה).
 
 # אנדפוינטים פעילים ב-FastAPI (src/api.py):
 POST /agent/auto-compare   # הרכב שנבחר ועד שלוש חלופות סימולטיביות + agent_steps
 POST /agent/chat           # מחזיר GroundedAgentResponse (status, engine, intent, metrics, tools_used, guardrails_passed)</code></pre>
         </section>
 
-        <!-- ═══ CHAPTER 06: PORTFOLIO SUMMARY (AI ENGINEERING + PM) ═══ -->
+        <!-- ═══ CHAPTER 06: AGENT EVALUATION SUITE (GOLDEN DATASET, VERIFIER STRESS & RED TEAMING) ═══ -->
         <section class="report-section section-card" id="sec6">
             <header class="chapter-head">
-                <h2><span class="ch-num">06.</span> סיכום ותובנות </h2>
+                <h2><span class="ch-num">06.</span> הערכת איכות, דיוק ואמינות הסוכן (Agent Evaluation)</h2>
+                <p class="chapter-id">Golden Dataset, Numeric Verifier Stress Test &amp; Honest Failure Analysis</p>
+            </header>
+            <p class="section-intro">
+                בדיקות <code>pytest</code> בפרק הקודם מאמתות חוזי קוד ופונקציונליות נקודתית (Unit &amp; Contract Tests)
+                ללא פנייה ל-LLM אמיתי. כדי למדוד <strong>דיוק ואמינות של סוכן AI</strong> בצורה הנדסית אובייקטיבית,
+                בנינו והרצנו חבילת הערכה ייעודית (<code>src/agent_eval.py</code> +
+                <code>evals/golden_dataset.json</code>)
+                המפרידה בין תרחישי זהב, מבחן עמידות של שכבה 4, והכנה להערכה חיה עם <code>LLM-as-a-Judge</code>.
+            </p>
+
+            <!-- 4 KPI Figures on the dark band -->
+            <div class="hero-figures" style="margin-top: var(--space-xl);">
+                <div class="metric-card metric-card--lead">
+                    <div class="metric-value" dir="ltr">85.7% <span
+                            style="font-size: 0.55em; opacity: 0.8;">(30/35)</span></div>
+                    <div class="metric-label"><strong>Golden Dataset Pass Rate:</strong><br>
+                        בדיקת 35 שאלות עברית ב-7 קטגוריות (<code>Schema 100%</code> · <code>Intent 91.4%</code> ·
+                        <code>Entity 91.4%</code>)
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" dir="ltr">100.0% <span
+                            style="font-size: 0.55em; opacity: 0.8;">(10/10)</span></div>
+                    <div class="metric-label"><strong>Numeric Verifier Recall:</strong><br>
+                        זיהוי 100% מהזיות הסכום, האחוז וסטיות ₪5 -עם <code>0.0% False Alarm Rate</code></div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" dir="ltr">100.0% <span
+                            style="font-size: 0.55em; opacity: 0.8;">(8/8)</span></div>
+                    <div class="metric-label"><strong>Auto-Compare Invariants:</strong><br>
+                        תקינות חשבונאית, 3 שלבי כלים, אפס חברות אסורות וזמן ממוצע <code>136.04 ms</code></div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" dir="ltr">80.55 ms</div>
+                    <div class="metric-label"><strong>חציון זמן תגובה (p50):</strong><br>
+                        פייפליין Offline דטרמיניסטי (<code>Mean 260.38 ms</code> · <code>p95 1006.28 ms</code>)</div>
+                </div>
+            </div>
+
+            <h3 class="block-head">תוצאות לפי קטגוריית הערכה (Golden Dataset v1.0 · 35 תרחישים)</h3>
+            <p class="block-sub">
+                הדירוג מודד עמידה מצרפית בכל 6 התנאים במקרה: תקינות סכמה (<code>GroundedAgentResponse</code>), התאמת
+                סטטוס, סיווג Intent, חילוץ דגם/עיר, סימן חיסכון נכון ותוכן תשובה.
+            </p>
+
+            <div class="tbl-wrap">
+                <table class="tbl">
+                    <thead>
+                        <tr>
+                            <th>קטגוריה</th>
+                            <th class="c">מקרים</th>
+                            <th class="c">עברו</th>
+                            <th class="c">שיעור הצלחה</th>
+                            <th class="c">Latency ממוצע</th>
+                            <th>מה נבדק בפועל</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong><code>mitigation</code> (מיגון ממוקד)</strong></td>
+                            <td class="c num">5</td>
+                            <td class="c num">5</td>
+                            <td class="c num">100.0%</td>
+                            <td class="c num">80.05 ms</td>
+                            <td>קודן בלבד, מנעול הגה, פוינטר כנרדף לאיתוראן וחבילה משולבת ללא ספירה כפולה.</td>
+                        </tr>
+                        <tr>
+                            <td><strong><code>alternatives_and_risk</code> (חלופות וסיכון)</strong></td>
+                            <td class="c num">4</td>
+                            <td class="c num">4</td>
+                            <td class="c num">100.0%</td>
+                            <td class="c num">350.86 ms</td>
+                            <td>רשימת חלופות בקטגוריה, הסבר פשיעה עירונית/פענוח, והיעדר מבטחים לא-מורשים.</td>
+                        </tr>
+                        <tr>
+                            <td><strong><code>multi_turn_history</code> (שיחת המשך)</strong></td>
+                            <td class="c num">2</td>
+                            <td class="c num">2</td>
+                            <td class="c num">100.0%</td>
+                            <td class="c num">103.03 ms</td>
+                            <td>שחזור דגם יעד (קיה נירו) או עיר יעד (ראשון לציון) מחלון ה-<code>history</code>.</td>
+                        </tr>
+                        <tr>
+                            <td><strong><code>entity_grounding_rejection</code> (אי-הזיה)</strong></td>
+                            <td class="c num">4</td>
+                            <td class="c num">4</td>
+                            <td class="c num">100.0%</td>
+                            <td class="c num">694.23 ms</td>
+                            <td>דחיית ישויות חסרות (למבורגיני אורוס, אטלנטיס, בוגאטי, אופניים חשמליים) עם
+                                <code>needs_clarification</code>.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong><code>model_comparison</code> (השוואת דגמים)</strong></td>
+                            <td class="c num">8</td>
+                            <td class="c num">7</td>
+                            <td class="c num">87.5%</td>
+                            <td class="c num">402.84 ms</td>
+                            <td>קורולה←נירו, פיקנטו←לנד קרוזר (תוספת עלות שלילית), היפוך "לעומת", תחיליות יחס ו-EV.</td>
+                        </tr>
+                        <tr>
+                            <td><strong><code>adversarial_and_scope</code> (אבטחה והזרקות)</strong></td>
+                            <td class="c num">6</td>
+                            <td class="c num">5</td>
+                            <td class="c num">83.3%</td>
+                            <td class="c num">23.04 ms</td>
+                            <td>Prompt Injection באנגלית ובעברית, מתכון פסטה, מזג אוויר בתל אביב (אף שמופיעה עיר!),
+                                והצפה &gt;500 תווים.</td>
+                        </tr>
+                        <tr class="row-hi">
+                            <td><strong><code>city_comparison</code> (השוואת ערים)</strong></td>
+                            <td class="c num">6</td>
+                            <td class="c num">3</td>
+                            <td class="c num">50.0%</td>
+                            <td class="c num">160.97 ms</td>
+                            <td>עבר במלאות על שמות מלאים (<code>ראשל"צ</code>/<code>ת"א</code> מפורשים,
+                                <code>חיפה</code>, <code>עכו</code>); נכשל בקיצורי גרשיים ויישוב עם מקף כפול במאגר.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="bands">
+                <div class="band plastic" style="--t: var(--p-mon);">
+                    <span class="chip chip-ink">Real Findings · 5 Edge Cases</span>
+                    <h3>מה ה-Eval חשף ש-<code>pytest</code> פספס</h3>
+                    <ul>
+                        <li><strong><code>CC-03/04</code> (קיצורי גרשיים — <code>ראשל"צ</code>, <code>ב"ש</code>):</strong>
+                            <code>_extract_cities_from_text</code> מפצל על <code>"</code> ושובר ראשי תיבות לפני
+                            <code>CITY_ALIASES</code>.</li>
+                        <li><strong><code>MC-05</code> (<code>טסלה מודל 3</code>):</strong>
+                            אינדקס הדגמים מסנן דגמים מתחת ל-15 גניבות היסטוריות, ולכן החזיר <code>needs_clarification</code>.</li>
+                        <li><strong><code>CC-06</code> (<code>אום אל-פחם</code>):</strong>
+                            נרמול המקף שלף את המפתח המקביל <code>אום אל פחם</code> במאגר.</li>
+                        <li><strong><code>AD-05</code> (פרפרזת הזרקה):</strong>
+                            נחסמה בבטחה (<code>blocked</code>), אך סווגה כ-<code>out_of_scope</code> במקום <code>prompt_injection</code>.</li>
+                    </ul>
+                </div>
+
+                <div class="band plastic" style="--t: var(--p-thu);">
+                    <span class="chip chip-mint">Layer 4 &amp; Live OpenAI Judge</span>
+                    <h3>עמידות Verifier והרצה חיה (<code>gpt-4o-mini</code>)</h3>
+                    <ul>
+                        <li><strong>Verifier Stress (<code>10/10</code> · <code>100%</code>):</strong>
+                            תפס 6/6 הזיות מדומות (<code>₪99,999</code>, סטייה <code>+₪5</code>, <code>18%</code>, ציון <code>53</code>, גיל <code>40</code>) עם <code>0.0%</code> התראות שווא.</li>
+                        <li><strong>Live Agent (<code>openai_verified</code>):</strong>
+                            <code>5/5</code> שאלות שנענו אומתו בשכבה 4 (<code>0</code> Fallbacks, זמן ממוצע <code>1934 ms</code>; <code>EG-01</code> נעצר מראש ב-Layer 2).</li>
+                        <li><strong><code>LLM-as-a-Judge</code> (<code>6/6</code> מקרים):</strong>
+                            <code>Faithfulness = 4.67/5</code> · <code>Numeric = 4.50/5</code> · <code>Clarity = 4.83/5</code> (השופט זיהה הסתייגות-יתר מילולית ב-<code>MT-01</code>).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <pre><code># הרצת חבילת ההערכה המלאה (כוללת תיעוד והערות שורה-אחר-שורה בתוך src/agent_eval.py):
+$ python -X utf8 -m src.agent_eval
+# פלט שמור: evals/agent_eval_results.json (35 מקרי זהב ב-evals/golden_dataset.json)
+# תוצאה מדודה: 30/35 Golden (85.7%) | Verifier 10/10 | Auto-Compare 8/8 | Live OpenAI 5/6 | Judge 4.67/4.50/4.83</code></pre>
+        </section>
+
+        <!-- ═══ CHAPTER 07: PORTFOLIO SUMMARY (AI ENGINEERING + PM) ═══ -->
+        <section class="report-section section-card" id="sec7">
+            <header class="chapter-head">
+                <h2><span class="ch-num">07.</span> סיכום ותובנות </h2>
                 <p class="chapter-id"> Summary: Insights &amp; conclusions</p>
             </header>
             <p class="section-intro">
